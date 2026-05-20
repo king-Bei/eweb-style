@@ -850,58 +850,43 @@
 });`;
         }
 
+        let _previewTimer = null;
         function updatePreview() {
+            clearTimeout(_previewTimer);
+            _previewTimer = setTimeout(_doUpdatePreview, 150);
+        }
+
+        function _doUpdatePreview() {
             const iframe = document.getElementById('previewIframe');
             if (!iframe) return;
-            
-            let doc = iframe.contentWindow.document;
-            
-            if (!doc.getElementById('preview-style')) {
-                doc.open();
-                doc.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style id="preview-style"></style>
-                    </head>
-                    <body>
-                        <div id="preview-content"></div>
-                        <script src="https://code.jquery.com/jquery-3.6.0.min.js"><\/script>
-                    </body>
-                    </html>
-                `);
-                doc.close();
-            }
-            
-            setTimeout(() => {
-                doc = iframe.contentWindow.document;
-                const styleEl = doc.getElementById('preview-style');
-                const contentEl = doc.getElementById('preview-content');
-                if (styleEl) styleEl.textContent = getCssContent();
-                if (contentEl) contentEl.innerHTML = getHtmlContent();
-                
-                const container = doc.getElementById('jollify-tour-module');
-                if (container) {
-                    const tabs = container.querySelectorAll('.j-day-tab');
-                    const panels = container.querySelectorAll('.j-day-panel');
-                    tabs.forEach(tab => {
-                        tab.onclick = function (e) {
-                            e.preventDefault();
-                            tabs.forEach(t => t.classList.remove('is-active'));
-                            panels.forEach(p => { p.style.display = 'none'; p.classList.remove('is-active'); });
-                            this.classList.add('is-active');
-                            const target = container.querySelector('#' + this.getAttribute('data-target'));
-                            if (target) { target.style.display = 'block'; target.classList.add('is-active'); }
-                        };
-                    });
-                    
-                    if(typeof initDaySwipeHint === 'function') {
-                        initDaySwipeHint(doc);
-                    }
-                }
-            }, 10);
+
+            const tabJs = `
+                document.addEventListener('click', function(e) {
+                    var tab = e.target.closest('.j-day-tab');
+                    if (!tab) return;
+                    e.preventDefault();
+                    var box = document.getElementById('jollify-tour-module');
+                    if (!box) return;
+                    box.querySelectorAll('.j-day-tab').forEach(function(t){ t.classList.remove('is-active'); });
+                    box.querySelectorAll('.j-day-panel').forEach(function(p){ p.style.display='none'; p.classList.remove('is-active'); });
+                    tab.classList.add('is-active');
+                    var target = box.querySelector('#' + tab.getAttribute('data-target'));
+                    if (target) { target.style.display = 'block'; target.classList.add('is-active'); }
+                });
+            `;
+
+            iframe.srcdoc = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>${getCssContent()}</style>
+</head>
+<body>
+${getHtmlContent()}
+<script>${tabJs}<\/script>
+</body>
+</html>`;
         }
 
         document.querySelectorAll('input[name="previewMode"]').forEach(radio => {
