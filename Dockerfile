@@ -1,5 +1,5 @@
 # 第一階段：編譯 Vite 專案
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
