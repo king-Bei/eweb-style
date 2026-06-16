@@ -92,13 +92,53 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         break;
       case 'flights':
         if (flights?.visible !== false) {
-          let flightHtml = '';
-          (flights?.items || []).forEach((c, i) => {
-            let isRet = (c.tag || '').includes('回') ? 'return' : '';
-            flightHtml += `<div class="j-editorial-route wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-e-station"><div class="j-e-time">${c.fTime || ''}</div><div class="j-e-code">${c.fCode || ''}</div></div><div class="j-e-divider"><span class="j-e-tag ${isRet}">${c.tag || ''}</span><div class="j-e-airline">${c.fn || ''}</div><div class="j-e-line"></div><div class="j-e-duration">${c.dur || ''}</div></div><div class="j-e-station"><div class="j-e-time">${c.tTime || ''}</div><div class="j-e-code">${c.tCode || ''}</div></div></div>`;
+          // 支援新版 groups 與舊版 flat items 向下相容
+          let flightGroups = [];
+          if (flights.groups && flights.groups.length > 0) {
+            flightGroups = flights.groups;
+          } else if (flights.items && flights.items.length > 0) {
+            const gMap = {}; const gOrder = [];
+            (flights.items || []).forEach(item => {
+              const key = item.tag || '去程';
+              if (!gMap[key]) { gMap[key] = []; gOrder.push(key); }
+              gMap[key].push(item);
+            });
+            flightGroups = gOrder.map(name => ({ group_name: name, layout: 'timeline', items: gMap[name] }));
+          }
+
+          let allGroupsHtml = '';
+
+          flightGroups.forEach(group => {
+            const gItems = group.items || [];
+            if (gItems.length === 0) return;
+            const gLayout = group.layout || 'timeline';
+            const gName = group.group_name || '';
+            let innerHtml = '';
+
+            if (gLayout === 'timeline') {
+              gItems.forEach((c, i) => {
+                const isRet = (c.tag || gName).includes('回') ? 'return' : '';
+                innerHtml += `<div class="j-editorial-route wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-e-station"><div class="j-e-time">${c.dep_time || c.fTime || ''}</div><div class="j-e-code">${c.dep_location_zh || ''} ${c.dep_location_en || c.fCode || ''}</div></div><div class="j-e-divider"><span class="j-e-tag ${isRet}">${gName}</span><div class="j-e-airline">${c.airline_name_zh || ''} ${c.airline_name_en || ''} ${c.flight_no || c.fn || ''}</div><div class="j-e-line"></div><div class="j-e-duration">${c.dur || ''}</div></div><div class="j-e-station"><div class="j-e-time">${c.arr_time || c.tTime || ''}</div><div class="j-e-code">${c.arr_location_zh || ''} ${c.arr_location_en || c.tCode || ''}</div></div></div>`;
+              });
+              innerHtml = `<div class="j-editorial-flight-box">${innerHtml}</div>`;
+            } else if (gLayout === 'card') {
+              gItems.forEach((c, i) => {
+                innerHtml += `<div class="j-flight-card wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-fc-airline">${c.airline_code || ''} <strong>${c.airline_name_zh || ''}</strong> <span>${c.airline_name_en || ''}</span></div><div class="j-fc-body"><div class="j-fc-station"><div class="j-fc-time">${c.dep_time || c.fTime || ''}</div><div class="j-fc-city">${c.dep_location_zh || ''}</div><div class="j-fc-code">${c.dep_location_en || ''}</div></div><div class="j-fc-middle"><div class="j-fc-no">${c.flight_no || c.fn || ''}</div><div class="j-fc-arrow">✈</div></div><div class="j-fc-station"><div class="j-fc-time">${c.arr_time || c.tTime || ''}</div><div class="j-fc-city">${c.arr_location_zh || ''}</div><div class="j-fc-code">${c.arr_location_en || ''}</div></div></div></div>`;
+              });
+              innerHtml = `<div class="j-flight-card-grid">${innerHtml}</div>`;
+            } else {
+              let rows = '';
+              gItems.forEach(c => {
+                rows += `<tr><td>${c.airline_code || ''} ${c.airline_name_zh || ''}</td><td>${c.flight_no || ''}</td><td>${c.dep_location_zh || ''} (${c.dep_location_en || ''})</td><td>${c.dep_time || c.fTime || ''}</td><td>→</td><td>${c.arr_location_zh || ''} (${c.arr_location_en || ''})</td><td>${c.arr_time || c.tTime || ''}</td></tr>`;
+              });
+              innerHtml = `<div class="j-flight-table-wrap"><table class="j-flight-table"><thead><tr><th>航空公司</th><th>航班號</th><th>出發地</th><th>起飛</th><th></th><th>目的地</th><th>抵達</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+            }
+
+            allGroupsHtml += `<div class="j-flight-group wow fadeInUp">${gName ? `<div class="j-flight-group-label"><span class="j-fgl-tag">${gName}</span></div>` : ''}${innerHtml}</div>`;
           });
-          if (flightHtml) {
-            html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Flight Information</span><h2>航程紀實 ‧ 優雅啟程</h2></div><div class="j-wrapper"><div class="j-editorial-flight-box">${flightHtml}</div></div></div>`;
+
+          if (allGroupsHtml) {
+            html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Flight Information</span><h2>航程紀實 ‧ 優雅啟程</h2></div><div class="j-wrapper j-flights-wrapper">${allGroupsHtml}</div></div>`;
           }
         }
         break;
@@ -391,6 +431,10 @@ export const generateCss = () => {
 .jollify-luxury-theme .j-hl-overlap-desc { font-size: 15px !important; color: #555 !important; line-height: 1.8 !important; text-align: justify !important; margin: 0 !important; }
 
 /* Flight */
+.jollify-luxury-theme .j-flights-wrapper { display: flex !important; flex-direction: column !important; gap: 40px !important; }
+.jollify-luxury-theme .j-flight-group { }
+.jollify-luxury-theme .j-flight-group-label { margin-bottom: 16px !important; }
+.jollify-luxury-theme .j-fgl-tag { display: inline-block !important; font-size: 11px !important; font-weight: 700 !important; letter-spacing: 2px !important; color: var(--c-sec) !important; background: rgba(212,169,59,0.1) !important; padding: 4px 16px !important; border-radius: 20px !important; border: 1px solid rgba(212,169,59,0.3) !important; text-transform: uppercase !important; }
 .jollify-luxury-theme .j-editorial-flight-box { background: #fff !important; padding: 50px 60px !important; border-radius: 2px !important; box-shadow: 0 15px 40px rgba(0,0,0,0.04) !important; border-top: 4px solid var(--c-pri) !important; }
 .jollify-luxury-theme .j-editorial-route { display: flex !important; align-items: center !important; justify-content: space-between !important; margin-bottom: 40px !important; padding-bottom: 40px !important; border-bottom: 1px solid #f0f0f0 !important; }
 .jollify-luxury-theme .j-editorial-route:last-child { margin-bottom: 0 !important; padding-bottom: 0 !important; border-bottom: none !important; }
@@ -404,6 +448,26 @@ export const generateCss = () => {
 .jollify-luxury-theme .j-e-line { width: 100% !important; height: 1px !important; background: #ddd !important; position: relative !important; }
 .jollify-luxury-theme .j-e-line::after { content: '✈' !important; position: absolute !important; font-size: 16px !important; color: var(--c-sec) !important; top: -12px !important; right: -5px !important; }
 .jollify-luxury-theme .j-e-duration { font-size: 12px !important; color: #888 !important; margin-top: 8px !important; font-style: italic !important; }
+/* Flight Card Layout */
+.jollify-luxury-theme .j-flight-card-grid { display: flex !important; flex-wrap: wrap !important; gap: 20px !important; }
+.jollify-luxury-theme .j-flight-card { flex: 1 !important; min-width: 260px !important; background: #fff !important; border: 1px solid #eee !important; border-radius: 14px !important; box-shadow: 0 6px 20px rgba(0,0,0,0.05) !important; overflow: hidden !important; }
+.jollify-luxury-theme .j-fc-airline { background: var(--c-pri) !important; color: #fff !important; padding: 12px 20px !important; font-size: 13px !important; display: flex !important; align-items: center !important; gap: 8px !important; }
+.jollify-luxury-theme .j-fc-airline strong { font-size: 15px !important; }
+.jollify-luxury-theme .j-fc-airline span { opacity: 0.7 !important; font-size: 12px !important; }
+.jollify-luxury-theme .j-fc-body { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 20px !important; gap: 10px !important; }
+.jollify-luxury-theme .j-fc-station { text-align: center !important; flex: 1 !important; }
+.jollify-luxury-theme .j-fc-time { font-size: 26px !important; font-weight: 300 !important; color: var(--c-pri) !important; letter-spacing: 1px !important; line-height: 1 !important; margin-bottom: 4px !important; }
+.jollify-luxury-theme .j-fc-city { font-size: 14px !important; color: #555 !important; font-weight: bold !important; }
+.jollify-luxury-theme .j-fc-code { font-size: 12px !important; color: #999 !important; letter-spacing: 1px !important; }
+.jollify-luxury-theme .j-fc-middle { text-align: center !important; flex: 0.6 !important; }
+.jollify-luxury-theme .j-fc-no { font-size: 11px !important; color: #bbb !important; margin-bottom: 4px !important; letter-spacing: 1px !important; }
+.jollify-luxury-theme .j-fc-arrow { font-size: 22px !important; color: var(--c-sec) !important; }
+/* Flight Table Layout */
+.jollify-luxury-theme .j-flight-table-wrap { overflow-x: auto !important; }
+.jollify-luxury-theme .j-flight-table { width: 100% !important; border-collapse: collapse !important; font-size: 14px !important; }
+.jollify-luxury-theme .j-flight-table th { background: var(--c-pri) !important; color: #fff !important; padding: 10px 16px !important; font-weight: 600 !important; text-align: left !important; font-size: 13px !important; letter-spacing: 0.5px !important; }
+.jollify-luxury-theme .j-flight-table td { padding: 10px 16px !important; border-bottom: 1px solid #f0f0f0 !important; color: #444 !important; }
+.jollify-luxury-theme .j-flight-table tr:hover td { background: rgba(76,42,133,0.03) !important; }
 
 /* Hotel: Overlap */
 .jollify-luxury-theme .j-luxury-hotel-card { display: flex !important; align-items: center !important; margin-bottom: 80px !important; position: relative !important; }
