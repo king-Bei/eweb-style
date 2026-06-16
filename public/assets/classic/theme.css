@@ -166,6 +166,12 @@
 .jollify-luxury-theme .j-rec-txt h5 { font-size: 18px !important; color: var(--c-pri) !important; margin: 0 0 15px 0 !important; font-weight: 400 !important;}
 .jollify-luxury-theme .j-rec-btn { font-size: 13px !important; color: var(--c-sec) !important; letter-spacing: 1px !important; font-weight: bold !important;}
 
+/* Map Section */
+.jollify-luxury-theme .j-map-section { background: #f9f9fb !important; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+.jollify-luxury-theme .j-map-wrap { border-radius: 16px !important; overflow: hidden !important; box-shadow: 0 20px 50px rgba(0,0,0,0.08) !important; border: 1px solid rgba(76,42,133,0.08) !important; }
+.jollify-luxury-theme .j-map-iframe { display: block !important; width: 100% !important; border: none !important; border-radius: 16px !important; }
+.jollify-luxury-theme .j-map-desc { max-width: 800px !important; margin: 28px auto 0 auto !important; text-align: center !important; font-size: 15px !important; color: #666 !important; line-height: 1.8 !important; }
+
 /* Floating CTA */
 .jollify-luxury-theme .j-floating-cta {
     position: fixed !important;

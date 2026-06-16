@@ -24,6 +24,7 @@ import FormSpots from '../components/FormSpots';
 import FormFlights from '../components/FormFlights';
 import FormHotels from '../components/FormHotels';
 import FormDays from '../components/FormDays';
+import FormMap from '../components/FormMap';
 import FormNotices from '../components/FormNotices';
 import FormRecommended from '../components/FormRecommended';
 import FormCTA from '../components/FormCTA';
@@ -44,7 +45,7 @@ export default function Editor({ forcedTheme = null }) {
     notices: {},
     recommended: {}
   });
-  const [moduleOrder, setModuleOrder] = useState(['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'recommended']);
+  const [moduleOrder, setModuleOrder] = useState(['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended']);
   const [status, setStatus] = useState('草稿');
   const [publishDateNote, setPublishDateNote] = useState('');
   const [flights, setFlights] = useState({});
@@ -186,10 +187,11 @@ export default function Editor({ forcedTheme = null }) {
         highlights: data.highlights || {},
         spots: data.spots || {},
         notices: data.notices || {},
-        recommended: data.recommended || {}
+        recommended: data.recommended || {},
+        map_data: data.map_data || {}
       });
 
-      const defaultOrder = ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'recommended'];
+      const defaultOrder = ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
       let loadedOrder = data.config?.module_order || defaultOrder;
       loadedOrder = loadedOrder.filter(k => defaultOrder.includes(k));
       defaultOrder.forEach(k => {
@@ -274,6 +276,7 @@ export default function Editor({ forcedTheme = null }) {
         spots: itinerary.spots,
         notices: itinerary.notices,
         recommended: itinerary.recommended,
+        map_data: itinerary.map_data,
         config,
         status,
         publish_date_note: publishDateNote,
@@ -485,6 +488,7 @@ ${html}
       hotels: '嚴選旅宿住宿',
       days: '每日行程說明',
       notices: '報名注意事項',
+      map: '行程地圖',
       recommended: '推薦行程/更多旅程'
     };
 
@@ -507,6 +511,9 @@ ${html}
         break;
       case 'days':
         formComponent = <FormDays data={days} onChange={setDays} />;
+        break;
+      case 'map':
+        formComponent = <FormMap data={itinerary.map_data || {}} onChange={(d) => setItinerary({ ...itinerary, map_data: d })} />;
         break;
       case 'notices':
         formComponent = <FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} />;

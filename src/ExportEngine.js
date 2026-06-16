@@ -1,9 +1,9 @@
 export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin = '', moduleOrder = []) => {
-  const { hero_data, highlights, spots, notices, recommended } = itinerary;
+  const { hero_data, highlights, spots, notices, recommended, map_data } = itinerary;
 
   const order = (moduleOrder && moduleOrder.length > 0)
     ? moduleOrder.filter(k => k !== 'quick_info' && k !== 'quick')
-    : ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'recommended'];
+    : ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
 
   let html = `<div class="jollify-luxury-theme" id="jollify-tour-module">`;
 
@@ -274,6 +274,38 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           }
         }
         break;
+      case 'map': {
+        const mapVisible = map_data?.visible !== false;
+        const mapUrl = map_data?.embed_url || '';
+        if (mapVisible && mapUrl) {
+          const mapTitle = map_data?.title || '行程地圖';
+          const mapHeight = map_data?.height || 450;
+          const mapDesc = map_data?.desc || '';
+          html += `
+<div class="j-section j-map-section" id="map">
+  <div class="j-wrapper">
+    <div class="j-heading wow fadeInUp">
+      <span class="j-badge">Route Map</span>
+      <h2>${mapTitle}</h2>
+    </div>
+    <div class="j-map-wrap wow fadeInUp">
+      <iframe
+        src="${mapUrl}"
+        width="100%"
+        height="${mapHeight}"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        class="j-map-iframe"
+      ></iframe>
+    </div>
+    ${mapDesc ? `<p class="j-map-desc">${mapDesc}</p>` : ''}
+  </div>
+</div>`;
+        }
+        break;
+      }
       case 'recommended':
         if (recommended?.visible !== false) {
           let rHtml = '';
@@ -479,6 +511,12 @@ export const generateCss = () => {
 .jollify-luxury-theme .j-rec-txt { padding: 20px !important; text-align: center !important;}
 .jollify-luxury-theme .j-rec-txt h5 { font-size: 18px !important; color: var(--c-pri) !important; margin: 0 0 15px 0 !important; font-weight: 400 !important;}
 .jollify-luxury-theme .j-rec-btn { font-size: 13px !important; color: var(--c-sec) !important; letter-spacing: 1px !important; font-weight: bold !important;}
+
+/* Map Section */
+.jollify-luxury-theme .j-map-section { background: #f9f9fb !important; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+.jollify-luxury-theme .j-map-wrap { border-radius: 16px !important; overflow: hidden !important; box-shadow: 0 20px 50px rgba(0,0,0,0.08) !important; border: 1px solid rgba(76,42,133,0.08) !important; }
+.jollify-luxury-theme .j-map-iframe { display: block !important; width: 100% !important; border: none !important; border-radius: 16px !important; }
+.jollify-luxury-theme .j-map-desc { max-width: 800px !important; margin: 28px auto 0 auto !important; text-align: center !important; font-size: 15px !important; color: #666 !important; line-height: 1.8 !important; }
 
 /* Floating CTA */
 .jollify-luxury-theme .j-floating-cta {
