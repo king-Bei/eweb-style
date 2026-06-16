@@ -85,6 +85,79 @@ export default function FormFlights({ data = {}, onChange }) {
     updateData([...groups, { ...EMPTY_GROUP, group_name: isReturn ? `組別 ${groups.length + 1}` : '回程', direction: isReturn ? 'custom' : 'return', items: [] }]);
   };
 
+  const autoGroupByAirline = () => {
+    const allItems = groups.flatMap(g => g.items || []);
+    if (allItems.length === 0) return alert('目前尚無航班可進行分組');
+
+    const isReturnFlight = (f) => String(f.tag || '').includes('回') || String(f.direction || '').includes('return');
+
+    const matchedGroups = [];
+    allItems.forEach(flight => {
+      if (isReturnFlight(flight)) {
+        const flightCode = String(flight.airline_code || '').trim().toUpperCase();
+        const flightZh = String(flight.airline_name_zh || '').trim().toUpperCase();
+
+        const sameAirlineGroup = matchedGroups.find(g => {
+          if (g.items.length >= 2) return false;
+          const first = g.items[0];
+          if (!first || isReturnFlight(first)) return false;
+          const firstCode = String(first.airline_code || '').trim().toUpperCase();
+          const firstZh = String(first.airline_name_zh || '').trim().toUpperCase();
+          return (flightCode && firstCode && flightCode === firstCode) || 
+                 (flightZh && firstZh && flightZh === firstZh);
+        });
+
+        if (sameAirlineGroup) {
+          sameAirlineGroup.items.push({ ...flight, tag: '回程' });
+        } else {
+          matchedGroups.push({
+            group_name: flight.airline_name_zh || flight.airline_code || '回程航班',
+            direction: 'return',
+            layout: 'timeline',
+            items: [{ ...flight, tag: '回程' }]
+          });
+        }
+      } else {
+        matchedGroups.push({
+          group_name: flight.airline_name_zh || flight.airline_code || '去程航班',
+          direction: 'outbound',
+          layout: 'timeline',
+          items: [{ ...flight, tag: '去程' }]
+        });
+      }
+    });
+
+    const finalGroups = [];
+    matchedGroups.forEach(g => {
+      const airlineName = g.group_name;
+      const existing = finalGroups.find(fg => fg.group_name === airlineName && fg.items.length < 2);
+      if (existing && g.items[0] && isReturnFlight(g.items[0]) && !existing.items.some(isReturnFlight)) {
+        existing.items.push(g.items[0]);
+      } else {
+        finalGroups.push(g);
+      }
+    });
+
+    const result = finalGroups.map((g, idx) => {
+      const hasOut = g.items.some(item => !isReturnFlight(item));
+      const hasIn = g.items.some(item => isReturnFlight(item));
+      let dir = 'custom';
+      if (hasOut && hasIn) dir = 'custom';
+      else if (hasOut) dir = 'outbound';
+      else if (hasIn) dir = 'return';
+
+      return {
+        group_name: g.group_name || `航班組別 ${idx + 1}`,
+        direction: dir,
+        layout: 'timeline',
+        items: g.items
+      };
+    });
+
+    updateData(result);
+    alert('已成功依航空公司進行去回程配對分組！');
+  };
+
   const removeGroup = (gi) => {
     if (!window.confirm(`確定要刪除「${groups[gi].group_name}」這整個組別？`)) return;
     updateData(groups.filter((_, i) => i !== gi));
@@ -97,6 +170,28 @@ export default function FormFlights({ data = {}, onChange }) {
 
   const toggleGroup = (gi) => {
     setCollapsedGroups(prev => ({ ...prev, [gi]: !prev[gi] }));
+  };
+
+  const moveGroup = (gi, direction) => {
+    const nextIndex = gi + direction;
+    if (nextIndex < 0 || nextIndex >= groups.length) return;
+    const nextGroups = [...groups];
+    const temp = nextGroups[gi];
+    nextGroups[gi] = nextGroups[nextIndex];
+    nextGroups[nextIndex] = temp;
+    updateData(nextGroups);
+  };
+
+  const moveItem = (gi, ii, direction) => {
+    const g = groups[gi];
+    const nextIndex = ii + direction;
+    if (nextIndex < 0 || nextIndex >= g.items.length) return;
+    const nextItems = [...g.items];
+    const temp = nextItems[ii];
+    nextItems[ii] = nextItems[nextIndex];
+    nextItems[nextIndex] = temp;
+    const nextGroups = groups.map((group, i) => i === gi ? { ...group, items: nextItems } : group);
+    updateData(nextGroups);
   };
 
   // ── Item actions ──
@@ -286,6 +381,14 @@ export default function FormFlights({ data = {}, onChange }) {
                   <option value="domestic_connection">中段銜接</option>
                 </select>
                 <span className="text-xs text-gray-500">經典版則使用每個組別自己的呈現方式。</span>
+                <button
+                  type="button"
+                  onClick={autoGroupByAirline}
+                  className="btn-outline-gold px-3 py-1.5 text-xs font-bold flex items-center gap-1 bg-white ml-auto"
+                  title="將所有航段依航空公司自動整理為去回程組別"
+                >
+                  ✈️ 依航空自動分組
+                </button>
               </div>
 
               {/* Search Results */}
@@ -389,9 +492,30 @@ export default function FormFlights({ data = {}, onChange }) {
 
                       <button
                         type="button"
+                        onClick={() => moveGroup(gi, -1)}
+                        disabled={gi === 0}
+                        style={{ background: 'none', border: 'none', cursor: gi === 0 ? 'not-allowed' : 'pointer', color: 'var(--c-pri)', opacity: gi === 0 ? 0.3 : 1, padding: '0 4px' }}
+                        title="上移此組別"
+                      >
+                        ▲
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => moveGroup(gi, 1)}
+                        disabled={gi === groups.length - 1}
+                        style={{ background: 'none', border: 'none', cursor: gi === groups.length - 1 ? 'not-allowed' : 'pointer', color: 'var(--c-pri)', opacity: gi === groups.length - 1 ? 0.3 : 1, padding: '0 4px' }}
+                        title="下移此組別"
+                      >
+                        ▼
+                      </button>
+
+                      <button
+                        type="button"
                         onClick={() => removeGroup(gi)}
                         className="text-red-400 hover:text-red-600"
                         title="刪除此組別"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -465,11 +589,31 @@ export default function FormFlights({ data = {}, onChange }) {
                                     </div>
                                   </td>
                                   <td className="p-2 border border-gray-200 text-center">
-                                    <div className="flex flex-col gap-2 items-center">
-                                      <button onClick={() => saveToDatabase(item)} className="text-[var(--luxury-gold)] hover:text-black flex items-center gap-1 text-xs" title="儲存至航班資料庫">
-                                        <Save size={13} /> 存庫
+                                    <div className="flex flex-col gap-1 items-center">
+                                      <button onClick={() => saveToDatabase(item)} className="text-[var(--luxury-gold)] hover:text-black flex items-center gap-1 text-xs" style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="儲存至航班資料庫">
+                                        <Save size={12} /> 存庫
                                       </button>
-                                      <button onClick={() => removeItem(gi, ii)} className="text-red-500 hover:text-red-700 text-xs">✖</button>
+                                      <div className="flex gap-2 justify-center my-0.5">
+                                        <button
+                                          type="button"
+                                          onClick={() => moveItem(gi, ii, -1)}
+                                          disabled={ii === 0}
+                                          style={{ background: 'none', border: 'none', cursor: ii === 0 ? 'not-allowed' : 'pointer', color: 'var(--c-pri)', opacity: ii === 0 ? 0.3 : 1, padding: '0 2px', fontSize: '11px' }}
+                                          title="上移此航段"
+                                        >
+                                          ▲
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => moveItem(gi, ii, 1)}
+                                          disabled={ii === group.items.length - 1}
+                                          style={{ background: 'none', border: 'none', cursor: ii === group.items.length - 1 ? 'not-allowed' : 'pointer', color: 'var(--c-pri)', opacity: ii === group.items.length - 1 ? 0.3 : 1, padding: '0 2px', fontSize: '11px' }}
+                                          title="下移此航段"
+                                        >
+                                          ▼
+                                        </button>
+                                      </div>
+                                      <button onClick={() => removeItem(gi, ii)} className="text-red-500 hover:text-red-700 text-xs" style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="刪除航段">✖ 刪除</button>
                                     </div>
                                   </td>
                                 </tr>

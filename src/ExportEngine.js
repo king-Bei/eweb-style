@@ -1,5 +1,61 @@
+function formatNoticeDesc(desc) {
+  if (!desc) return '';
+  const lines = desc.split('\n');
+  let inList = false;
+  let listType = null;
+  let result = [];
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      if (inList) {
+        result.push(`</${listType}>`);
+        inList = false;
+        listType = null;
+      }
+      result.push('<br/>');
+      return;
+    }
+
+    const bulletMatch = trimmed.match(/^[-*•]\s*(.*)/);
+    const numberMatch = trimmed.match(/^(\d+[\.\)]|\(\d+\))\s*(.*)/);
+
+    if (bulletMatch) {
+      if (!inList || listType !== 'ul') {
+        if (inList) result.push(`</${listType}>`);
+        result.push('<ul style="margin: 4px 0 4px 20px; padding: 0; list-style-type: disc;">');
+        inList = true;
+        listType = 'ul';
+      }
+      result.push(`<li style="margin-bottom: 4px;">${bulletMatch[1]}</li>`);
+    } else if (numberMatch) {
+      if (!inList || listType !== 'ol') {
+        if (inList) result.push(`</${listType}>`);
+        result.push('<ol style="margin: 4px 0 4px 20px; padding: 0; list-style-type: decimal;">');
+        inList = true;
+        listType = 'ol';
+      }
+      result.push(`<li style="margin-bottom: 4px;">${numberMatch[2]}</li>`);
+    } else {
+      if (inList) {
+        result.push(`</${listType}>`);
+        inList = false;
+        listType = null;
+      }
+      result.push(`<p style="margin: 4px 0;">${trimmed}</p>`);
+    }
+  });
+
+  if (inList) {
+    result.push(`</${listType}>`);
+  }
+
+  return result.join('\n');
+}
+
 export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin = '', moduleOrder = []) => {
   const { hero_data, highlights, spots, notices, recommended, map_data } = itinerary;
+
 
   const order = (moduleOrder && moduleOrder.length > 0)
     ? moduleOrder.filter(k => k !== 'quick_info' && k !== 'quick')
@@ -99,7 +155,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           } else if (flights.items && flights.items.length > 0) {
             const gMap = {}; const gOrder = [];
             (flights.items || []).forEach(item => {
-              const key = item.tag || '去程';
+              const key = item.airline_name_zh || item.airline_code || '航班資訊';
               if (!gMap[key]) { gMap[key] = []; gOrder.push(key); }
               gMap[key].push(item);
             });
@@ -170,7 +226,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           if (daysLayout === 'timeline') {
             const totalDays = (days?.items || []).length;
             const totalNights = totalDays > 1 ? totalDays - 1 : 0;
-            
+
             let daysHtml = '';
             (days?.items || []).forEach((c, i) => {
               // 解析 points 成時間線 k-tl
@@ -193,7 +249,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                     } else {
                       ev = line.trim();
                     }
-                    
+
                     tlHtml += `
                       <div class="k-tl__item">
                         <div class="k-tl__dot"></div>
@@ -205,7 +261,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                   tlHtml += `</div>`;
                 }
               }
-              
+
               // 解析 pills
               let pillsHtml = '';
               if (c.image?.label) {
@@ -223,7 +279,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                 if (lunch) pillsHtml += `<span class="k-pill">🍽️ 午: ${lunch}</span>`;
                 if (dinner) pillsHtml += `<span class="k-pill">🍽️ 晚: ${dinner}</span>`;
               }
-              
+
               daysHtml += `
                 <div class="k-day wow fadeInUp">
                   <div class="k-day__num"><span class="k-day__n">${i + 1}</span><span class="k-day__d">DAY</span></div>
@@ -236,12 +292,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                   </div>
                 </div>`;
             });
-            
+
             html += `
               <div class="j-section bg-light-gray k-sec k-sec--mist" id="itinerary">
                 <div class="j-wrapper k-wrap">
                   <div class="wow fadeInUp" style="margin-bottom:3rem; text-align:center;">
-                    <p class="k-label" style="display:inline-block; font-size: 11px; letter-spacing: 3px; background: var(--c-sec); color: #fff; padding: 5px 15px; border-radius: 20px; text-transform: uppercase; margin-bottom:15px;">逐日行程</p>
+                    <p class="k-label" style="display:inline-block; font-size: 11px; letter-spacing: 3px; background: var(--c-sec); color: #fff; padding: 5px 15px; border-radius: 20px; text-transform: uppercase; margin-bottom:15px;">每日行程</p>
                     <h2 class="k-h2" style="font-size:32px; color:var(--c-pri); font-weight:bold; letter-spacing:2px; margin:0;">${totalDays} 天 ${totalNights} 夜完整規劃</h2>
                     <div class="k-rule" style="width:50px; height:2px; background:var(--c-sec); margin:15px auto 0 auto;"></div>
                   </div>
@@ -309,7 +365,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               </button>
               <div class="j-accordion-content">
                 <div class="j-accordion-content-inner">
-                  <p>${(c.desc || '').replace(/\n/g, '<br>')}</p>
+                  <div>${formatNoticeDesc(c.desc || '')}</div>
                 </div>
               </div>
             </div>`;
@@ -324,27 +380,22 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         const mapUrl = map_data?.embed_url || '';
         if (mapVisible && mapUrl) {
           const mapTitle = map_data?.title || '行程地圖';
-          const mapHeight = map_data?.height || 450;
           const mapDesc = map_data?.desc || '';
           html += `
-<div class="j-section j-map-section" id="map">
-  <div class="j-wrapper">
-    <div class="j-heading wow fadeInUp">
+<div class="j-section j-map-section" id="map" style="background: none; border: none; padding: 40px 0;">
+  <div class="j-wrapper" style="max-width: 100%; padding: 0;">
+    <div class="j-heading wow fadeInUp" style="margin-bottom: 20px; text-align: center;">
       <span class="j-badge">Route Map</span>
       <h2>${mapTitle}</h2>
     </div>
-    <div class="j-map-wrap wow fadeInUp" style="--j-map-height:${mapHeight}px">
-      <iframe
+    <div class="j-map-img-box wow fadeInUp" style="width: 100%; max-width: 100%;">
+      <img
         src="${mapUrl}"
-        width="100%"
-        style="border:0;"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        class="j-map-iframe"
-      ></iframe>
+        alt="${mapTitle}"
+        style="width: 100%; height: auto; display: block; max-width: 1200px; margin: 0 auto; border: none; box-shadow: none;"
+      />
     </div>
-    ${mapDesc ? `<p class="j-map-desc">${mapDesc}</p>` : ''}
+    ${mapDesc ? `<p class="j-map-desc" style="max-width: 800px; margin: 20px auto 0; text-align: center; color: #666; font-size: 14px;">${mapDesc}</p>` : ''}
   </div>
 </div>`;
         }

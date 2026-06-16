@@ -18,6 +18,14 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      setSession(null);
+    };
+    window.addEventListener('auth-expired', handleAuthExpired);
+    return () => window.removeEventListener('auth-expired', handleAuthExpired);
+  }, []);
+
   if (loading) return <div className="h-screen w-screen flex items-center justify-center bg-[#1a1a1a] text-[#C5A059]">載入中...</div>;
 
   return (

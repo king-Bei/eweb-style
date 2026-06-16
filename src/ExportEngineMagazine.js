@@ -1,4 +1,59 @@
 
+function formatNoticeDesc(desc) {
+  if (!desc) return '';
+  const lines = desc.split('\n');
+  let inList = false;
+  let listType = null;
+  let result = [];
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      if (inList) {
+        result.push(`</${listType}>`);
+        inList = false;
+        listType = null;
+      }
+      result.push('<br/>');
+      return;
+    }
+
+    const bulletMatch = trimmed.match(/^[-*•]\s*(.*)/);
+    const numberMatch = trimmed.match(/^(\d+[\.\)]|\(\d+\))\s*(.*)/);
+
+    if (bulletMatch) {
+      if (!inList || listType !== 'ul') {
+        if (inList) result.push(`</${listType}>`);
+        result.push('<ul style="margin: 4px 0 4px 20px; padding: 0; list-style-type: disc;">');
+        inList = true;
+        listType = 'ul';
+      }
+      result.push(`<li style="margin-bottom: 4px;">${bulletMatch[1]}</li>`);
+    } else if (numberMatch) {
+      if (!inList || listType !== 'ol') {
+        if (inList) result.push(`</${listType}>`);
+        result.push('<ol style="margin: 4px 0 4px 20px; padding: 0; list-style-type: decimal;">');
+        inList = true;
+        listType = 'ol';
+      }
+      result.push(`<li style="margin-bottom: 4px;">${numberMatch[2]}</li>`);
+    } else {
+      if (inList) {
+        result.push(`</${listType}>`);
+        inList = false;
+        listType = null;
+      }
+      result.push(`<p style="margin: 4px 0;">${trimmed}</p>`);
+    }
+  });
+
+  if (inList) {
+    result.push(`</${listType}>`);
+  }
+
+  return result.join('\n');
+}
+
 export const generateCss = () => {
   return `
         #jollify-magazine-tour,
@@ -1069,8 +1124,28 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     };
     const flightGroups = [];
     (flights.items || []).forEach((flight) => {
-      if (isReturnFlight(flight) && flightGroups.length && !flightGroups[flightGroups.length - 1].inbound) {
-        flightGroups[flightGroups.length - 1].inbound = flight;
+      if (isReturnFlight(flight)) {
+        const flightCode = String(flight.airline_code || '').trim().toUpperCase();
+        const flightZh = String(flight.airline_name_zh || '').trim().toUpperCase();
+
+        const sameAirlineGroup = flightGroups.find(g => {
+          if (!g.outbound || g.inbound) return false;
+          const outCode = String(g.outbound.airline_code || '').trim().toUpperCase();
+          const outZh = String(g.outbound.airline_name_zh || '').trim().toUpperCase();
+          return (flightCode && outCode && flightCode === outCode) || 
+                 (flightZh && outZh && flightZh === outZh);
+        });
+
+        if (sameAirlineGroup) {
+          sameAirlineGroup.inbound = flight;
+        } else {
+          const lastOpenGroup = [...flightGroups].reverse().find(g => !g.inbound);
+          if (lastOpenGroup) {
+            lastOpenGroup.inbound = flight;
+          } else {
+            flightGroups.push({ outbound: null, inbound: flight });
+          }
+        }
       } else {
         flightGroups.push({ outbound: flight, inbound: null });
       }
@@ -1380,7 +1455,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
         </button>
         <div class="j-magazine-accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-jollify-cream/30">
           <div class="px-6 pb-6 pt-2 text-jollify-gray font-sans text-base md:text-lg leading-relaxed">
-            <p>${esc(notice.desc || notice.description || '').replace(/\n/g, '<br>')}</p>
+            <div>${formatNoticeDesc(esc(notice.desc || notice.description || ''))}</div>
           </div>
         </div>
       </div>

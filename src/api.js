@@ -24,6 +24,7 @@ export const authApi = {
     // 檢查是否超過 6 小時
     if (user.expiresAt && new Date().getTime() > user.expiresAt) {
       localStorage.removeItem('jollify_user');
+      window.dispatchEvent(new Event('auth-expired'));
       return null;
     }
     return user;

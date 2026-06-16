@@ -25,16 +25,16 @@ export default function FormMap({ data = {}, onChange }) {
 
       {!isCollapsed && (
         <div className="module-body" style={{ padding: '20px' }}>
-          <label className="form-label text-xs text-[var(--c-pri)] font-bold">地圖嵌入網址</label>
+          <label className="form-label text-xs text-[var(--c-pri)] font-bold">地圖圖片網址</label>
           <p className="text-xs text-gray-400 mb-2">
-            Google Maps → 分享 → 嵌入地圖 → 複製 <code>src="..."</code> 中的網址
+            請輸入地圖的公開圖片連結（如：上傳至科威素材庫之圖片網址，地圖會自動隨視窗大小縮放）
           </p>
           <input
             type="text"
             className="form-control"
             value={data.embed_url || ''}
             onChange={e => onChange({ ...data, embed_url: e.target.value })}
-            placeholder="https://www.google.com/maps/embed?pb=..."
+            placeholder="https://example.com/images/map.jpg"
           />
         </div>
       )}
