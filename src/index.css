@@ -16,7 +16,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--bg-body);
-  font-family: "PingFang TC", "Microsoft JhengHei", "Noto Serif TC", sans-serif;
+  font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif;
   color: var(--text-primary);
 }
 

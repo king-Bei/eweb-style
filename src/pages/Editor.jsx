@@ -333,7 +333,7 @@ export default function Editor({ forcedTheme = null }) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
 <style>
-  body { margin: 0; padding: 0; font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; background: #fff; }
+  body { margin: 0; padding: 0; font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif; background: #fff; }
   ${css}
 </style>
 </head>
@@ -364,7 +364,7 @@ ${html}
       headPreloads += `<link rel="preload" as="image" href="${itinerary.hero_data.image_url}">\n`;
     }
     // 如果有其他常用 CDN，也可在此預載
-    headPreloads += `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n`;
+    headPreloads += `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Noto+Serif+TC:wght@300;400;600;700&display=swap" rel="stylesheet">\n`;
 
     setExportCodes({
       html: theme === 'classic'

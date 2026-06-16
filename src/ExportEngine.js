@@ -305,7 +305,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
 };
 
 export const generateCss = () => {
-  return `.jollify-luxury-theme { --c-pri: #4c2a85; --c-sec: #d4a93b; --c-bg: #fff; font-family: "PingFang TC", "Microsoft JhengHei", sans-serif !important; color: #333 !important; line-height: 1.6 !important; width: 100% !important; background: var(--c-bg) !important; padding-bottom:50px;}
+  return `.jollify-luxury-theme { --c-pri: #4c2a85; --c-sec: #d4a93b; --c-bg: #fff; font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif !important; color: #333 !important; line-height: 1.6 !important; width: 100% !important; background: var(--c-bg) !important; padding-bottom:50px;}
 .jollify-luxury-theme .j-wrapper { max-width: 1000px !important; margin: 0 auto !important; padding: 0 20px !important; }
 .jollify-luxury-theme .j-section { padding: 60px 0 !important; }
 .jollify-luxury-theme .bg-light-gray { background: #f9f9fb !important; border-top: 1px solid #eee; border-bottom: 1px solid #eee;}
