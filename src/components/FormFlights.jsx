@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { codeLookupApi, flightTemplateApi } from '../api';
 import { Search, Save, Plus, ChevronDown, ChevronRight, Trash2 } from 'lucide-react';
 
@@ -269,6 +269,22 @@ export default function FormFlights({ data = {}, onChange }) {
                 </button>
               </div>
 
+              <div className="mb-4 flex flex-wrap gap-3 items-center bg-purple-50 p-3 rounded-lg border border-purple-100">
+                <span className="text-sm font-bold text-[var(--c-pri)] whitespace-nowrap">雜誌風航班版型</span>
+                <select
+                  className="form-control"
+                  style={{ marginBottom: 0, padding: '6px 10px', width: '220px', fontSize: '13px' }}
+                  value={migratedData.magazine_layout || 'auto'}
+                  onChange={e => onChange({ ...migratedData, magazine_layout: e.target.value })}
+                >
+                  <option value="auto">自動判斷</option>
+                  <option value="roundtrip_card">雙卡往返</option>
+                  <option value="multi_segment">多段航程</option>
+                  <option value="domestic_connection">中段銜接</option>
+                </select>
+                <span className="text-xs text-gray-500">經典版則使用每個組別自己的呈現方式。</span>
+              </div>
+
               {/* Search Results */}
               {searchResults.length > 0 && (
                 <div className="mb-4 bg-white border border-[var(--luxury-gold)] p-3 rounded-lg shadow-sm">
@@ -340,6 +356,7 @@ export default function FormFlights({ data = {}, onChange }) {
                         onClick={e => e.stopPropagation()}
                       >
                         <option value="timeline">⏱ 時間軸（橫向）</option>
+                        <option value="boarding">🎫 登機證風</option>
                         <option value="card">🃏 卡片式</option>
                         <option value="table">📋 表格式</option>
                       </select>

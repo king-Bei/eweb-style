@@ -61,6 +61,8 @@ export default function Editor({ forcedTheme = null }) {
   const [previewVersion, setPreviewVersion] = useState(0);
   const [showExport, setShowExport] = useState(false);
   const [exportCodes, setExportCodes] = useState({ html: '', css: '', js: '' });
+  const [externalCssUrl, setExternalCssUrl] = useState('');
+  const [externalJsUrl, setExternalJsUrl] = useState('');
 
   // New Features State
   const [activeUsers, setActiveUsers] = useState([]);
@@ -371,7 +373,7 @@ ${html}
 
     setExportCodes({
       html: theme === 'classic'
-        ? engine.generateHtml(itinerary, flights, days, hotels, cta, window.location.origin, moduleOrder)
+        ? engine.generateHtml(itinerary, flights, days, hotels, cta, '', moduleOrder)
         : engine.generateHtml(itinerary, flights, days, hotels, cta),
       css: engine.generateCss(),
       js: engine.generateJs(),
@@ -383,6 +385,26 @@ ${html}
   const handleCopy = (type) => {
     navigator.clipboard.writeText(exportCodes[type]);
     alert(`已複製 ${type.toUpperCase()} 代碼！`);
+  };
+
+  const handleCopyExternalCssImport = () => {
+    const url = externalCssUrl.trim();
+    if (!url) {
+      alert('請先貼上 CSS 檔案的公開網址');
+      return;
+    }
+    navigator.clipboard.writeText(`<link rel="stylesheet" href="${url}">`);
+    alert('已複製 CSS 外部匯入碼！');
+  };
+
+  const handleCopyExternalJsImport = () => {
+    const url = externalJsUrl.trim();
+    if (!url) {
+      alert('請先貼上 JS 檔案的公開網址');
+      return;
+    }
+    navigator.clipboard.writeText(`<script src="${url}" defer></script>`);
+    alert('已複製 JS 外部匯入碼！');
   };
 
   const handleDownload = (type) => {
@@ -729,6 +751,28 @@ ${html}
                   </div>
                 </div>
                 <textarea readOnly value={exportCodes.css} className="w-full h-20 bg-gray-50 text-xs font-mono p-2 border border-gray-300 rounded cursor-text" onClick={e => e.target.select()} />
+                <div className="mt-3 rounded border border-emerald-100 bg-emerald-50 p-3">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="text-xs font-bold text-emerald-900">CSS 外部匯入</span>
+                    <input
+                      type="url"
+                      className="form-control"
+                      style={{ marginBottom: 0, minWidth: '280px', flex: 1, padding: '6px 10px', fontSize: '12px' }}
+                      value={externalCssUrl}
+                      onChange={e => setExternalCssUrl(e.target.value)}
+                      placeholder="https://example.com/itinerary.css"
+                    />
+                    <button className="btn-outline-gold px-3 py-1 text-xs flex items-center gap-1" onClick={handleCopyExternalCssImport}>
+                      <Copy size={12} /> 複製匯入碼
+                    </button>
+                  </div>
+                  <textarea
+                    readOnly
+                    value={externalCssUrl.trim() ? `<link rel="stylesheet" href="${externalCssUrl.trim()}">` : '請先下載 .css 檔，上傳到科威素材庫，再把網址貼到上方。'}
+                    className="w-full h-12 bg-white text-xs font-mono p-2 border border-emerald-100 rounded cursor-text"
+                    onClick={e => e.target.select()}
+                  />
+                </div>
               </div>
 
               <div className="mb-4">
@@ -742,6 +786,28 @@ ${html}
                   </div>
                 </div>
                 <textarea readOnly value={exportCodes.js} className="w-full h-20 bg-gray-50 text-xs font-mono p-2 border border-gray-300 rounded cursor-text" onClick={e => e.target.select()} />
+                <div className="mt-3 rounded border border-blue-100 bg-blue-50 p-3">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="text-xs font-bold text-blue-900">JS 外部匯入</span>
+                    <input
+                      type="url"
+                      className="form-control"
+                      style={{ marginBottom: 0, minWidth: '280px', flex: 1, padding: '6px 10px', fontSize: '12px' }}
+                      value={externalJsUrl}
+                      onChange={e => setExternalJsUrl(e.target.value)}
+                      placeholder="https://example.com/itinerary.js"
+                    />
+                    <button className="btn-outline-gold px-3 py-1 text-xs flex items-center gap-1" onClick={handleCopyExternalJsImport}>
+                      <Copy size={12} /> 複製匯入碼
+                    </button>
+                  </div>
+                  <textarea
+                    readOnly
+                    value={externalJsUrl.trim() ? `<script src="${externalJsUrl.trim()}" defer></script>` : '請先下載 .js 檔，上傳到公開 HTTPS 位置，再把網址貼到上方。'}
+                    className="w-full h-12 bg-white text-xs font-mono p-2 border border-blue-100 rounded cursor-text"
+                    onClick={e => e.target.select()}
+                  />
+                </div>
               </div>
 
               {exportCodes.head && (

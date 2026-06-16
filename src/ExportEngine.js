@@ -121,6 +121,15 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                 innerHtml += `<div class="j-editorial-route wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-e-station"><div class="j-e-time">${c.dep_time || c.fTime || ''}</div><div class="j-e-code">${c.dep_location_zh || ''} ${c.dep_location_en || c.fCode || ''}</div></div><div class="j-e-divider"><span class="j-e-tag ${isRet}">${gName}</span><div class="j-e-airline">${c.airline_name_zh || ''} ${c.airline_name_en || ''} ${c.flight_no || c.fn || ''}</div><div class="j-e-line"></div><div class="j-e-duration">${c.dur || ''}</div></div><div class="j-e-station"><div class="j-e-time">${c.arr_time || c.tTime || ''}</div><div class="j-e-code">${c.arr_location_zh || ''} ${c.arr_location_en || c.tCode || ''}</div></div></div>`;
               });
               innerHtml = `<div class="j-editorial-flight-box">${innerHtml}</div>`;
+            } else if (gLayout === 'boarding') {
+              gItems.forEach((c, i) => {
+                const isRet = (c.tag || gName).includes('回') ? 'return' : '';
+                const tag = c.tag || gName || '航班';
+                const flightNo = c.flight_no || c.fn || '';
+                const airline = `${c.airline_name_zh || ''} ${c.airline_name_en || ''}`.trim();
+                innerHtml += `<div class="j-boarding-pass wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-bp-left"><span class="j-bp-tag ${isRet}">${tag}</span><div class="j-bp-route"><div class="j-bp-station"><div class="j-bp-time">${c.dep_time || c.fTime || ''}</div><div class="j-bp-code">${c.dep_location_zh || ''} ${c.dep_location_en || c.fCode || ''}</div></div><div class="j-bp-plane">✈</div><div class="j-bp-station"><div class="j-bp-time">${c.arr_time || c.tTime || ''}</div><div class="j-bp-code">${c.arr_location_zh || ''} ${c.arr_location_en || c.tCode || ''}</div></div></div><div class="j-bp-meta"><span>${airline}</span><span>${flightNo}</span>${c.dur ? `<span>${c.dur}</span>` : ''}</div></div><div class="j-bp-perforation"></div><div class="j-bp-right"><div class="j-bp-stub-label">BOARDING PASS</div><div class="j-bp-stub-code">${flightNo}</div></div></div>`;
+              });
+              innerHtml = `<div class="j-boarding-wrapper">${innerHtml}</div>`;
             } else if (gLayout === 'card') {
               gItems.forEach((c, i) => {
                 innerHtml += `<div class="j-flight-card wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-fc-airline">${c.airline_code || ''} <strong>${c.airline_name_zh || ''}</strong> <span>${c.airline_name_en || ''}</span></div><div class="j-fc-body"><div class="j-fc-station"><div class="j-fc-time">${c.dep_time || c.fTime || ''}</div><div class="j-fc-city">${c.dep_location_zh || ''}</div><div class="j-fc-code">${c.dep_location_en || ''}</div></div><div class="j-fc-middle"><div class="j-fc-no">${c.flight_no || c.fn || ''}</div><div class="j-fc-arrow">✈</div></div><div class="j-fc-station"><div class="j-fc-time">${c.arr_time || c.tTime || ''}</div><div class="j-fc-city">${c.arr_location_zh || ''}</div><div class="j-fc-code">${c.arr_location_en || ''}</div></div></div></div>`;
@@ -177,7 +186,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                   tlHtml += `<div class="k-tl">`;
                   lines.forEach(line => {
                     const parts = line.split('|');
-                    let lbl = '', ev = '', note = '';
+                    let lbl = '', note = '';
+                    let ev;
                     if (parts.length >= 3) {
                       lbl = parts[0].trim();
                       ev = parts[1].trim();
@@ -375,9 +385,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
   html += `</div>`;
 
   if (origin) {
-    html += `\n<!-- 鑫囍探索 經典版專用樣式與腳本 (自動引入) -->\n`;
+    html += `\n<!-- 鑫囍探索 經典版專用樣式 (JS 請於科威頁面自行外部導入) -->\n`;
     html += `<link rel="stylesheet" href="${origin}/assets/classic/theme.css">\n`;
-    html += `<script src="${origin}/assets/classic/theme.js"></script>\n`;
   }
 
   return html;
@@ -448,6 +457,25 @@ export const generateCss = () => {
 .jollify-luxury-theme .j-e-line { width: 100% !important; height: 1px !important; background: #ddd !important; position: relative !important; }
 .jollify-luxury-theme .j-e-line::after { content: '✈' !important; position: absolute !important; font-size: 16px !important; color: var(--c-sec) !important; top: -12px !important; right: -5px !important; }
 .jollify-luxury-theme .j-e-duration { font-size: 12px !important; color: #888 !important; margin-top: 8px !important; font-style: italic !important; }
+/* Flight Boarding Pass Layout */
+.jollify-luxury-theme .j-boarding-wrapper { display: flex !important; flex-direction: column !important; gap: 25px !important; }
+.jollify-luxury-theme .j-boarding-pass { display: flex !important; background: #fff !important; border-radius: 8px !important; box-shadow: 0 15px 40px rgba(0,0,0,0.06) !important; overflow: hidden !important; border: 1px solid rgba(76,42,133,0.08) !important; }
+.jollify-luxury-theme .j-bp-left { flex: 1 !important; padding: 30px 35px !important; min-width: 0 !important; }
+.jollify-luxury-theme .j-bp-tag { display: inline-block !important; font-size: 10px !important; background: rgba(76,42,133,0.08) !important; color: var(--c-pri) !important; padding: 2px 10px !important; border-radius: 12px !important; margin-bottom: 14px !important; letter-spacing: 1px !important; }
+.jollify-luxury-theme .j-bp-tag.return { background: rgba(212,169,59,0.15) !important; color: #b58b21 !important; }
+.jollify-luxury-theme .j-bp-route { display: flex !important; align-items: center !important; gap: 20px !important; }
+.jollify-luxury-theme .j-bp-station { text-align: center !important; flex: 0 0 32% !important; min-width: 0 !important; }
+.jollify-luxury-theme .j-bp-time { font-size: 14px !important; color: #888 !important; font-family: 'Times New Roman', serif !important; margin-bottom: 4px !important; }
+.jollify-luxury-theme .j-bp-code { font-size: 30px !important; font-weight: 300 !important; color: var(--c-pri) !important; letter-spacing: 1px !important; line-height: 1.15 !important; overflow-wrap: anywhere !important; }
+.jollify-luxury-theme .j-bp-plane { flex: 1 !important; text-align: center !important; color: var(--c-sec) !important; font-size: 18px !important; border-top: 1px dashed #ddd !important; position: relative !important; top: -1px !important; min-width: 50px !important; }
+.jollify-luxury-theme .j-bp-meta { display: flex !important; flex-wrap: wrap !important; gap: 8px 16px !important; margin-top: 16px !important; font-size: 12px !important; color: #999 !important; letter-spacing: 0.5px !important; }
+.jollify-luxury-theme .j-bp-perforation { width: 0 !important; border-left: 2px dotted #ddd !important; position: relative !important; }
+.jollify-luxury-theme .j-bp-perforation::before, .jollify-luxury-theme .j-bp-perforation::after { content: '' !important; position: absolute !important; width: 16px !important; height: 16px !important; background: var(--c-bg, #faf8f5) !important; border-radius: 50% !important; left: -9px !important; }
+.jollify-luxury-theme .j-bp-perforation::before { top: -8px !important; }
+.jollify-luxury-theme .j-bp-perforation::after { bottom: -8px !important; }
+.jollify-luxury-theme .j-bp-right { width: 130px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; background: var(--c-pri) !important; color: #fff !important; padding: 20px 10px !important; }
+.jollify-luxury-theme .j-bp-stub-label { font-size: 9px !important; letter-spacing: 2px !important; opacity: 0.7 !important; margin-bottom: 8px !important; writing-mode: vertical-rl !important; text-orientation: mixed !important; }
+.jollify-luxury-theme .j-bp-stub-code { font-size: 16px !important; letter-spacing: 1px !important; writing-mode: vertical-rl !important; text-orientation: mixed !important; word-break: break-word !important; }
 /* Flight Card Layout */
 .jollify-luxury-theme .j-flight-card-grid { display: flex !important; flex-wrap: wrap !important; gap: 20px !important; }
 .jollify-luxury-theme .j-flight-card { flex: 1 !important; min-width: 260px !important; background: #fff !important; border: 1px solid #eee !important; border-radius: 14px !important; box-shadow: 0 6px 20px rgba(0,0,0,0.05) !important; overflow: hidden !important; }
@@ -637,6 +665,18 @@ export const generateCss = () => {
     .jollify-luxury-theme .j-editorial-flight-box { padding: 30px 20px !important; }
     .jollify-luxury-theme .j-editorial-route { flex-direction: column !important; padding-bottom: 30px !important; }
     .jollify-luxury-theme .j-e-divider { margin: 20px 0 !important; width: 100% !important; }
+    .jollify-luxury-theme .j-boarding-pass { flex-direction: column !important; }
+    .jollify-luxury-theme .j-bp-left { padding: 26px 22px !important; }
+    .jollify-luxury-theme .j-bp-route { gap: 12px !important; }
+    .jollify-luxury-theme .j-bp-station { flex-basis: 38% !important; }
+    .jollify-luxury-theme .j-bp-code { font-size: 22px !important; }
+    .jollify-luxury-theme .j-bp-plane { min-width: 32px !important; }
+    .jollify-luxury-theme .j-bp-perforation { width: 100% !important; height: 0 !important; border-left: none !important; border-top: 2px dotted #ddd !important; }
+    .jollify-luxury-theme .j-bp-perforation::before, .jollify-luxury-theme .j-bp-perforation::after { top: -9px !important; left: auto !important; }
+    .jollify-luxury-theme .j-bp-perforation::before { left: -8px !important; }
+    .jollify-luxury-theme .j-bp-perforation::after { right: -8px !important; }
+    .jollify-luxury-theme .j-bp-right { width: 100% !important; flex-direction: row !important; gap: 14px !important; padding: 14px 18px !important; }
+    .jollify-luxury-theme .j-bp-stub-label, .jollify-luxury-theme .j-bp-stub-code { writing-mode: horizontal-tb !important; text-orientation: initial !important; margin-bottom: 0 !important; }
     .jollify-luxury-theme .j-luxury-hotel-card, .jollify-luxury-theme .j-luxury-hotel-card.reverse { flex-direction: column !important; margin-bottom: 50px !important; }
     .jollify-luxury-theme .j-h-image { width: 100% !important; }
     .jollify-luxury-theme .j-h-info { width: 90% !important; margin: -50px auto 0 auto !important; padding: 30px 25px !important; text-align: center !important; }
@@ -971,21 +1011,36 @@ export const generateCss = () => {
 
 export const generateJs = () => {
   return `
-    $(document).ready(function(){
-        var container = $('#jollify-tour-module');
-        if(container.length === 0) return;
-        container.on('click', '.j-day-tab', function(e){
-            e.preventDefault();
-            container.find('.j-day-tab').removeClass('is-active');
-            container.find('.j-day-panel').hide().removeClass('is-active');
-            $(this).addClass('is-active');
-            var targetPanel = container.find('#' + $(this).data('target'));
-            if(targetPanel.length) { targetPanel.show().addClass('is-active'); }
-        });
-        container.on('click', '.j-accordion-header', function(e){
-            e.preventDefault();
-            var item = $(this).closest('.j-accordion-item');
-            item.toggleClass('is-active');
+    document.addEventListener('DOMContentLoaded', function() {
+        var container = document.getElementById('jollify-tour-module');
+        if (!container) return;
+
+        container.addEventListener('click', function(e) {
+            var dayTab = e.target.closest('.j-day-tab');
+            if (dayTab && container.contains(dayTab)) {
+                e.preventDefault();
+                container.querySelectorAll('.j-day-tab').forEach(function(tab) {
+                    tab.classList.remove('is-active');
+                });
+                container.querySelectorAll('.j-day-panel').forEach(function(panel) {
+                    panel.style.display = 'none';
+                    panel.classList.remove('is-active');
+                });
+                dayTab.classList.add('is-active');
+                var targetPanel = container.querySelector('#' + dayTab.dataset.target);
+                if (targetPanel) {
+                    targetPanel.style.display = '';
+                    targetPanel.classList.add('is-active');
+                }
+                return;
+            }
+
+            var accordionHeader = e.target.closest('.j-accordion-header');
+            if (accordionHeader && container.contains(accordionHeader)) {
+                e.preventDefault();
+                var item = accordionHeader.closest('.j-accordion-item');
+                if (item) item.classList.toggle('is-active');
+            }
         });
     });
 `;

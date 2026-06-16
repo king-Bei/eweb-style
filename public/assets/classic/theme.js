@@ -1,17 +1,32 @@
-$(document).ready(function(){
-    var container = $('#jollify-tour-module');
-    if(container.length === 0) return;
-    container.on('click', '.j-day-tab', function(e){
-        e.preventDefault();
-        container.find('.j-day-tab').removeClass('is-active');
-        container.find('.j-day-panel').hide().removeClass('is-active');
-        $(this).addClass('is-active');
-        var targetPanel = container.find('#' + $(this).data('target'));
-        if(targetPanel.length) { targetPanel.show().addClass('is-active'); }
-    });
-    container.on('click', '.j-accordion-header', function(e){
-        e.preventDefault();
-        var item = $(this).closest('.j-accordion-item');
-        item.toggleClass('is-active');
+document.addEventListener('DOMContentLoaded', function() {
+    var container = document.getElementById('jollify-tour-module');
+    if (!container) return;
+
+    container.addEventListener('click', function(e) {
+        var dayTab = e.target.closest('.j-day-tab');
+        if (dayTab && container.contains(dayTab)) {
+            e.preventDefault();
+            container.querySelectorAll('.j-day-tab').forEach(function(tab) {
+                tab.classList.remove('is-active');
+            });
+            container.querySelectorAll('.j-day-panel').forEach(function(panel) {
+                panel.style.display = 'none';
+                panel.classList.remove('is-active');
+            });
+            dayTab.classList.add('is-active');
+            var targetPanel = container.querySelector('#' + dayTab.dataset.target);
+            if (targetPanel) {
+                targetPanel.style.display = '';
+                targetPanel.classList.add('is-active');
+            }
+            return;
+        }
+
+        var accordionHeader = e.target.closest('.j-accordion-header');
+        if (accordionHeader && container.contains(accordionHeader)) {
+            e.preventDefault();
+            var item = accordionHeader.closest('.j-accordion-item');
+            if (item) item.classList.toggle('is-active');
+        }
     });
 });

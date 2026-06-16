@@ -141,7 +141,7 @@ const editorBridgeScript = `
         window.parent.postMessage({ type: 'BROCHURE_DIRTY' }, '*');
       });
     })();
-  <\/script>
+  </script>
 `;
 
 const cleanSectionForSave = (section) => {
@@ -248,6 +248,7 @@ export default function EditorMagazine() {
   const { id } = useParams();
   const navigate = useNavigate();
   const iframeRef = useRef(null);
+  const pageSerialRef = useRef(0);
   const [pages, setPages] = useState([]);
   const [headHtml, setHeadHtml] = useState('');
   const [activePage, setActivePage] = useState(null);
@@ -332,7 +333,7 @@ export default function EditorMagazine() {
     const next = captureCurrentPage();
     setSaving(true);
     try {
-      localStorage.setItem(getStorageKey(id), JSON.stringify({ pages: next, updatedAt: Date.now() }));
+      localStorage.setItem(getStorageKey(id), JSON.stringify({ pages: next, updatedAt: ++pageSerialRef.current }));
       if (id && itinerary) {
         const user = await authApi.getUser();
         const config = {
@@ -399,7 +400,7 @@ export default function EditorMagazine() {
     const title = window.prompt('新頁面名稱', '自訂頁面');
     if (!title?.trim()) return;
     const next = captureCurrentPage();
-    const id = `custom-page-${Date.now()}`;
+    const id = `custom-page-${++pageSerialRef.current}`;
     const page = {
       id,
       label: title.trim(),
@@ -415,7 +416,7 @@ export default function EditorMagazine() {
     if (!currentPage) return;
     const next = captureCurrentPage();
     const source = next.find(page => page.id === activePage);
-    const id = `copy-page-${Date.now()}`;
+    const id = `copy-page-${++pageSerialRef.current}`;
     const parser = new DOMParser().parseFromString(source.html, 'text/html');
     const section = parser.querySelector('section');
     section.id = id;
@@ -494,8 +495,10 @@ export default function EditorMagazine() {
     const exportScript = `
       <script>
         document.addEventListener('DOMContentLoaded', () => {
-          const sections = [...document.querySelectorAll('body > section')];
+          const root = document.querySelector('.kowei-host-content') || document;
+          const sections = [...root.querySelectorAll('section')];
           const nav = document.getElementById('nav-dots');
+          if (!nav) return;
           sections.forEach((section, index) => {
             const dot = document.createElement('button');
             dot.className = 'dot';
@@ -516,17 +519,21 @@ export default function EditorMagazine() {
           }, { threshold: .25 });
           sections.forEach(section => observer.observe(section));
         });
-      <\/script>`;
+      </script>`;
 
     const output = `<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 ${headHtml}
-<style>${transitionCss}</style>
+<style>${koweiHostCss}${transitionCss}</style>
 </head>
 <body class="antialiased selection:bg-luxury-gold selection:text-white">
+<div class="kowei-host-shell">
+<main class="kowei-host-content">
 <div class="nav-dots" id="nav-dots"></div>
 ${sections}
+</main>
+</div>
 ${exportScript}
 </body>
 </html>`;
