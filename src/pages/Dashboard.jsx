@@ -15,6 +15,11 @@ export default function Dashboard({ onLogout }) {
   const [statusModalItin, setStatusModalItin] = useState(null);
   const [statusForm, setStatusForm] = useState({ status: '', publish_date_note: '' });
   const navigate = useNavigate();
+  const getEditorPath = itinerary => (
+    itinerary?.config?.theme === 'magazine'
+      ? `/editor-magazine/${itinerary.id}`
+      : `/editor/${itinerary.id}`
+  );
 
   useEffect(() => {
     fetchItineraries();
@@ -37,7 +42,7 @@ export default function Dashboard({ onLogout }) {
       setLoading(true);
       const newItin = await itineraryApi.create(newTitle || '未命名新行程', newTheme);
       setShowCreateModal(false);
-      navigate(`/editor/${newItin.id}`);
+      navigate(getEditorPath(newItin));
     } catch (err) {
       alert('建立失敗');
       console.error(err);
@@ -153,7 +158,7 @@ export default function Dashboard({ onLogout }) {
                 <div className="flex gap-3 mt-5 pt-4 border-t border-gray-100">
                   <button
                     className="btn-gold flex items-center justify-center gap-2 flex-1 shadow-sm hover:shadow-md py-2 rounded-lg"
-                    onClick={() => navigate(`/editor/${itin.id}`)}
+                    onClick={() => navigate(getEditorPath(itin))}
                   >
                     <Edit2 size={15} /> 編輯
                   </button>

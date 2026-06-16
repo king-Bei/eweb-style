@@ -5,7 +5,7 @@ export default function FormHighlights({ data = {}, onChange }) {
   const items = data.items || [];
 
   const addItem = () => {
-    onChange({ ...data, items: [...items, { title: '', desc: '' }] });
+    onChange({ ...data, items: [...items, { title: '', desc: '', img: '' }] });
   };
 
   const updateItem = (index, field, value) => {
@@ -33,13 +33,39 @@ export default function FormHighlights({ data = {}, onChange }) {
 
       {data.visible !== false && (
         <>
+          <div style={{ marginBottom: '20px' }}>
+            <label className="form-label text-sm font-bold text-gray-700 block mb-1">特色版面選擇</label>
+            <select
+              className="form-control font-medium"
+              value={data.layout || 'grid'}
+              onChange={e => onChange({ ...data, layout: e.target.value })}
+            >
+              <option value="grid">經典無圖網格 (Grid)</option>
+              <option value="card">帶圖卡片網格 (Card)</option>
+              <option value="overlap">帶圖破格交疊 (Overlap)</option>
+            </select>
+          </div>
+
           {items.map((item, i) => (
             <div key={i} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
               <button onClick={() => removeItem(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer' }}>✖</button>
-              <label className="form-label">特色標題</label>
-              <input type="text" className="form-control" value={item.title} onChange={e => updateItem(i, 'title', e.target.value)} placeholder="例如: 專屬水上別墅" />
-              <label className="form-label">說明文字</label>
-              <textarea className="form-control" rows={3} value={item.desc} onChange={e => updateItem(i, 'desc', e.target.value)} placeholder="說明特色..."></textarea>
+              
+              <div style={{ marginBottom: '10px' }}>
+                <label className="form-label text-xs font-semibold text-gray-500 block mb-1">特色標題</label>
+                <input type="text" className="form-control" value={item.title} onChange={e => updateItem(i, 'title', e.target.value)} placeholder="例如: 專屬水上別墅" />
+              </div>
+
+              {(data.layout === 'card' || data.layout === 'overlap') && (
+                <div style={{ marginBottom: '10px' }}>
+                  <label className="form-label text-xs font-semibold text-gray-500 block mb-1">特色圖片網址</label>
+                  <input type="text" className="form-control" value={item.img || ''} onChange={e => updateItem(i, 'img', e.target.value)} placeholder="https://example.com/image.jpg" />
+                </div>
+              )}
+
+              <div style={{ marginBottom: '5px' }}>
+                <label className="form-label text-xs font-semibold text-gray-500 block mb-1">說明文字</label>
+                <textarea className="form-control" rows={3} value={item.desc} onChange={e => updateItem(i, 'desc', e.target.value)} placeholder="說明特色..."></textarea>
+              </div>
             </div>
           ))}
           <button onClick={addItem} className="btn-outline-gold" style={{ width: '100%', padding: '8px' }}>+ 新增特色</button>

@@ -49,6 +49,19 @@ export default function FormDays({ data = {}, onChange }) {
       </div>
       {!isCollapsed && (
       <div className="module-body" style={{ padding: '20px' }}>
+        <div style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #f0f0f0' }}>
+          <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1.5 block">行程圖面放置方式</label>
+          <select 
+            className="form-control" 
+            value={data.layout || 'leftimg'} 
+            onChange={e => onChange({ ...data, layout: e.target.value })}
+            style={{ width: '100%', maxWidth: '280px', padding: '6px 12px', fontSize: '14px', borderRadius: '6px', border: '1px solid #ccc' }}
+          >
+            <option value="leftimg">左圖右文 (經典預設)</option>
+            <option value="rightimg">右圖左文 (交錯對稱)</option>
+            <option value="topimg">上圖下文 (雜誌大圖)</option>
+          </select>
+        </div>
 
       {data.visible !== false && (
         <>

@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Editor from './pages/Editor';
 import Settings from './pages/Settings';
+import MagazinePageBuilder from './pages/Editor_Magazine';
 
 function App() {
   const [session, setSession] = useState(null);
@@ -27,6 +28,9 @@ function App() {
         <Route path="/dashboard" element={<Navigate to="/" />} />
         <Route path="/settings" element={session ? <Settings /> : <Navigate to="/login" />} />
         <Route path="/editor/:id?" element={session ? <Editor /> : <Navigate to="/login" />} />
+        <Route path="/editor-magazine/:id" element={session ? <Editor forcedTheme="magazine" /> : <Navigate to="/login" />} />
+        <Route path="/editor-magazine-pages/:id" element={session ? <MagazinePageBuilder /> : <Navigate to="/login" />} />
+        <Route path="/brochure-pages" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

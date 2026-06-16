@@ -515,3 +515,591 @@ body {
     height: 640px;
   }
 }
+
+/* Standalone brochure page workspace */
+.brochure-pages-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #d6dde6;
+}
+
+.brochure-pages-header {
+  min-height: 72px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #fff;
+  border-bottom: 1px solid #d9dee6;
+}
+
+.brochure-pages-title,
+.brochure-pages-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brochure-pages-title {
+  color: #243b53;
+}
+
+.brochure-pages-title h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.brochure-pages-title p {
+  margin: 3px 0 0;
+  color: #8290a3;
+  font-size: 0.78rem;
+}
+
+.brochure-pages-actions .editor-action-button {
+  min-height: 38px;
+}
+
+.editor-pdf-button {
+  color: #fff;
+  background: #1e3a5f;
+  border-color: #1e3a5f;
+}
+
+.editor-pdf-button:hover {
+  color: #fff;
+  background: #152d4b;
+  border-color: #152d4b;
+}
+
+.brochure-builder-toolbar {
+  min-height: 58px;
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border-bottom: 1px solid #d9dee6;
+  overflow-x: auto;
+}
+
+.brochure-builder-toolbar .editor-segment-button {
+  min-height: 36px;
+  white-space: nowrap;
+}
+
+.brochure-builder-toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.brochure-builder-toolbar input,
+.brochure-builder-toolbar select {
+  height: 36px;
+  min-width: 150px;
+  padding: 0 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+}
+
+.brochure-builder-toolbar input:focus,
+.brochure-builder-toolbar select:focus {
+  border-color: #4c2a85;
+  outline: 2px solid rgba(76, 42, 133, 0.12);
+}
+
+.brochure-edit-hint {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #7c8a9d;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.brochure-preview-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  gap: 3px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.brochure-preview-switch button {
+  height: 29px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 4px;
+  color: #64748b;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.brochure-preview-switch button.active {
+  color: #fff;
+  background: #4c2a85;
+}
+
+.brochure-preview-switch button.active.kowei {
+  background: #0f766e;
+}
+
+.brochure-preview-switch.device button {
+  width: 30px;
+  padding: 0;
+}
+
+.brochure-page-counter {
+  min-width: 64px;
+  color: #64748b;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.brochure-pages-workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.brochure-pages-sidebar {
+  width: 410px;
+  flex: 0 0 410px;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f8fafc;
+  border-right: 1px solid #cbd5e1;
+}
+
+.brochure-page-list-panel {
+  flex: 0 0 250px;
+  min-height: 0;
+  padding: 14px;
+  overflow-y: auto;
+  border-bottom: 1px solid #dbe3ed;
+}
+
+.brochure-sidebar-heading {
+  padding: 0 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.brochure-sidebar-heading button,
+.brochure-order-actions button {
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.brochure-sidebar-heading button:hover,
+.brochure-order-actions button:hover:not(:disabled) {
+  color: #4c2a85;
+}
+
+.brochure-pages-sidebar nav {
+  display: grid;
+  gap: 6px;
+}
+
+.brochure-content-editor {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.brochure-content-heading {
+  min-height: 58px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.brochure-content-heading span,
+.brochure-content-heading small {
+  display: block;
+}
+
+.brochure-content-heading span {
+  color: #263f46;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.brochure-content-heading small {
+  margin-top: 3px;
+  color: #94a3b8;
+  font-size: 0.72rem;
+}
+
+.brochure-editor-fields {
+  flex: 1;
+  min-height: 0;
+  padding: 16px 18px 28px;
+  overflow-y: auto;
+}
+
+.brochure-field-group + .brochure-field-group {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.brochure-field-group h3 {
+  margin: 0 0 14px;
+  color: #4c2a85;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.brochure-editor-field {
+  display: block;
+  margin-bottom: 13px;
+}
+
+.brochure-editor-field > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.brochure-editor-field input,
+.brochure-editor-field textarea {
+  width: 100%;
+  border: 1px solid #d7dee8;
+  border-radius: 6px;
+  background: #fafbfc;
+  color: #273444;
+  padding: 9px 10px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.brochure-editor-field textarea {
+  resize: vertical;
+}
+
+.brochure-editor-field input:focus,
+.brochure-editor-field textarea:focus {
+  border-color: #4c2a85;
+  background: #fff;
+  outline: 2px solid rgba(76, 42, 133, 0.1);
+}
+
+.brochure-image-field img {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  margin-bottom: 7px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  background: #eef2f6;
+}
+
+.brochure-page-button {
+  width: 100%;
+  min-height: 58px;
+  padding: 9px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #475569;
+  text-align: left;
+  cursor: pointer;
+}
+
+.brochure-page-button.dragging {
+  opacity: 0.45;
+}
+
+.brochure-drag-handle {
+  flex: 0 0 auto;
+  color: #a8b3c2;
+  cursor: grab;
+}
+
+.brochure-page-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.brochure-order-actions {
+  display: grid;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.brochure-order-actions button {
+  width: 22px;
+  height: 20px;
+  border-radius: 3px;
+}
+
+.brochure-order-actions button:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.brochure-page-button:hover {
+  background: #fff;
+  border-color: #dbe3ed;
+}
+
+.brochure-page-button.active {
+  color: #4c2a85;
+  background: #fff;
+  border-color: rgba(76, 42, 133, 0.28);
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+}
+
+.brochure-page-number {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #e8edf3;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.brochure-page-button.active .brochure-page-number {
+  color: #fff;
+  background: #4c2a85;
+}
+
+.brochure-page-button strong,
+.brochure-page-button small {
+  display: block;
+}
+
+.brochure-page-button strong {
+  font-size: 0.9rem;
+}
+
+.brochure-page-button small {
+  margin-top: 2px;
+  color: #94a3b8;
+  font-size: 0.7rem;
+}
+
+.brochure-pages-preview {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.brochure-preview-heading {
+  min-height: 62px;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.brochure-preview-heading span,
+.brochure-preview-heading p {
+  color: #7c8a9d;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.brochure-preview-heading h2,
+.brochure-preview-heading p {
+  margin: 0;
+}
+
+.brochure-preview-heading h2 {
+  margin-top: 2px;
+  color: #263f46;
+  font-size: 1.05rem;
+}
+
+.brochure-compatibility-report {
+  padding: 10px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: #f0fdfa;
+  border-bottom: 1px solid #99f6e4;
+}
+
+.brochure-compatibility-report > strong {
+  flex: 0 0 auto;
+  color: #115e59;
+  font-size: 0.78rem;
+}
+
+.brochure-compatibility-report > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 14px;
+}
+
+.brochure-compatibility-report span {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 5px;
+  color: #92400e;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.brochure-compatibility-report span.error {
+  color: #b91c1c;
+}
+
+.brochure-compatibility-report span.success {
+  color: #047857;
+}
+
+.brochure-compatibility-report svg {
+  margin-top: 1px;
+  flex: 0 0 auto;
+}
+
+.brochure-preview-canvas {
+  flex: 1;
+  min-height: 0;
+  padding: 26px;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+}
+
+.brochure-preview-canvas iframe {
+  width: min(1320px, 100%);
+  min-height: 820px;
+  border: 0;
+  background: #fff;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.2);
+}
+
+.brochure-preview-canvas.mobile iframe {
+  width: min(390px, 100%);
+  min-height: 760px;
+}
+
+@media (max-width: 900px) {
+  .brochure-pages-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .brochure-pages-actions {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .brochure-builder-toolbar {
+    align-items: flex-start;
+  }
+
+  .brochure-pages-sidebar {
+    width: 360px;
+    flex-basis: 360px;
+  }
+
+  .brochure-preview-heading p {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .brochure-pages-workspace {
+    flex-direction: column;
+  }
+
+  .brochure-pages-header {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+
+  .brochure-edit-hint {
+    display: none;
+  }
+
+  .brochure-pages-sidebar {
+    width: 100%;
+    flex: 0 0 58vh;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .brochure-sidebar-heading {
+    padding-top: 4px;
+  }
+
+  .brochure-page-list-panel {
+    flex: 0 0 130px;
+    padding: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .brochure-page-list-panel nav {
+    display: flex;
+  }
+
+  .brochure-page-button {
+    width: 150px;
+    flex: 0 0 150px;
+  }
+
+  .brochure-preview-canvas {
+    padding: 12px;
+  }
+
+  .brochure-preview-canvas iframe {
+    min-height: 620px;
+  }
+}

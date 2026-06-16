@@ -510,6 +510,11 @@ export const generateCss = () => {
                 bottom: -1.25rem;
                 transform: translateX(50%) rotate(90deg);
             }
+
+            #jollify-magazine-tour .j-magazine-accordion-item.is-active {
+                border-color: #D4A93B !important;
+                box-shadow: 0 4px 15px rgba(212, 169, 59, 0.08) !important;
+            }
         }
     `;
 };
@@ -639,6 +644,31 @@ export const generateJs = () => {
                         animatedElements.forEach(el => {
                             el.classList.add('animate-active');
                         });
+                    }
+                });
+            }
+
+            // 5. 注意事項手風琴控制 (Accordion)
+            const magazineRoot = document.getElementById('jollify-magazine-tour');
+            if (magazineRoot) {
+                magazineRoot.addEventListener('click', (e) => {
+                    const header = e.target.closest('.j-magazine-accordion-header');
+                    if (header) {
+                        const item = header.closest('.j-magazine-accordion-item');
+                        const content = item.querySelector('.j-magazine-accordion-content');
+                        const icon = item.querySelector('.j-magazine-accordion-icon');
+                        
+                        const isActive = item.classList.contains('is-active');
+                        
+                        if (isActive) {
+                            item.classList.remove('is-active');
+                            content.style.maxHeight = '0px';
+                            if (icon) icon.style.transform = 'rotate(0deg)';
+                        } else {
+                            item.classList.add('is-active');
+                            content.style.maxHeight = content.scrollHeight + 'px';
+                            if (icon) icon.style.transform = 'rotate(135deg)';
+                        }
                     }
                 });
             }
@@ -1007,22 +1037,34 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   let noticesHtml = '';
   if (hasNotices) {
     const noticeCards = itinerary.notices.items.map((notice, i) => `
-      <div class="glass-premium border border-jollify-purple/10 p-6 md:p-8 animate-trigger ${i % 2 === 0 ? 'slide-left' : 'slide-right'} delay-${Math.min((i + 1) * 100, 700)}">
-        <div class="text-jollify-gold font-serif text-3xl font-bold mb-4">${String(i + 1).padStart(2, '0')}</div>
-        <h3 class="text-2xl md:text-3xl font-serif font-bold text-jollify-purple-dark mb-4 mobile-readable-title">${esc(notice.t || notice.title || '注意事項')}</h3>
-        <p class="text-jollify-gray font-sans text-base md:text-lg leading-loose mobile-readable-body">${esc(notice.desc || notice.description || '').replace(/\n/g, '<br>')}</p>
+      <div class="j-magazine-accordion-item border border-jollify-purple/10 rounded-lg overflow-hidden bg-white shadow-sm mb-4 transition-all duration-300 animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
+        <button class="j-magazine-accordion-header w-full text-left px-6 py-5 flex items-center justify-between focus:outline-none" type="button">
+          <div class="flex items-center gap-4">
+            <span class="bg-jollify-purple text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">${i + 1}</span>
+            <span class="text-xl md:text-2xl font-serif font-bold text-jollify-purple-dark">${esc(notice.t || notice.title || '注意事項')}</span>
+          </div>
+          <span class="j-magazine-accordion-icon w-4 h-4 relative transition-transform duration-300 shrink-0 ml-4">
+            <span class="absolute top-1.5 left-0 w-4 h-0.5 bg-jollify-gold"></span>
+            <span class="absolute top-0 left-1.5 w-0.5 h-4 bg-jollify-gold"></span>
+          </span>
+        </button>
+        <div class="j-magazine-accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-jollify-cream/30">
+          <div class="px-6 pb-6 pt-2 text-jollify-gray font-sans text-base md:text-lg leading-relaxed">
+            <p>${esc(notice.desc || notice.description || '').replace(/\n/g, '<br>')}</p>
+          </div>
+        </div>
       </div>
     `).join('');
 
     noticesHtml = `
     <section id="page-${noticesPageNum}" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="報名注意">
-      <div class="max-w-6xl mx-auto w-full relative z-10">
+      <div class="max-w-4xl mx-auto w-full relative z-10">
         <div class="text-center mb-14 animate-trigger">
           <p class="text-jollify-purple tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">NOTICES</p>
           <h2 class="text-4xl md:text-6xl font-bold tracking-[0.12em] font-serif text-jollify-purple-dark mobile-readable-title">報名注意事項</h2>
           <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">${noticeCards}</div>
+        <div class="space-y-4">${noticeCards}</div>
       </div>
     </section>`;
   }

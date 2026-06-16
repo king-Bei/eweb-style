@@ -13,12 +13,12 @@ import {
   RefreshCw,
   Phone,
   Monitor,
-  BookOpen
+  BookOpen,
+  PanelsTopLeft
 } from 'lucide-react';
 import * as ClassicEngine from '../ExportEngine';
 import * as MagazineEngine from '../ExportEngineMagazine';
 import FormHero from '../components/FormHero';
-import FormQuickInfo from '../components/FormQuickInfo';
 import FormHighlights from '../components/FormHighlights';
 import FormSpots from '../components/FormSpots';
 import FormFlights from '../components/FormFlights';
@@ -28,7 +28,7 @@ import FormNotices from '../components/FormNotices';
 import FormRecommended from '../components/FormRecommended';
 import FormCTA from '../components/FormCTA';
 
-export default function Editor() {
+export default function Editor({ forcedTheme = null }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -39,12 +39,12 @@ export default function Editor() {
   const [itinerary, setItinerary] = useState({
     title: '',
     hero_data: {},
-    quick_info: {},
     highlights: {},
     spots: {},
     notices: {},
     recommended: {}
   });
+  const [moduleOrder, setModuleOrder] = useState(['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'recommended']);
   const [status, setStatus] = useState('草稿');
   const [publishDateNote, setPublishDateNote] = useState('');
   const [flights, setFlights] = useState({});
@@ -54,6 +54,7 @@ export default function Editor() {
 
   // Preview Mode & Export Output
   const [theme, setTheme] = useState('classic');
+  const [baseConfig, setBaseConfig] = useState({});
   const [previewMode, setPreviewMode] = useState('desktop');
   const [autoPreview, setAutoPreview] = useState(false);
   const [previewVersion, setPreviewVersion] = useState(0);
@@ -175,15 +176,29 @@ export default function Editor() {
   const loadData = async () => {
     try {
       const data = await itineraryApi.getById(id);
+      if (!forcedTheme && data.config?.theme === 'magazine') {
+        navigate(`/editor-magazine/${id}`, { replace: true });
+        return;
+      }
       setItinerary({
         title: data.title,
         hero_data: data.hero_data || {},
-        quick_info: data.quick_info || {},
         highlights: data.highlights || {},
         spots: data.spots || {},
         notices: data.notices || {},
         recommended: data.recommended || {}
       });
+
+      const defaultOrder = ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'recommended'];
+      let loadedOrder = data.config?.module_order || defaultOrder;
+      loadedOrder = loadedOrder.filter(k => defaultOrder.includes(k));
+      defaultOrder.forEach(k => {
+        if (!loadedOrder.includes(k)) {
+          loadedOrder.push(k);
+        }
+      });
+      setModuleOrder(loadedOrder);
+
       setStatus(data.status || '草稿');
       setPublishDateNote(data.publish_date_note || '');
 
@@ -191,7 +206,11 @@ export default function Editor() {
       setFlights({ visible: data.config?.flights_visible !== false, items: f_items });
 
       const d_items = data.itinerary_days ? data.itinerary_days.sort((a, b) => a.day_index - b.day_index).map(d => d.content) : [];
-      setDays({ visible: data.config?.days_visible !== false, items: d_items });
+      setDays({
+        visible: data.config?.days_visible !== false,
+        layout: data.config?.daysLayout || 'leftimg',
+        items: d_items
+      });
 
       const h_items = data.itinerary_hotels ? data.itinerary_hotels.map(h => h.hotel_group_data) : [];
       setHotels({ visible: data.config?.hotels_visible !== false, layout: data.config?.hotelLayout || 'overlap', items: h_items });
@@ -202,7 +221,8 @@ export default function Editor() {
         cta_line_url: data.config?.cta_line_url || ''
       });
 
-      setTheme(data.config?.theme || 'classic');
+      setBaseConfig(data.config || {});
+      setTheme(forcedTheme || data.config?.theme || 'classic');
 
       // Check for unsaved local backup
       const backupStr = localStorage.getItem(backupKey);
@@ -234,20 +254,22 @@ export default function Editor() {
     try {
       const user = await authApi.getUser();
       const config = {
-        theme,
+        ...baseConfig,
+        theme: forcedTheme || theme,
         flights_visible: flights.visible,
         days_visible: days.visible,
+        daysLayout: days.layout || 'leftimg',
         hotels_visible: hotels.visible,
         hotelLayout: hotels.layout,
         cta_visible: cta.visible,
         cta_register_url: cta.cta_register_url,
-        cta_line_url: cta.cta_line_url
+        cta_line_url: cta.cta_line_url,
+        module_order: moduleOrder
       };
 
       await itineraryApi.update(id, {
         title: itinerary.title,
         hero_data: itinerary.hero_data,
-        quick_info: itinerary.quick_info,
         highlights: itinerary.highlights,
         spots: itinerary.spots,
         notices: itinerary.notices,
@@ -294,7 +316,9 @@ export default function Editor() {
   const updatePreview = () => {
     if (!iframeRef.current) return;
     const engine = theme === 'magazine' ? MagazineEngine : ClassicEngine;
-    const html = engine.generateHtml(itinerary, flights, days, hotels, cta);
+    const html = theme === 'magazine'
+      ? engine.generateHtml(itinerary, flights, days, hotels, cta)
+      : engine.generateHtml(itinerary, flights, days, hotels, cta, '', moduleOrder);
     const css = engine.generateCss();
     const js = engine.generateJs();
 
@@ -334,10 +358,21 @@ ${html}
 
   const handleExport = () => {
     const engine = theme === 'magazine' ? MagazineEngine : ClassicEngine;
+
+    let headPreloads = '';
+    if (itinerary.hero_data?.image_url) {
+      headPreloads += `<link rel="preload" as="image" href="${itinerary.hero_data.image_url}">\n`;
+    }
+    // 如果有其他常用 CDN，也可在此預載
+    headPreloads += `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n`;
+
     setExportCodes({
-      html: engine.generateHtml(itinerary, flights, days, hotels, cta),
+      html: theme === 'classic'
+        ? engine.generateHtml(itinerary, flights, days, hotels, cta, window.location.origin, moduleOrder)
+        : engine.generateHtml(itinerary, flights, days, hotels, cta),
       css: engine.generateCss(),
-      js: engine.generateJs()
+      js: engine.generateJs(),
+      head: headPreloads.trim()
     });
     setShowExport(true);
   };
@@ -345,6 +380,23 @@ ${html}
   const handleCopy = (type) => {
     navigator.clipboard.writeText(exportCodes[type]);
     alert(`已複製 ${type.toUpperCase()} 代碼！`);
+  };
+
+  const handleDownload = (type) => {
+    const code = exportCodes[type];
+    if (!code) {
+      alert(`尚無 ${type.toUpperCase()} 代碼可下載`);
+      return;
+    }
+    const blob = new Blob([code], { type: type === 'css' ? 'text/css' : 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `itinerary-${id || 'export'}.${type}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const handleRestoreLocalBackup = () => {
@@ -378,17 +430,127 @@ ${html}
       const snapshot = await itineraryApi.getVersionData(versionId);
       if (snapshot.itinerary) setItinerary(snapshot.itinerary);
       if (snapshot.flights) setFlights(snapshot.flights);
-      if (snapshot.days) setDays(snapshot.days);
+      if (snapshot.days) {
+        setDays({
+          ...snapshot.days,
+          layout: snapshot.config?.daysLayout || snapshot.days.layout || 'leftimg'
+        });
+      }
       if (snapshot.hotels) setHotels(snapshot.hotels);
       if (snapshot.cta) setCta(snapshot.cta);
       if (snapshot.status) setStatus(snapshot.status);
       if (snapshot.publish_date_note !== undefined) setPublishDateNote(snapshot.publish_date_note || '');
       if (snapshot.theme || snapshot.config?.theme) setTheme(snapshot.theme || snapshot.config.theme);
+      if (snapshot.config?.module_order) {
+        setModuleOrder(snapshot.config.module_order);
+      } else {
+        setModuleOrder(['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'recommended']);
+      }
       setShowHistoryModal(false);
       alert('已還原版本，請記得點擊「儲存變更」以確認覆蓋。');
     } catch (err) {
       alert('還原失敗');
     }
+  };
+
+  const renderModuleForm = (key) => {
+    const isFirst = moduleOrder[0] === key;
+    const isLast = moduleOrder[moduleOrder.length - 1] === key;
+
+    const moveUp = () => {
+      const idx = moduleOrder.indexOf(key);
+      if (idx > 0) {
+        const newOrder = [...moduleOrder];
+        newOrder[idx] = newOrder[idx - 1];
+        newOrder[idx - 1] = key;
+        setModuleOrder(newOrder);
+      }
+    };
+
+    const moveDown = () => {
+      const idx = moduleOrder.indexOf(key);
+      if (idx < moduleOrder.length - 1) {
+        const newOrder = [...moduleOrder];
+        newOrder[idx] = newOrder[idx + 1];
+        newOrder[idx + 1] = key;
+        setModuleOrder(newOrder);
+      }
+    };
+
+    const names = {
+      hero: '橫幅 Banner',
+      highlights: '行程特色亮點',
+      spots: '精選景點',
+      flights: '航程航班資訊',
+      hotels: '嚴選旅宿住宿',
+      days: '每日行程說明',
+      notices: '報名注意事項',
+      recommended: '推薦行程/更多旅程'
+    };
+
+    let formComponent = null;
+    switch (key) {
+      case 'hero':
+        formComponent = <FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} />;
+        break;
+      case 'highlights':
+        formComponent = <FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} />;
+        break;
+      case 'spots':
+        formComponent = <FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} />;
+        break;
+      case 'flights':
+        formComponent = <FormFlights data={flights} onChange={setFlights} />;
+        break;
+      case 'hotels':
+        formComponent = <FormHotels data={hotels} onChange={setHotels} />;
+        break;
+      case 'days':
+        formComponent = <FormDays data={days} onChange={setDays} />;
+        break;
+      case 'notices':
+        formComponent = <FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} />;
+        break;
+      case 'recommended':
+        formComponent = <FormRecommended data={itinerary.recommended} onChange={(d) => setItinerary({ ...itinerary, recommended: d })} />;
+        break;
+      default:
+        return null;
+    }
+
+    return (
+      <div key={key} className="bg-white border border-gray-200 rounded-xl p-5 mb-6 shadow-sm relative transition-all duration-200 hover:shadow-md">
+        <div className="flex justify-between items-center pb-3 mb-4 border-b border-gray-100">
+          <span className="font-bold text-gray-800 flex items-center gap-2">
+            <span className="bg-purple-50 text-[var(--c-pri)] text-xs px-3 py-1 rounded-full font-bold">
+              第 {moduleOrder.indexOf(key) + 1} 區塊
+            </span>
+            {names[key]}
+          </span>
+          <div className="flex gap-2">
+            <button 
+              type="button" 
+              onClick={moveUp} 
+              disabled={isFirst}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${isFirst ? 'text-gray-300 border-gray-100 bg-gray-50 cursor-not-allowed' : 'text-gray-600 border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 hover:border-gray-400'}`}
+            >
+              ▲ 上移
+            </button>
+            <button 
+              type="button" 
+              onClick={moveDown} 
+              disabled={isLast}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${isLast ? 'text-gray-300 border-gray-100 bg-gray-50 cursor-not-allowed' : 'text-gray-600 border-gray-300 bg-white hover:bg-gray-50 active:bg-gray-100 hover:border-gray-400'}`}
+            >
+              ▼ 下移
+            </button>
+          </div>
+        </div>
+        <div>
+          {formComponent}
+        </div>
+      </div>
+    );
   };
 
   if (loading) return <div style={{ padding: '20px' }}>載入中...</div>;
@@ -417,6 +579,11 @@ ${html}
         </div>
 
         <div className="editor-action-row">
+          {forcedTheme === 'magazine' && (
+            <button className="editor-action-button" onClick={() => navigate(`/editor-magazine-pages/${id}`)}>
+              <PanelsTopLeft size={17} /> 分頁微調
+            </button>
+          )}
           <button className="editor-action-button editor-action-primary" onClick={handleSave} disabled={saving || isLocked}>
             <Save size={17} /> {saving ? '儲存中' : '儲存變更'}
           </button>
@@ -453,11 +620,18 @@ ${html}
           <div className="editor-theme-strip">
             <div className="editor-theme-label">
               <BookOpen size={14} />
-              {theme === 'magazine' ? '雜誌風格' : '經典風格'}
+              {forcedTheme === 'magazine' || theme === 'magazine' ? '雜誌風格 · 資料表單' : '經典風格'}
             </div>
-            <button className="editor-link-button" onClick={handleExport}>
-              <Code size={14} /> 匯出代碼
-            </button>
+            <div className="flex items-center gap-2">
+              {forcedTheme === 'magazine' && (
+                <button className="editor-link-button" onClick={() => navigate(`/editor-magazine-pages/${id}`)}>
+                  <PanelsTopLeft size={14} /> 分頁微調
+                </button>
+              )}
+              <button className="editor-link-button" onClick={handleExport}>
+                <Code size={14} /> 匯出代碼
+              </button>
+            </div>
           </div>
 
           <div className="editor-legacy-header">
@@ -521,6 +695,12 @@ ${html}
                 <button onClick={() => setShowExport(false)} className="text-gray-500 hover:text-black">關閉</button>
               </div>
 
+              {theme === 'classic' && (
+                <div className="mb-3 p-2 bg-purple-50 border border-purple-200 rounded text-xs text-purple-900 font-sans">
+                  💡 <strong>經典版提示</strong>：產出的 HTML 已自動帶入外部 CSS 樣式與 JS 腳本素材連結，您只需複製 <strong>1. HTML 原始碼</strong> 貼入您的 CMS 即可。
+                </div>
+              )}
+
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-bold text-gray-700">1. HTML 原始碼</span>
@@ -534,22 +714,40 @@ ${html}
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-bold text-gray-700">2. CSS 樣式</span>
-                  <button className="btn-gold px-3 py-1 text-xs flex items-center gap-1" onClick={() => handleCopy('css')}>
-                    <Copy size={12} /> 一鍵複製 CSS
-                  </button>
+                  <div className="flex gap-2">
+                    <button className="btn-outline-gold px-3 py-1 text-xs" onClick={() => handleDownload('css')}>下載 .css 檔</button>
+                    <button className="btn-gold px-3 py-1 text-xs flex items-center gap-1" onClick={() => handleCopy('css')}>
+                      <Copy size={12} /> 一鍵複製 CSS
+                    </button>
+                  </div>
                 </div>
                 <textarea readOnly value={exportCodes.css} className="w-full h-20 bg-gray-50 text-xs font-mono p-2 border border-gray-300 rounded cursor-text" onClick={e => e.target.select()} />
               </div>
 
-              <div className="mb-2">
+              <div className="mb-4">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-bold text-gray-700">3. JS 腳本</span>
-                  <button className="btn-gold px-3 py-1 text-xs flex items-center gap-1" onClick={() => handleCopy('js')}>
-                    <Copy size={12} /> 一鍵複製 JS
-                  </button>
+                  <div className="flex gap-2">
+                    <button className="btn-outline-gold px-3 py-1 text-xs" onClick={() => handleDownload('js')}>下載 .js 檔</button>
+                    <button className="btn-gold px-3 py-1 text-xs flex items-center gap-1" onClick={() => handleCopy('js')}>
+                      <Copy size={12} /> 一鍵複製 JS
+                    </button>
+                  </div>
                 </div>
                 <textarea readOnly value={exportCodes.js} className="w-full h-20 bg-gray-50 text-xs font-mono p-2 border border-gray-300 rounded cursor-text" onClick={e => e.target.select()} />
               </div>
+
+              {exportCodes.head && (
+                <div className="mb-2">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-bold text-[var(--c-pri)]">4. Head 預載代碼 (建議貼於頁面 &lt;head&gt; 區塊)</span>
+                    <button className="btn-outline-gold px-3 py-1 text-xs flex items-center gap-1" onClick={() => handleCopy('head')}>
+                      <Copy size={12} /> 一鍵複製 Head 代碼
+                    </button>
+                  </div>
+                  <textarea readOnly value={exportCodes.head} className="w-full h-16 bg-gray-50 text-xs font-mono p-2 border border-[var(--luxury-gold)] rounded cursor-text" onClick={e => e.target.select()} />
+                </div>
+              )}
             </div>
           )}
 
@@ -572,16 +770,24 @@ ${html}
               </div>
             </div>
 
-            <FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} />
-            <FormQuickInfo data={itinerary.quick_info} onChange={(d) => setItinerary({ ...itinerary, quick_info: d })} />
-            <FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} />
-            <FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} />
-            <FormFlights data={flights} onChange={setFlights} />
-            <FormHotels data={hotels} onChange={setHotels} />
-            <FormDays data={days} onChange={setDays} />
-            <FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} />
-            <FormCTA data={cta} onChange={setCta} />
-            <FormRecommended data={itinerary.recommended} onChange={(d) => setItinerary({ ...itinerary, recommended: d })} />
+            {theme === 'classic' ? (
+              <>
+                {moduleOrder.map(key => renderModuleForm(key))}
+                <FormCTA data={cta} onChange={setCta} />
+              </>
+            ) : (
+              <>
+                <FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} />
+                <FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} />
+                <FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} />
+                <FormFlights data={flights} onChange={setFlights} />
+                <FormHotels data={hotels} onChange={setHotels} />
+                <FormDays data={days} onChange={setDays} />
+                <FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} />
+                <FormCTA data={cta} onChange={setCta} />
+                <FormRecommended data={itinerary.recommended} onChange={(d) => setItinerary({ ...itinerary, recommended: d })} />
+              </>
+            )}
           </div>
         </aside>
 
