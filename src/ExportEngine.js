@@ -11,7 +11,18 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
     switch (moduleKey) {
       case 'hero':
         if (hero_data?.visible !== false) {
-          html += `<div class="j-hero wow fadeIn"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${hero_data?.title2 || ''}</span><h1 class="j-hero-title">${hero_data?.title1 || ''}</h1></div></div>`;
+          let tagsHtml = '';
+          if (hero_data?.tags) {
+            const tagsList = hero_data.tags.split('\n').filter(t => t.trim());
+            if (tagsList.length > 0) {
+              tagsHtml += `<div class="k-hero__tags">`;
+              tagsList.forEach(t => {
+                tagsHtml += `<span class="k-tag">${t}</span>`;
+              });
+              tagsHtml += `</div>`;
+            }
+          }
+          html += `<div class="j-hero wow fadeIn"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${hero_data?.title2 || ''}</span><h1 class="j-hero-title">${hero_data?.title1 || ''}</h1>${tagsHtml}</div></div>`;
         }
         break;
       case 'highlights':
@@ -105,50 +116,131 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         break;
       case 'days':
         if (days?.visible !== false) {
-          let tabsHtml = '', panelsHtml = '';
-          (days?.items || []).forEach((c, i) => {
-            const dayNum = i + 1;
-            const act = i === 0 ? 'is-active' : '';
-            const sty = i === 0 ? 'display:block;' : 'display:none;';
-            tabsHtml += `<button class="j-day-tab ${act}" data-target="panel-${dayNum}"><span class="j-tab-num">0${dayNum}</span><span class="j-tab-label">DAY</span></button>`;
-
-            let pointsHtml = '';
-            if (c.points) {
-              c.points.split('\n').filter(p => p.trim()).forEach(p => {
-                pointsHtml += `<li>${p}</li>`;
-              });
-            }
-
-            const daysLayout = days?.layout || 'leftimg';
-            const hasImg = !!(c.image?.url);
-            panelsHtml += `
-            <div id="panel-${dayNum}" class="day-panel j-day-panel ${act}" style="${sty}">
-                <div class="day-grid j-day-layout-${daysLayout}${hasImg ? '' : ' no-image'}">
-                    ${hasImg ? `<div class="day-image-area">
-                        <div class="day-stamp">${c.image?.label || ''}</div>
-                        <img src="${c.image?.url}" alt="Day ${dayNum}">
-                        <div class="img-slot"><span class="slot-label">${c.image?.subtitle || ''}</span></div>
-                    </div>` : ''}
-                    <div class="day-text-area">
-                        <span class="day-route">${c.route || ''}</span>
-                        <h3 class="day-title">${c.title || ''}</h3>
-                        <p class="day-lead">${(c.lead || '').replace(/\n/g, '<br>')}</p>
-                        <ul class="day-points">${pointsHtml}</ul>
-                        ${c.meals?.show !== false ? `<div class="day-meals-row">
-                            <span><strong>B</strong>${c.meals?.breakfast || '機上餐食或自理'}</span>
-                            <span><strong>L</strong>${c.meals?.lunch || '機上餐食或自理'}</span>
-                            <span><strong>D</strong>${c.meals?.dinner || '機上餐食或自理'}</span>
-                        </div>` : ''}
-                        <div class="day-stay">
-                            <span class="stay-label">STAY</span>
-                            <span class="stay-name">${c.stay || ''}</span>
-                        </div>
-                    </div>
+          const daysLayout = days?.layout || 'leftimg';
+          if (daysLayout === 'timeline') {
+            const totalDays = (days?.items || []).length;
+            const totalNights = totalDays > 1 ? totalDays - 1 : 0;
+            
+            let daysHtml = '';
+            (days?.items || []).forEach((c, i) => {
+              // 解析 points 成時間線 k-tl
+              let tlHtml = '';
+              if (c.points) {
+                const lines = c.points.split('\n').filter(p => p.trim());
+                if (lines.length > 0) {
+                  tlHtml += `<div class="k-tl">`;
+                  lines.forEach(line => {
+                    const parts = line.split('|');
+                    let lbl = '', ev = '', note = '';
+                    if (parts.length >= 3) {
+                      lbl = parts[0].trim();
+                      ev = parts[1].trim();
+                      note = parts[2].trim();
+                    } else if (parts.length === 2) {
+                      ev = parts[0].trim();
+                      note = parts[1].trim();
+                    } else {
+                      ev = line.trim();
+                    }
+                    
+                    tlHtml += `
+                      <div class="k-tl__item">
+                        <div class="k-tl__dot"></div>
+                        ${lbl ? `<p class="k-tl__lbl">${lbl}</p>` : ''}
+                        <p class="k-tl__ev">${ev}</p>
+                        ${note ? `<p class="k-tl__note">${note}</p>` : ''}
+                      </div>`;
+                  });
+                  tlHtml += `</div>`;
+                }
+              }
+              
+              // 解析 pills
+              let pillsHtml = '';
+              if (c.image?.label) {
+                pillsHtml += `<span class="k-pill k-pill--star">⭐ ${c.image.label}</span>`;
+              }
+              if (c.stay) {
+                pillsHtml += `<span class="k-pill k-pill--hotel">🏨 ${c.stay}</span>`;
+              }
+              if (c.image?.subtitle) {
+                pillsHtml += `<span class="k-pill">🛏️ ${c.image.subtitle}</span>`;
+              }
+              if (c.meals?.show !== false && c.meals) {
+                const { breakfast, lunch, dinner } = c.meals;
+                if (breakfast) pillsHtml += `<span class="k-pill">🍽️ 早: ${breakfast}</span>`;
+                if (lunch) pillsHtml += `<span class="k-pill">🍽️ 午: ${lunch}</span>`;
+                if (dinner) pillsHtml += `<span class="k-pill">🍽️ 晚: ${dinner}</span>`;
+              }
+              
+              daysHtml += `
+                <div class="k-day wow fadeInUp">
+                  <div class="k-day__num"><span class="k-day__n">${i + 1}</span><span class="k-day__d">DAY</span></div>
+                  <div class="k-day__body">
+                    <h3 class="k-day__title">${c.route ? c.route + ' ‧ ' : ''}${c.title || ''}</h3>
+                    <p class="k-day__desc">${(c.lead || '').replace(/\n/g, '<br>')}</p>
+                    ${tlHtml}
+                    ${pillsHtml ? `<div class="k-day__pills" style="margin-top:1rem;">${pillsHtml}</div>` : ''}
+                  </div>
+                </div>`;
+            });
+            
+            html += `
+              <div class="j-section bg-light-gray k-sec k-sec--mist" id="itinerary">
+                <div class="j-wrapper k-wrap">
+                  <div class="wow fadeInUp" style="margin-bottom:3rem; text-align:center;">
+                    <p class="k-label" style="display:inline-block; font-size: 11px; letter-spacing: 3px; background: var(--c-sec); color: #fff; padding: 5px 15px; border-radius: 20px; text-transform: uppercase; margin-bottom:15px;">逐日行程</p>
+                    <h2 class="k-h2" style="font-size:32px; color:var(--c-pri); font-weight:bold; letter-spacing:2px; margin:0;">${totalDays} 天 ${totalNights} 夜完整規劃</h2>
+                    <div class="k-rule" style="width:50px; height:2px; background:var(--c-sec); margin:15px auto 0 auto;"></div>
+                  </div>
+                  <div class="k-days">${daysHtml}</div>
                 </div>
-            </div>`;
-          });
-          if (tabsHtml) {
-            html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Daily Itinerary</span><h2>每日行程</h2></div><div class="j-wrapper"><div class="j-magazine-box"><div class="j-tabs-row">${tabsHtml}</div><div class="j-panels-row">${panelsHtml}</div></div></div></div>`;
+              </div>`;
+          } else {
+            let tabsHtml = '', panelsHtml = '';
+            (days?.items || []).forEach((c, i) => {
+              const dayNum = i + 1;
+              const act = i === 0 ? 'is-active' : '';
+              const sty = i === 0 ? 'display:block;' : 'display:none;';
+              tabsHtml += `<button class="j-day-tab ${act}" data-target="panel-${dayNum}"><span class="j-tab-num">0${dayNum}</span><span class="j-tab-label">DAY</span></button>`;
+
+              let pointsHtml = '';
+              if (c.points) {
+                c.points.split('\n').filter(p => p.trim()).forEach(p => {
+                  pointsHtml += `<li>${p}</li>`;
+                });
+              }
+
+              const hasImg = !!(c.image?.url);
+              panelsHtml += `
+              <div id="panel-${dayNum}" class="day-panel j-day-panel ${act}" style="${sty}">
+                  <div class="day-grid j-day-layout-${daysLayout}${hasImg ? '' : ' no-image'}">
+                      ${hasImg ? `<div class="day-image-area">
+                          <div class="day-stamp">${c.image?.label || ''}</div>
+                          <img src="${c.image?.url}" alt="Day ${dayNum}">
+                          <div class="img-slot"><span class="slot-label">${c.image?.subtitle || ''}</span></div>
+                      </div>` : ''}
+                      <div class="day-text-area">
+                          <span class="day-route">${c.route || ''}</span>
+                          <h3 class="day-title">${c.title || ''}</h3>
+                          <p class="day-lead">${(c.lead || '').replace(/\n/g, '<br>')}</p>
+                          <ul class="day-points">${pointsHtml}</ul>
+                          ${c.meals?.show !== false ? `<div class="day-meals-row">
+                              <span><strong>B</strong>${c.meals?.breakfast || '機上餐食或自理'}</span>
+                              <span><strong>L</strong>${c.meals?.lunch || '機上餐食或自理'}</span>
+                              <span><strong>D</strong>${c.meals?.dinner || '機上餐食或自理'}</span>
+                          </div>` : ''}
+                          <div class="day-stay">
+                              <span class="stay-label">STAY</span>
+                              <span class="stay-name">${c.stay || ''}</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>`;
+            });
+            if (tabsHtml) {
+              html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Daily Itinerary</span><h2>每日行程</h2></div><div class="j-wrapper"><div class="j-magazine-box"><div class="j-tabs-row">${tabsHtml}</div><div class="j-panels-row">${panelsHtml}</div></div></div></div>`;
+            }
           }
         }
         break;
@@ -412,6 +504,216 @@ export const generateCss = () => {
     30% { transform: translateX(-18px); }
     60% { transform: translateX(8px); }
     100% { transform: translateX(0); }
+}
+
+/* Hero Tags */
+.jollify-luxury-theme .k-hero__tags {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin-top: 25px !important;
+    max-width: 800px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+.jollify-luxury-theme .k-tag {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #fff !important;
+    padding: 6px 16px !important;
+    border-radius: 30px !important;
+    font-size: 13px !important;
+    letter-spacing: 1px !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+    transition: all 0.3s ease !important;
+    font-weight: bold !important;
+}
+.jollify-luxury-theme .k-tag:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: var(--c-sec) !important;
+}
+
+/* Itinerary Timeline Layout */
+.jollify-luxury-theme .k-sec--mist {
+    background: #f9f9fb !important;
+}
+.jollify-luxury-theme .k-days {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 40px !important;
+    position: relative !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    padding-left: 20px !important;
+}
+.jollify-luxury-theme .k-day {
+    display: flex !important;
+    gap: 30px !important;
+    position: relative !important;
+}
+.jollify-luxury-theme .k-days::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 65px !important;
+    top: 20px !important;
+    bottom: 20px !important;
+    width: 2px !important;
+    background: rgba(76, 42, 133, 0.1) !important;
+    z-index: 1 !important;
+}
+.jollify-luxury-theme .k-day__num {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 90px !important;
+    height: 90px !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    border: 3px solid var(--c-pri) !important;
+    box-shadow: 0 8px 20px rgba(76, 42, 133, 0.06) !important;
+    z-index: 2 !important;
+    flex-shrink: 0 !important;
+}
+.jollify-luxury-theme .k-day__n {
+    font-size: 32px !important;
+    font-weight: 800 !important;
+    color: var(--c-pri) !important;
+    line-height: 1 !important;
+    font-family: 'Times New Roman', serif !important;
+}
+.jollify-luxury-theme .k-day__d {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    color: var(--c-sec) !important;
+    letter-spacing: 1px !important;
+    margin-top: 2px !important;
+}
+.jollify-luxury-theme .k-day__body {
+    flex: 1 !important;
+    background: #fff !important;
+    padding: 30px 40px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02) !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+.jollify-luxury-theme .k-day__title {
+    font-size: 22px !important;
+    font-weight: bold !important;
+    color: var(--c-pri) !important;
+    margin: 0 0 15px 0 !important;
+    letter-spacing: 0.5px !important;
+}
+.jollify-luxury-theme .k-day__desc {
+    font-size: 15px !important;
+    color: #555 !important;
+    line-height: 1.8 !important;
+    margin: 0 0 20px 0 !important;
+    text-align: justify !important;
+}
+.jollify-luxury-theme .k-info {
+    background: rgba(212, 169, 59, 0.06) !important;
+    border-left: 3px solid var(--c-sec) !important;
+    padding: 12px 18px !important;
+    border-radius: 0 8px 8px 0 !important;
+    font-size: 14px !important;
+    color: #8a6d27 !important;
+    line-height: 1.6 !important;
+    margin-bottom: 20px !important;
+}
+.jollify-luxury-theme .k-tl {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    margin-bottom: 25px !important;
+    position: relative !important;
+    padding-left: 15px !important;
+}
+.jollify-luxury-theme .k-tl__item {
+    position: relative !important;
+    padding-left: 20px !important;
+}
+.jollify-luxury-theme .k-tl__dot {
+    position: absolute !important;
+    left: 0 !important;
+    top: 7px !important;
+    width: 6px !important;
+    height: 6px !important;
+    background: var(--c-sec) !important;
+    border-radius: 50% !important;
+}
+.jollify-luxury-theme .k-tl__lbl {
+    font-size: 12px !important;
+    color: #999 !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    margin: 0 0 4px 0 !important;
+}
+.jollify-luxury-theme .k-tl__ev {
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: var(--c-pri) !important;
+    margin: 0 0 4px 0 !important;
+}
+.jollify-luxury-theme .k-tl__note {
+    font-size: 14px !important;
+    color: #666 !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+}
+.jollify-luxury-theme .k-day__pills {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+.jollify-luxury-theme .k-pill {
+    display: inline-block !important;
+    font-size: 12px !important;
+    background: #f3f4f6 !important;
+    color: #4b5563 !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-weight: 500 !important;
+}
+.jollify-luxury-theme .k-pill--hotel {
+    background: rgba(76, 42, 133, 0.08) !important;
+    color: var(--c-pri) !important;
+    font-weight: bold !important;
+}
+.jollify-luxury-theme .k-pill--star {
+    background: rgba(212, 169, 59, 0.12) !important;
+    color: #b58b21 !important;
+    font-weight: bold !important;
+}
+
+@media (max-width: 768px) {
+    .jollify-luxury-theme .k-days::before {
+        left: 35px !important;
+    }
+    .jollify-luxury-theme .k-day {
+        gap: 15px !important;
+    }
+    .jollify-luxury-theme .k-day__num {
+        width: 60px !important;
+        height: 60px !important;
+        border-width: 2px !important;
+    }
+    .jollify-luxury-theme .k-day__n {
+        font-size: 22px !important;
+    }
+    .jollify-luxury-theme .k-day__d {
+        font-size: 8px !important;
+    }
+    .jollify-luxury-theme .k-day__body {
+        padding: 20px !important;
+    }
+    .jollify-luxury-theme .k-day__title {
+        font-size: 18px !important;
+    }
 }
 `;
 };

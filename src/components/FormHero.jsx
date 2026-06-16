@@ -28,6 +28,9 @@ export default function FormHero({ heroData = {}, onChange }) {
 
           <label className="form-label">封面圖片網址</label>
           <input type="text" name="image" className="form-control" value={heroData.image || ''} onChange={handleChange} placeholder="https://" />
+
+          <label className="form-label">宣傳標籤 (Tags，每行一個)</label>
+          <textarea name="tags" className="form-control" rows={4} value={heroData.tags || ''} onChange={handleChange} placeholder="入住 AYANA 系列五星度假村&#10;科摩多巨蜥近距離探訪" />
         </>
       )}
     </div>

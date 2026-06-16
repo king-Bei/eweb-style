@@ -60,6 +60,7 @@ export default function FormDays({ data = {}, onChange }) {
             <option value="leftimg">左圖右文 (經典預設)</option>
             <option value="rightimg">右圖左文 (交錯對稱)</option>
             <option value="topimg">上圖下文 (雜誌大圖)</option>
+            <option value="timeline">時序時間軸 (新版型)</option>
           </select>
         </div>
 
