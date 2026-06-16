@@ -474,31 +474,44 @@
     .jollify-luxury-theme .stay-name { font-size: 14px !important; }
     .jollify-luxury-theme .day-meals-row { font-size: 12px !important; padding: 10px !important; gap: 8px !important; }
     
+    /* ── 手機版時間軸：改為縱向堆疊 ── */
+    .jollify-luxury-theme .k-days {
+        padding-left: 0 !important;
+        gap: 24px !important;
+    }
     .jollify-luxury-theme .k-days::before {
-        left: 35px !important;
+        display: none !important;  /* 隱藏橫向時間線，改用卡片左邊線 */
     }
     .jollify-luxury-theme .k-day {
-        gap: 15px !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        align-items: flex-start !important;
     }
     .jollify-luxury-theme .k-day__num {
-        width: 60px !important;
-        height: 60px !important;
+        width: 54px !important;
+        height: 54px !important;
         border-width: 2px !important;
+        align-self: flex-start !important;
     }
     .jollify-luxury-theme .k-day__n {
-        font-size: 22px !important;
+        font-size: 20px !important;
     }
     .jollify-luxury-theme .k-day__d {
         font-size: 8px !important;
     }
     .jollify-luxury-theme .k-day__body {
-        padding: 20px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 18px 16px !important;
+        border-left: 3px solid var(--c-pri) !important;
+        border-radius: 0 12px 12px 0 !important;
     }
     .jollify-luxury-theme .k-day__title {
-        font-size: 18px !important;
+        font-size: 17px !important;
     }
     .jollify-luxury-theme .k-day__route {
-        font-size: 13px !important;
+        font-size: 12px !important;
     }
     .jollify-luxury-theme .k-day__desc {
         font-size: 14px !important;
