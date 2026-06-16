@@ -371,7 +371,11 @@ export const generateCss = () => {
 .jollify-luxury-theme .j-e-airline { font-size: 12px !important; color: #aaa !important; letter-spacing: 1px !important; margin-bottom: 8px !important; }
 .jollify-luxury-theme .j-e-line { width: 100% !important; height: 1px !important; background: #ddd !important; position: relative !important; }
 .jollify-luxury-theme .j-e-line::after { content: '✈' !important; position: absolute !important; font-size: 16px !important; color: var(--c-sec) !important; top: -12px !important; right: -5px !important; }
-.jollify-luxury-theme .j-e-duration { font-size: 12px !i.jollify-luxury-theme .j-luxury-hotel-card.reverse { flex-direction: row-reverse !important; }
+.jollify-luxury-theme .j-e-duration { font-size: 12px !important; color: #888 !important; margin-top: 8px !important; font-style: italic !important; }
+
+/* Hotel: Overlap */
+.jollify-luxury-theme .j-luxury-hotel-card { display: flex !important; align-items: center !important; margin-bottom: 80px !important; position: relative !important; }
+.jollify-luxury-theme .j-luxury-hotel-card.reverse { flex-direction: row-reverse !important; }
 .jollify-luxury-theme .j-h-image { width: 60% !important; position: relative !important; z-index: 1 !important; }
 .jollify-luxury-theme .j-h-image img { width: 100% !important; height: 400px !important; object-fit: cover !important; border-radius: 12px !important; box-shadow: 0 20px 50px rgba(0,0,0,0.1) !important; }
 .jollify-luxury-theme .j-h-info { width: 50% !important; background: #fff !important; padding: 50px 40px !important; position: relative !important; z-index: 2 !important; margin-left: -10% !important; box-shadow: 0 15px 40px rgba(0,0,0,0.06) !important; border: 1px solid #f9f9f9 !important; border-radius: 12px !important; }
