@@ -19,6 +19,7 @@ const EMPTY_FLIGHT = {
 
 const EMPTY_GROUP = {
   group_name: '去程',
+  direction: 'outbound',
   layout: 'timeline',
   items: []
 };
@@ -54,6 +55,7 @@ function migrateToGroups(data) {
 
   const groups = groupOrder.map(name => ({
     group_name: name,
+    direction: name.includes('回') ? 'return' : 'outbound',
     layout: 'timeline',
     items: groupMap[name]
   }));
@@ -79,7 +81,8 @@ export default function FormFlights({ data = {}, onChange }) {
 
   // ── Group actions ──
   const addGroup = () => {
-    updateData([...groups, { ...EMPTY_GROUP, group_name: `組別 ${groups.length + 1}`, items: [] }]);
+    const isReturn = groups.some(g => (g.direction || g.group_name || '').includes('return') || String(g.group_name || '').includes('回'));
+    updateData([...groups, { ...EMPTY_GROUP, group_name: isReturn ? `組別 ${groups.length + 1}` : '回程', direction: isReturn ? 'custom' : 'return', items: [] }]);
   };
 
   const removeGroup = (gi) => {
@@ -347,16 +350,28 @@ export default function FormFlights({ data = {}, onChange }) {
                         onClick={e => e.stopPropagation()}
                       />
 
+                      {/* 去回程標註 */}
+                      <select
+                        className="form-control"
+                        style={{ marginBottom: 0, padding: '4px 8px', height: '32px', width: '112px', fontSize: '13px' }}
+                        value={group.direction || (String(group.group_name || '').includes('回') ? 'return' : 'outbound')}
+                        onChange={e => updateGroupField(gi, 'direction', e.target.value)}
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <option value="outbound">去程標註</option>
+                        <option value="return">回程標註</option>
+                        <option value="custom">其他標註</option>
+                      </select>
+
                       {/* 呈現方式 */}
                       <select
                         className="form-control"
                         style={{ marginBottom: 0, padding: '4px 8px', height: '32px', width: '150px', fontSize: '13px' }}
-                        value={group.layout || 'timeline'}
+                        value={group.layout === 'boarding' ? 'card' : (group.layout || 'timeline')}
                         onChange={e => updateGroupField(gi, 'layout', e.target.value)}
                         onClick={e => e.stopPropagation()}
                       >
                         <option value="timeline">⏱ 時間軸（橫向）</option>
-                        <option value="boarding">🎫 登機證風</option>
                         <option value="card">🃏 卡片式</option>
                         <option value="table">📋 表格式</option>
                       </select>
