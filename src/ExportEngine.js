@@ -68,7 +68,13 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           let spotHtml = '';
           const spotLayout = spots?.layout || 'fullimg';
           (spots?.items || []).forEach((c, i) => {
-            const tagHtml = c.tag ? `<span class="j-spot-tag">${c.tag}</span>` : '';
+            let tagHtml = '';
+            if (c.tag) {
+              const tags = c.tag.split(/[\s,，、]+/).filter(t => t.trim());
+              tags.forEach(t => {
+                tagHtml += `<span class="j-spot-tag">${t}</span>`;
+              });
+            }
             if (spotLayout === 'fullimg') {
               spotHtml += `<div class="j-spot-fullimg wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-fi-img"><img src="${c.img || ''}" alt="${c.name || ''}"></div><div class="j-spot-fi-caption">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
             } else if (spotLayout === 'ltr') {
@@ -177,7 +183,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                 <div class="k-day wow fadeInUp">
                   <div class="k-day__num"><span class="k-day__n">${i + 1}</span><span class="k-day__d">DAY</span></div>
                   <div class="k-day__body">
-                    <h3 class="k-day__title">${c.route ? c.route + ' ‧ ' : ''}${c.title || ''}</h3>
+                    ${c.route ? `<div class="k-day__route">${c.route}</div>` : ''}
+                    <h3 class="k-day__title">${c.title || ''}</h3>
                     <p class="k-day__desc">${(c.lead || '').replace(/\n/g, '<br>')}</p>
                     ${tlHtml}
                     ${pillsHtml ? `<div class="k-day__pills" style="margin-top:1rem;">${pillsHtml}</div>` : ''}
@@ -283,12 +290,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
 
   // 10. Floating CTA
   if (cta?.visible !== false && (cta?.cta_register_url || cta?.cta_line_url)) {
-    html += '<div style="position:fixed;bottom:20px;right:20px;z-index:9000;display:flex;flex-direction:column;gap:10px;align-items:flex-end;">';
+    html += '<div class="j-floating-cta">';
     if (cta.cta_line_url) {
-      html += `<a href="${cta.cta_line_url}" target="_blank" style="display:flex;align-items:center;justify-content:center;background:#06C755;color:#fff;text-decoration:none;padding:12px 20px;border-radius:50px;box-shadow:0 4px 10px rgba(0,0,0,0.2);font-weight:bold;font-family:sans-serif;transition:0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor;margin-right:8px;"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.038 9.608.391.084.922.258 1.057.592.121.298.039.756.016.953l-.168 1.011c-.053.307-.243 1.18.591.82 1.037-.446 5.58-3.284 7.971-5.882 1.636-1.782 2.495-3.682 2.495-7.102"/></svg>LINE 客服</a>`;
+      html += `<a href="${cta.cta_line_url}" target="_blank" class="j-cta-btn j-cta-line"><svg viewBox="0 0 24 24"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.038 9.608.391.084.922.258 1.057.592.121.298.039.756.016.953l-.168 1.011c-.053.307-.243 1.18.591.82 1.037-.446 5.58-3.284 7.971-5.882 1.636-1.782 2.495-3.682 2.495-7.102"/></svg>LINE 客服</a>`;
     }
     if (cta.cta_register_url) {
-      html += `<a href="${cta.cta_register_url}" target="_blank" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(to right, #C5A059, #a08147);color:#fff;text-decoration:none;padding:12px 24px;border-radius:50px;box-shadow:0 5px 15px rgba(0,0,0,0.3);font-weight:bold;letter-spacing:1px;font-size:16px;font-family:serif;transition:0.3s;border:1px solid rgba(255,255,255,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">我要報名</a>`;
+      html += `<a href="${cta.cta_register_url}" target="_blank" class="j-cta-btn j-cta-register">我要報名</a>`;
     }
     html += '</div>';
   }
@@ -306,6 +313,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
 
 export const generateCss = () => {
   return `.jollify-luxury-theme { --c-pri: #4c2a85; --c-sec: #d4a93b; --c-bg: #fff; font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif !important; color: #333 !important; line-height: 1.6 !important; width: 100% !important; background: var(--c-bg) !important; padding-bottom:50px;}
+.jollify-luxury-theme button, .jollify-luxury-theme input, .jollify-luxury-theme select, .jollify-luxury-theme textarea { font-family: inherit !important; }
 .jollify-luxury-theme .j-wrapper { max-width: 1000px !important; margin: 0 auto !important; padding: 0 20px !important; }
 .jollify-luxury-theme .j-section { padding: 60px 0 !important; }
 .jollify-luxury-theme .bg-light-gray { background: #f9f9fb !important; border-top: 1px solid #eee; border-bottom: 1px solid #eee;}
@@ -330,7 +338,7 @@ export const generateCss = () => {
 
 /* Highlights: card */
 .jollify-luxury-theme .j-hl-card-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; }
-.jollify-luxury-theme .j-hl-card-item { background: #fff !important; border: 1px solid #eee !important; border-radius: 8px !important; overflow: hidden !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important; display: flex !important; flex-direction: column !important; transition: transform 0.3s ease !important; }
+.jollify-luxury-theme .j-hl-card-item { background: #fff !important; border: 1px solid #eee !important; border-radius: 12px !important; overflow: hidden !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important; display: flex !important; flex-direction: column !important; transition: transform 0.3s ease !important; }
 .jollify-luxury-theme .j-hl-card-item:hover { transform: translateY(-5px) !important; box-shadow: 0 10px 25px rgba(0,0,0,0.06) !important; }
 .jollify-luxury-theme .j-hl-card-img { width: 100% !important; height: 200px !important; background: #fafafa !important; overflow: hidden !important; display: flex !important; align-items: center !important; justify-content: center !important; }
 .jollify-luxury-theme .j-hl-card-img img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
@@ -343,9 +351,9 @@ export const generateCss = () => {
 .jollify-luxury-theme .j-hl-overlap-wrapper { display: flex !important; flex-direction: column !important; gap: 60px !important; }
 .jollify-luxury-theme .j-hl-overlap-item { display: flex !important; align-items: center !important; gap: 50px !important; position: relative !important; }
 .jollify-luxury-theme .j-hl-overlap-item.reverse { flex-direction: row-reverse !important; }
-.jollify-luxury-theme .j-hl-overlap-img { width: 55% !important; height: 350px !important; background: #fafafa !important; overflow: hidden !important; border-radius: 4px !important; box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important; display: flex !important; align-items: center !important; justify-content: center !important; z-index: 1 !important; }
+.jollify-luxury-theme .j-hl-overlap-img { width: 55% !important; height: 350px !important; background: #fafafa !important; overflow: hidden !important; border-radius: 12px !important; box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important; display: flex !important; align-items: center !important; justify-content: center !important; z-index: 1 !important; }
 .jollify-luxury-theme .j-hl-overlap-img img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
-.jollify-luxury-theme .j-hl-overlap-info { width: 50% !important; background: #fff !important; padding: 45px 40px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important; border: 1px solid #f3f4f6 !important; border-radius: 4px !important; position: relative !important; z-index: 2 !important; margin-left: -8% !important; }
+.jollify-luxury-theme .j-hl-overlap-info { width: 50% !important; background: #fff !important; padding: 45px 40px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important; border: 1px solid #f3f4f6 !important; border-radius: 12px !important; position: relative !important; z-index: 2 !important; margin-left: -8% !important; }
 .jollify-luxury-theme .j-hl-overlap-item.reverse .j-hl-overlap-info { margin-left: 0 !important; margin-right: -8% !important; }
 .jollify-luxury-theme .j-hl-overlap-title { font-size: 24px !important; color: var(--c-pri) !important; font-weight: bold !important; margin: 0 0 15px 0 !important; }
 .jollify-luxury-theme .j-hl-overlap-desc { font-size: 15px !important; color: #555 !important; line-height: 1.8 !important; text-align: justify !important; margin: 0 !important; }
@@ -363,36 +371,32 @@ export const generateCss = () => {
 .jollify-luxury-theme .j-e-airline { font-size: 12px !important; color: #aaa !important; letter-spacing: 1px !important; margin-bottom: 8px !important; }
 .jollify-luxury-theme .j-e-line { width: 100% !important; height: 1px !important; background: #ddd !important; position: relative !important; }
 .jollify-luxury-theme .j-e-line::after { content: '✈' !important; position: absolute !important; font-size: 16px !important; color: var(--c-sec) !important; top: -12px !important; right: -5px !important; }
-.jollify-luxury-theme .j-e-duration { font-size: 12px !important; color: #888 !important; margin-top: 8px !important; font-style: italic !important; }
-
-/* Hotel: Overlap */
-.jollify-luxury-theme .j-luxury-hotel-card { display: flex !important; align-items: center !important; margin-bottom: 80px !important; position: relative !important; }
-.jollify-luxury-theme .j-luxury-hotel-card.reverse { flex-direction: row-reverse !important; }
+.jollify-luxury-theme .j-e-duration { font-size: 12px !i.jollify-luxury-theme .j-luxury-hotel-card.reverse { flex-direction: row-reverse !important; }
 .jollify-luxury-theme .j-h-image { width: 60% !important; position: relative !important; z-index: 1 !important; }
-.jollify-luxury-theme .j-h-image img { width: 100% !important; height: 400px !important; object-fit: cover !important; border-radius: 2px !important; box-shadow: 0 20px 50px rgba(0,0,0,0.1) !important; }
-.jollify-luxury-theme .j-h-info { width: 50% !important; background: #fff !important; padding: 50px 40px !important; position: relative !important; z-index: 2 !important; margin-left: -10% !important; box-shadow: 0 15px 40px rgba(0,0,0,0.06) !important; border: 1px solid #f9f9f9 !important; }
+.jollify-luxury-theme .j-h-image img { width: 100% !important; height: 400px !important; object-fit: cover !important; border-radius: 12px !important; box-shadow: 0 20px 50px rgba(0,0,0,0.1) !important; }
+.jollify-luxury-theme .j-h-info { width: 50% !important; background: #fff !important; padding: 50px 40px !important; position: relative !important; z-index: 2 !important; margin-left: -10% !important; box-shadow: 0 15px 40px rgba(0,0,0,0.06) !important; border: 1px solid #f9f9f9 !important; border-radius: 12px !important; }
 .jollify-luxury-theme .j-luxury-hotel-card.reverse .j-h-info { margin-left: 0 !important; margin-right: -10% !important; }
 .jollify-luxury-theme .j-h-stars { color: var(--c-sec) !important; font-size: 14px !important; letter-spacing: 4px !important; margin-bottom: 10px !important; }
 .jollify-luxury-theme .j-h-name { font-size: 26px !important; color: var(--c-pri) !important; margin: 0 0 15px 0 !important; font-weight: 400 !important; }
 .jollify-luxury-theme .j-h-desc { font-size: 15px !important; color: #555 !important; line-height: 1.9 !important; text-align: justify !important; margin: 0 !important; }
-
+ 
 /* Hotel: Grid */
 .jollify-luxury-theme .j-hotel-grid-wrapper { max-width: 1100px !important; margin: 0 auto !important; padding: 0 20px !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important;}
-.jollify-luxury-theme .j-grid-hotel-card { background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #eee;}
+.jollify-luxury-theme .j-grid-hotel-card { background: #fff; border-radius: 12px !important; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #eee;}
 .jollify-luxury-theme .j-grid-hotel-card img { width: 100%; height: 220px; object-fit: cover; }
 .jollify-luxury-theme .j-grid-h-info { padding: 25px; }
 .jollify-luxury-theme .j-grid-h-info h4 { font-size: 20px !important; color: var(--c-pri) !important; margin: 0 0 10px 0 !important;}
 .jollify-luxury-theme .j-grid-h-info p { font-size: 14px !important; color: #666 !important; line-height: 1.6 !important; margin:0;}
 
 /* Scenic Spots: Shared */
-.jollify-luxury-theme .j-spot-tag { display: inline-block !important; font-size: 11px !important; letter-spacing: 2px !important; background: rgba(76,42,133,0.08) !important; color: var(--c-pri) !important; padding: 3px 12px !important; border-radius: 12px !important; margin-bottom: 12px !important; border: 1px solid rgba(76,42,133,0.15) !important; }
+.jollify-luxury-theme .j-spot-tag { display: inline-block !important; font-size: 11px !important; letter-spacing: 2px !important; background: rgba(76,42,133,0.08) !important; color: var(--c-pri) !important; padding: 3px 12px !important; border-radius: 12px !important; margin-right: 6px !important; margin-bottom: 12px !important; border: 1px solid rgba(76,42,133,0.15) !important; }
 .jollify-luxury-theme .j-spot-name { font-size: 24px !important; color: var(--c-pri) !important; font-weight: 400 !important; margin: 0 0 14px 0 !important; letter-spacing: 1px !important; }
 .jollify-luxury-theme .j-spot-desc { font-size: 15px !important; color: #555 !important; line-height: 1.9 !important; text-align: justify !important; margin: 0 !important; }
 
 /* Scenic Spots: fullimg */
 .jollify-luxury-theme .j-spot-fullimg { margin-bottom: 60px !important; }
 .jollify-luxury-theme .j-spot-fullimg:last-child { margin-bottom: 0 !important; }
-.jollify-luxury-theme .j-spot-fi-img { width: 100% !important; overflow: hidden !important; border-radius: 2px !important; }
+.jollify-luxury-theme .j-spot-fi-img { width: 100% !important; overflow: hidden !important; border-radius: 16px !important; }
 .jollify-luxury-theme .j-spot-fi-img img { width: 100% !important; height: 480px !important; object-fit: cover !important; display: block !important; transition: transform 0.5s ease !important; }
 .jollify-luxury-theme .j-spot-fi-img img:hover { transform: scale(1.02) !important; }
 .jollify-luxury-theme .j-spot-fi-caption { max-width: 700px !important; margin: 30px auto 0 auto !important; text-align: center !important; padding: 0 20px !important; }
@@ -402,12 +406,12 @@ export const generateCss = () => {
 .jollify-luxury-theme .j-spot-ltr:last-child { margin-bottom: 0 !important; }
 .jollify-luxury-theme .j-spot-ltr.reverse { flex-direction: row-reverse !important; }
 .jollify-luxury-theme .j-spot-ltr-img { flex: 0 0 55% !important; }
-.jollify-luxury-theme .j-spot-ltr-img img { width: 100% !important; height: 380px !important; object-fit: cover !important; border-radius: 2px !important; box-shadow: 0 15px 40px rgba(0,0,0,0.08) !important; display: block !important; }
+.jollify-luxury-theme .j-spot-ltr-img img { width: 100% !important; height: 380px !important; object-fit: cover !important; border-radius: 16px !important; box-shadow: 0 15px 40px rgba(0,0,0,0.08) !important; display: block !important; }
 .jollify-luxury-theme .j-spot-ltr-text { flex: 1 !important; }
 
 /* Scenic Spots: grid */
 .jollify-luxury-theme .j-spot-grid-wrapper { max-width: 1100px !important; margin: 0 auto !important; padding: 0 20px !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; }
-.jollify-luxury-theme .j-spot-grid-card { background: #fff !important; border-radius: 6px !important; overflow: hidden !important; box-shadow: 0 5px 20px rgba(0,0,0,0.05) !important; border: 1px solid #eee !important; transition: transform 0.3s !important; }
+.jollify-luxury-theme .j-spot-grid-card { background: #fff !important; border-radius: 12px !important; overflow: hidden !important; box-shadow: 0 5px 20px rgba(0,0,0,0.05) !important; border: 1px solid #eee !important; transition: transform 0.3s !important; }
 .jollify-luxury-theme .j-spot-grid-card:hover { transform: translateY(-4px) !important; }
 .jollify-luxury-theme .j-spot-grid-img img { width: 100% !important; height: 220px !important; object-fit: cover !important; display: block !important; }
 .jollify-luxury-theme .j-spot-grid-info { padding: 25px !important; }
@@ -465,12 +469,58 @@ export const generateCss = () => {
 
 /* Recommend */
 .jollify-luxury-theme .j-rec-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; }
-.jollify-luxury-theme .j-rec-card { display: block !important; text-decoration: none !important; background: #fff !important; border-radius: 6px !important; overflow: hidden !important; box-shadow: 0 5px 20px rgba(0,0,0,0.05) !important; transition: 0.3s !important; border: 1px solid #eee !important;}
+.jollify-luxury-theme .j-rec-card { display: block !important; text-decoration: none !important; background: #fff !important; border-radius: 12px !important; overflow: hidden !important; box-shadow: 0 5px 20px rgba(0,0,0,0.05) !important; transition: 0.3s !important; border: 1px solid #eee !important;}
 .jollify-luxury-theme .j-rec-card:hover { transform: translateY(-5px) !important; box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important; }
 .jollify-luxury-theme .j-rec-img { width: 100% !important; height: 200px !important; background-size: cover !important; background-position: center !important; }
 .jollify-luxury-theme .j-rec-txt { padding: 20px !important; text-align: center !important;}
 .jollify-luxury-theme .j-rec-txt h5 { font-size: 18px !important; color: var(--c-pri) !important; margin: 0 0 15px 0 !important; font-weight: 400 !important;}
 .jollify-luxury-theme .j-rec-btn { font-size: 13px !important; color: var(--c-sec) !important; letter-spacing: 1px !important; font-weight: bold !important;}
+
+/* Floating CTA */
+.jollify-luxury-theme .j-floating-cta {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 9000 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: flex-end !important;
+}
+.jollify-luxury-theme .j-cta-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    border-radius: 50px !important;
+    font-weight: bold !important;
+    transition: 0.3s !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+}
+.jollify-luxury-theme .j-cta-btn:hover {
+    transform: scale(1.05) !important;
+}
+.jollify-luxury-theme .j-cta-line {
+    background: #06C755 !important;
+    color: #fff !important;
+    padding: 12px 20px !important;
+    font-family: sans-serif !important;
+}
+.jollify-luxury-theme .j-cta-line svg {
+    width: 20px !important;
+    height: 20px !important;
+    fill: currentColor !important;
+    margin-right: 8px !important;
+}
+.jollify-luxury-theme .j-cta-register {
+    background: linear-gradient(to right, #C5A059, #a08147) !important;
+    color: #fff !important;
+    padding: 12px 24px !important;
+    letter-spacing: 1px !important;
+    font-size: 16px !important;
+    font-family: serif !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+}
 
 /* RWD */
 @media (max-width: 900px) {
@@ -601,6 +651,13 @@ export const generateCss = () => {
     position: relative !important;
     z-index: 2 !important;
 }
+.jollify-luxury-theme .k-day__route {
+    font-size: 15px !important;
+    font-weight: bold !important;
+    color: var(--c-sec) !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+}
 .jollify-luxury-theme .k-day__title {
     font-size: 22px !important;
     font-weight: bold !important;
@@ -691,6 +748,42 @@ export const generateCss = () => {
 }
 
 @media (max-width: 768px) {
+    .jollify-luxury-theme .j-section { padding: 40px 0 !important; }
+    .jollify-luxury-theme .j-heading { margin-bottom: 30px !important; }
+    .jollify-luxury-theme .j-heading h2 { font-size: 24px !important; }
+    .jollify-luxury-theme .j-badge { font-size: 10px !important; padding: 4px 12px !important; margin-bottom: 10px !important; }
+    
+    .jollify-luxury-theme .j-hero { height: 45vh !important; min-height: 300px !important; }
+    .jollify-luxury-theme .j-hero-title { font-size: 28px !important; }
+    .jollify-luxury-theme .j-hero-sub { font-size: 14px !important; letter-spacing: 2px !important; }
+    .jollify-luxury-theme .k-tag { font-size: 11px !important; padding: 4px 10px !important; }
+    .jollify-luxury-theme .k-hero__tags { gap: 6px !important; margin-top: 15px !important; padding: 0 15px !important; }
+    
+    .jollify-luxury-theme .j-hl-title { font-size: 18px !important; }
+    .jollify-luxury-theme .j-hl-desc { font-size: 14px !important; }
+    .jollify-luxury-theme .j-hl-card-title { font-size: 18px !important; }
+    .jollify-luxury-theme .j-hl-card-desc { font-size: 13px !important; }
+    .jollify-luxury-theme .j-hl-overlap-title { font-size: 20px !important; }
+    .jollify-luxury-theme .j-hl-overlap-desc { font-size: 14px !important; }
+    
+    .jollify-luxury-theme .j-spot-name { font-size: 20px !important; }
+    .jollify-luxury-theme .j-spot-desc { font-size: 14px !important; }
+    .jollify-luxury-theme .j-spot-tag { font-size: 10px !important; padding: 2px 8px !important; }
+    
+    .jollify-luxury-theme .j-h-name { font-size: 22px !important; }
+    .jollify-luxury-theme .j-h-desc { font-size: 14px !important; }
+    .jollify-luxury-theme .j-grid-h-info h4 { font-size: 18px !important; }
+    .jollify-luxury-theme .j-grid-h-info p { font-size: 13px !important; }
+    
+    .jollify-luxury-theme .j-e-code { font-size: 28px !important; }
+    .jollify-luxury-theme .j-e-time { font-size: 18px !important; }
+    
+    .jollify-luxury-theme .day-title { font-size: 20px !important; }
+    .jollify-luxury-theme .day-lead { font-size: 14px !important; }
+    .jollify-luxury-theme .day-points { font-size: 13px !important; }
+    .jollify-luxury-theme .stay-name { font-size: 14px !important; }
+    .jollify-luxury-theme .day-meals-row { font-size: 12px !important; padding: 10px !important; gap: 8px !important; }
+    
     .jollify-luxury-theme .k-days::before {
         left: 35px !important;
     }
@@ -713,6 +806,45 @@ export const generateCss = () => {
     }
     .jollify-luxury-theme .k-day__title {
         font-size: 18px !important;
+    }
+    .jollify-luxury-theme .k-day__route {
+        font-size: 13px !important;
+    }
+    .jollify-luxury-theme .k-day__desc {
+        font-size: 14px !important;
+    }
+    .jollify-luxury-theme .k-tl__ev {
+        font-size: 14px !important;
+    }
+    .jollify-luxury-theme .k-tl__note {
+        font-size: 13px !important;
+    }
+    .jollify-luxury-theme .k-pill {
+        font-size: 11px !important;
+        padding: 3px 10px !important;
+    }
+    
+    .jollify-luxury-theme .j-accordion-title { font-size: 15px !important; }
+    .jollify-luxury-theme .j-accordion-content-inner { padding: 15px 15px 20px 58px !important; font-size: 13px !important; }
+    .jollify-luxury-theme .j-rec-txt h5 { font-size: 16px !important; }
+    
+    .jollify-luxury-theme .j-floating-cta {
+        bottom: 12px !important;
+        right: 12px !important;
+        gap: 8px !important;
+    }
+    .jollify-luxury-theme .j-cta-line {
+        padding: 8px 14px !important;
+        font-size: 13px !important;
+    }
+    .jollify-luxury-theme .j-cta-line svg {
+        width: 15px !important;
+        height: 15px !important;
+        margin-right: 5px !important;
+    }
+    .jollify-luxury-theme .j-cta-register {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
     }
 }
 `;

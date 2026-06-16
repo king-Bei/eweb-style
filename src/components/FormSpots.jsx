@@ -53,7 +53,7 @@ export default function FormSpots({ data = {}, onChange }) {
                 </div>
                 <div>
                   <label className="form-label">標籤 (Tag)</label>
-                  <input type="text" className="form-control" value={item.tag} onChange={e => updateItem(i, 'tag', e.target.value)} placeholder="例如: 必訪景點" />
+                  <input type="text" className="form-control" value={item.tag} onChange={e => updateItem(i, 'tag', e.target.value)} placeholder="例如: 必訪景點, 網美打卡 (多個請用逗號或空格分隔)" />
                 </div>
                 <div className="col-span-2">
                   <label className="form-label">圖片網址</label>
