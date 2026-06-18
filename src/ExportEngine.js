@@ -80,7 +80,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
       case 'hero':
         if (hero_data?.visible !== false) {
           const style = hero_data?.titleStyle || 'classic';
-          
+
           if (style === 'alternative') {
             let tagsList = [];
             if (hero_data?.tags) {
@@ -94,7 +94,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               });
               tagsHtml += `</div>`;
             }
-            
+
             const title1Str = (hero_data?.title1 || '').replace(/x|×/g, '<em>×</em>');
 
             html += `
@@ -127,15 +127,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         <a href="#cta" class="k-btn k-btn--ghost">立即諮詢顧問</a>
       </div>
     </div>
-  </section>
-
-  <!-- ░░ STATS ░░ -->
-  <div class="k-stats">
-    <div class="k-stat"><span class="k-stat__n">6</span><span class="k-stat__l">旅遊天數</span></div>
-    <div class="k-stat"><span class="k-stat__n">2</span><span class="k-stat__l">五星度假村</span></div>
-    <div class="k-stat"><span class="k-stat__n">5</span><span class="k-stat__l">精選景點</span></div>
-    <div class="k-stat"><span class="k-stat__n">1</span><span class="k-stat__l">專屬服務</span></div>
-  </div>`;
+  </section>`;
           } else {
             let tagsHtml = '';
             if (hero_data?.tags) {
