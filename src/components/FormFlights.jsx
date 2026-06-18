@@ -103,8 +103,8 @@ export default function FormFlights({ data = {}, onChange }) {
           if (!first || isReturnFlight(first)) return false;
           const firstCode = String(first.airline_code || '').trim().toUpperCase();
           const firstZh = String(first.airline_name_zh || '').trim().toUpperCase();
-          return (flightCode && firstCode && flightCode === firstCode) || 
-                 (flightZh && firstZh && flightZh === firstZh);
+          return (flightCode && firstCode && flightCode === firstCode) ||
+            (flightZh && firstZh && flightZh === firstZh);
         });
 
         if (sameAirlineGroup) {
@@ -334,7 +334,7 @@ export default function FormFlights({ data = {}, onChange }) {
         style={{ cursor: 'pointer', backgroundColor: '#f8f9fa', padding: '12px 20px', borderBottom: '1px solid #e9ecef', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
         <h3 className="module-title" style={{ margin: 0, color: 'var(--c-pri)', fontSize: '1.05rem', fontWeight: 'bold' }}>
-          {isCollapsed ? '▶️ ' : '🔽 '}✈️ 航程航班 ({groups.length} 組別)
+          {isCollapsed ? '▶️ ' : '🔽 '} 航程航班 ({groups.length} 組別)
         </h3>
         <label className="flex items-center gap-2 cursor-pointer text-sm" onClick={e => e.stopPropagation()}>
           <input

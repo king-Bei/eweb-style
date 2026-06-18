@@ -1529,7 +1529,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   // ── CTA floating button ────────────────────────────────────────
   const floatBtn = (cta?.visible !== false && (cta?.cta_register_url || cta?.cta_line_url)) ? `
     <div class="fixed bottom-6 right-6 z-[9000] flex flex-col gap-3 items-end">
-      ${cta.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="flex items-center bg-[#06C755] hover:bg-[#05b04b] text-white rounded-full px-5 py-3 shadow-lg transition-transform hover:scale-105"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current mr-2"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.038 9.608.391.084.922.258 1.057.592.121.298.039.756.016.953l-.168 1.011c-.053.307-.243 1.18.591.82 1.037-.446 5.58-3.284 7.971-5.882 1.636-1.782 2.495-3.682 2.495-7.102"/></svg><span class="font-bold">LINE 客服</span></a>` : ''}
+      ${cta.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="flex items-center bg-[#06C755] hover:bg-[#05b04b] text-white rounded-full px-5 py-3 shadow-lg transition-transform hover:scale-105"><img src="/material-alias/Shared_data/LINE.png" alt="LINE" class="w-5 h-5 object-contain mr-2" /><span class="font-bold">LINE 客服</span></a>` : ''}
       ${cta.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" class="flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl hover:scale-105 font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>` : ''}
     </div>` : '';
 

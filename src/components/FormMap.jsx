@@ -11,7 +11,7 @@ export default function FormMap({ data = {}, onChange }) {
         style={{ cursor: 'pointer', backgroundColor: '#f8f9fa', padding: '12px 20px', borderBottom: '1px solid #e9ecef', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
         <h3 className="module-title" style={{ margin: 0, color: 'var(--c-pri)', fontSize: '1.05rem', fontWeight: 'bold' }}>
-          {isCollapsed ? '▶️ ' : '🔽 '}🗺️ 行程地圖
+          {isCollapsed ? '▶️ ' : '🔽 '} 行程地圖
         </h3>
         <label className="flex items-center gap-2 cursor-pointer text-sm" onClick={e => e.stopPropagation()}>
           <input

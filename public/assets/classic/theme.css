@@ -1,4 +1,4 @@
-.jollify-luxury-theme { --c-pri: #4c2a85; --c-sec: #d4a93b; --c-bg: #fff; font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif !important; color: #333 !important; line-height: 1.6 !important; width: 100% !important; background: var(--c-bg) !important; padding-bottom:50px;}
+.jollify-luxury-theme { --c-pri: var(--color-brand-primary); --c-sec: var(--color-brand-gold); --c-bg: #fff; font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif !important; color: #333 !important; line-height: 1.6 !important; width: 100% !important; background: var(--c-bg) !important; padding-bottom:50px;}
 .jollify-luxury-theme button, .jollify-luxury-theme input, .jollify-luxury-theme select, .jollify-luxury-theme textarea { font-family: inherit !important; }
 .jollify-luxury-theme .j-wrapper { max-width: 1000px !important; margin: 0 auto !important; padding: 0 20px !important; }
 .jollify-luxury-theme .j-section { padding: 60px 0 !important; }
@@ -12,8 +12,8 @@
 .jollify-luxury-theme .j-hero img { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important; z-index: 1 !important; }
 .jollify-luxury-theme .j-hero-overlay { position: absolute !important; inset: 0 !important; background: rgba(0,0,0,0.4) !important; z-index: 2 !important; }
 .jollify-luxury-theme .j-hero-content { position: relative !important; z-index: 3 !important; color: white !important; }
-.jollify-luxury-theme .j-hero-sub { font-size: 20px !important; font-weight: 600 !important; letter-spacing: 4px !important; color: var(--c-sec) !important; display: block !important; margin-bottom: 15px !important; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important; }
-.jollify-luxury-theme .j-hero-title { font-size: 48px !important; font-weight: bold !important; letter-spacing: 2px !important; margin: 0 !important; text-shadow: 0 2px 8px rgba(0,0,0,0.6) !important; }
+.jollify-luxury-theme .j-hero-sub { font-size: 20px !important; font-weight: 600 !important; letter-spacing: 4px !important; color: var(--c-sec) !important; display: block !important; margin-bottom: 15px !important; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important; font-family: inherit !important; }
+.jollify-luxury-theme .j-hero-title { font-size: 48px !important; font-weight: bold !important; letter-spacing: 2px !important; margin: 0 !important; text-shadow: 0 2px 8px rgba(0,0,0,0.6) !important; color: #fff !important; font-family: inherit !important; }
 
 /* Highlights */
 .jollify-luxury-theme .j-hl-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 40px !important; }
