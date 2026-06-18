@@ -64,15 +64,29 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
     ? moduleOrder.filter(k => k !== 'quick_info' && k !== 'quick')
     : ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
 
-  let html = `<div class="jollify-luxury-theme" id="jollify-tour-module">`;
+  let html = `
+<style>
+/* 科威後台專用：全域主題變數，可在此直接修改顏色 */
+.jollify-luxury-theme {
+  --c-pri: #4c2a85; /* 主色 */
+  --c-sec: #d4a93b; /* 次色 */
+  --c-bg: #ffffff;  /* 背景色 */
+}
+</style>
+<div class="jollify-luxury-theme" id="jollify-tour-module">`;
 
   order.forEach(moduleKey => {
     switch (moduleKey) {
       case 'hero':
         if (hero_data?.visible !== false) {
-          let tagsHtml = '';
-          if (hero_data?.tags) {
-            const tagsList = hero_data.tags.split('\n').filter(t => t.trim());
+          const style = hero_data?.titleStyle || 'classic';
+          
+          if (style === 'alternative') {
+            let tagsList = [];
+            if (hero_data?.tags) {
+              tagsList = hero_data.tags.split('\n').filter(t => t.trim());
+            }
+            let tagsHtml = '';
             if (tagsList.length > 0) {
               tagsHtml += `<div class="k-hero__tags">`;
               tagsList.forEach(t => {
@@ -80,8 +94,62 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               });
               tagsHtml += `</div>`;
             }
+            
+            const title1Str = (hero_data?.title1 || '').replace(/x|×/g, '<em>×</em>');
+
+            html += `
+  <!-- ░░ 麵包屑導覽 ░░ -->
+  <div class="k-topbar">
+    <a href="index.html" class="k-breadcrumb">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      主題旅遊
+    </a>
+    <span class="k-breadcrumb-sep">›</span>
+    <a href="island-vacation.html" class="k-breadcrumb">海島自由行</a>
+    <span class="k-breadcrumb-sep">›</span>
+    <span class="k-breadcrumb-cur">${hero_data?.title1 || ''}</span>
+  </div>
+
+  <!-- ░░ HERO ░░ -->
+  <section class="k-hero" id="top">
+    <div class="k-hero__bg" style="background-image:url('${hero_data?.image || ''}');"></div>
+    <div class="k-hero__grad"></div>
+    <div class="k-hero__body">
+      <span class="k-eyebrow">FEATURED ITINERARY · 精選行程</span>
+      <h1 class="k-hero__h1">
+        ${title1Str}<br>
+        ${hero_data?.title2 || ''}
+      </h1>
+      <p class="k-hero__sub">${hero_data?.description || ''}</p>
+      ${tagsHtml}
+      <div class="k-hero__btns">
+        <a href="#itinerary" class="k-btn k-btn--teal">查看完整行程</a>
+        <a href="#cta" class="k-btn k-btn--ghost">立即諮詢顧問</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ STATS ░░ -->
+  <div class="k-stats">
+    <div class="k-stat"><span class="k-stat__n">6</span><span class="k-stat__l">旅遊天數</span></div>
+    <div class="k-stat"><span class="k-stat__n">2</span><span class="k-stat__l">五星度假村</span></div>
+    <div class="k-stat"><span class="k-stat__n">5</span><span class="k-stat__l">精選景點</span></div>
+    <div class="k-stat"><span class="k-stat__n">1</span><span class="k-stat__l">專屬服務</span></div>
+  </div>`;
+          } else {
+            let tagsHtml = '';
+            if (hero_data?.tags) {
+              const tagsList = hero_data.tags.split('\n').filter(t => t.trim());
+              if (tagsList.length > 0) {
+                tagsHtml += `<div class="k-hero__tags">`;
+                tagsList.forEach(t => {
+                  tagsHtml += `<span class="k-tag">${t}</span>`;
+                });
+                tagsHtml += `</div>`;
+              }
+            }
+            html += `<div class="j-hero wow fadeIn"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${hero_data?.title2 || ''}</span><h1 class="j-hero-title">${hero_data?.title1 || ''}</h1>${tagsHtml}</div></div>`;
           }
-          html += `<div class="j-hero wow fadeIn"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${hero_data?.title2 || ''}</span><h1 class="j-hero-title">${hero_data?.title1 || ''}</h1>${tagsHtml}</div></div>`;
         }
         break;
       case 'highlights':

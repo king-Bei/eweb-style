@@ -1,4 +1,4 @@
-.jollify-luxury-theme { --c-pri: var(--color-brand-primary); --c-sec: var(--color-brand-gold); --c-bg: #fff; font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif !important; color: #333 !important; line-height: 1.6 !important; width: 100% !important; background: var(--c-bg) !important; padding-bottom:50px;}
+.jollify-luxury-theme { font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif !important; color: #333 !important; line-height: 1.6 !important; width: 100% !important; background: var(--c-bg, #fff) !important; padding-bottom:50px;}
 .jollify-luxury-theme button, .jollify-luxury-theme input, .jollify-luxury-theme select, .jollify-luxury-theme textarea { font-family: inherit !important; }
 .jollify-luxury-theme .j-wrapper { max-width: 1000px !important; margin: 0 auto !important; padding: 0 20px !important; }
 .jollify-luxury-theme .j-section { padding: 60px 0 !important; }
