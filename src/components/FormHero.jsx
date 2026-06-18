@@ -32,6 +32,9 @@ export default function FormHero({ heroData = {}, onChange }) {
               <label className="form-label" style={{ color: 'white' }}>副標題</label>
               <input type="text" name="title2" className="form-control" value={heroData.title2 || ''} onChange={handleChange} placeholder="Maldives Honeymoon ‧ 7 Days" />
 
+              <label className="form-label" style={{ color: 'white' }}>標題小字 (Eyebrow)</label>
+              <input type="text" name="subtitle" className="form-control" value={heroData.subtitle || ''} onChange={handleChange} placeholder="FEATURED ITINERARY · 精選行程" style={{ marginBottom: '10px' }} />
+
               <label className="form-label" style={{ color: 'white' }}>內容敘述 (可選)</label>
               <textarea name="description" className="form-control" rows={3} value={heroData.description || ''} onChange={handleChange} placeholder="從 AYANA 五星度假村的靜謐，走進世界自然遺產..." style={{ marginBottom: '10px' }} />
 

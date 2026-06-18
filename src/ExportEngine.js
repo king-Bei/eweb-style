@@ -115,7 +115,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
     <div class="k-hero__bg" style="background-image:url('${hero_data?.image || ''}');"></div>
     <div class="k-hero__grad"></div>
     <div class="k-hero__body">
-      <span class="k-eyebrow">FEATURED ITINERARY · 精選行程</span>
+      <span class="k-eyebrow">${hero_data?.subtitle || 'FEATURED ITINERARY · 精選行程'}</span>
       <h1 class="k-hero__h1">
         ${title1Str}<br>
         ${hero_data?.title2 || ''}
