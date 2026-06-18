@@ -470,11 +470,12 @@ export default function FormFlights({ data = {}, onChange }) {
                       <select
                         className="form-control"
                         style={{ marginBottom: 0, padding: '4px 8px', height: '32px', width: '150px', fontSize: '13px' }}
-                        value={group.layout === 'boarding' ? 'card' : (group.layout || 'timeline')}
+                        value={group.layout || 'timeline'}
                         onChange={e => updateGroupField(gi, 'layout', e.target.value)}
                         onClick={e => e.stopPropagation()}
                       >
                         <option value="timeline">⏱ 時間軸（橫向）</option>
+                        <option value="boarding">🎫 登機證風</option>
                         <option value="card">🃏 卡片式</option>
                         <option value="table">📋 表格式</option>
                       </select>

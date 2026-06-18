@@ -230,7 +230,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           flightGroups.forEach(group => {
             const gItems = group.items || [];
             if (gItems.length === 0) return;
-            const gLayout = group.layout === 'boarding' ? 'card' : (group.layout || 'timeline');
+            const gLayout = group.layout || 'timeline';
             const gName = group.group_name || '';
             const gDirection = group.direction || (gName.includes('回') ? 'return' : 'outbound');
             const directionLabel = gDirection === 'return' ? '回程' : (gDirection === 'outbound' ? '去程' : '');
@@ -249,6 +249,15 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                 innerHtml += `<div class="j-flight-card wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-fc-airline">${c.airline_code || ''} <strong>${c.airline_name_zh || ''}</strong> <span>${c.airline_name_en || ''}</span></div><div class="j-fc-body"><div class="j-fc-station"><div class="j-fc-time">${c.dep_time || c.fTime || ''}</div><div class="j-fc-city">${c.dep_location_zh || ''}</div><div class="j-fc-code">${c.dep_location_en || ''}</div></div><div class="j-fc-middle"><div class="j-fc-no">${c.flight_no || c.fn || ''}</div><div class="j-fc-arrow">✈</div></div><div class="j-fc-station"><div class="j-fc-time">${c.arr_time || c.tTime || ''}</div><div class="j-fc-city">${c.arr_location_zh || ''}</div><div class="j-fc-code">${c.arr_location_en || ''}</div></div></div></div>`;
               });
               innerHtml = `<div class="j-flight-card-grid">${innerHtml}</div>`;
+            } else if (gLayout === 'boarding') {
+              gItems.forEach((c, i) => {
+                const isRet = directionClass === 'return' || (c.tag || gName).includes('回') ? 'return' : '';
+                const tagText = c.tag || directionLabel || gName;
+                const airline = c.airline_name_zh || c.airline_name_en || '';
+                const flightNo = c.flight_no || c.fn || '';
+                innerHtml += `<div class="j-boarding-pass wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-bp-left"><span class="j-bp-tag ${isRet}">${tagText}</span><div class="j-bp-route"><div class="j-bp-station"><div class="j-bp-time">${c.dep_time || c.fTime || ''}</div><div class="j-bp-code">${c.dep_location_zh || ''} ${c.dep_location_en || c.fCode || ''}</div></div><div class="j-bp-plane">✈</div><div class="j-bp-station"><div class="j-bp-time">${c.arr_time || c.tTime || ''}</div><div class="j-bp-code">${c.arr_location_zh || ''} ${c.arr_location_en || c.tCode || ''}</div></div></div><div class="j-bp-meta"><span>${airline}</span><span>${flightNo}</span>${c.dur ? `<span>${c.dur}</span>` : ''}</div></div><div class="j-bp-perforation"></div><div class="j-bp-right"><div class="j-bp-stub-label">BOARDING PASS</div><div class="j-bp-stub-code">${flightNo}</div></div></div>`;
+              });
+              innerHtml = `<div class="j-boarding-wrapper">${innerHtml}</div>`;
             } else {
               let rows = '';
               gItems.forEach(c => {
