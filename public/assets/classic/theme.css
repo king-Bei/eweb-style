@@ -598,3 +598,222 @@
         font-size: 13px !important;
     }
 }
+
+/* ── 版本二 (Alternative Hero & Breadcrumbs) 專屬樣式 ── */
+.jollify-luxury-theme {
+  --k-deep: var(--c-pri, #4c2a85);
+  --k-light: var(--c-sec, #d4a93b);
+  --k-white: #ffffff;
+  --k-serif: 'Times New Roman', 'Noto Serif TC', serif;
+  --k-sans: 'Noto Sans TC', sans-serif;
+  --k-ui: 'Montserrat', 'Noto Sans TC', sans-serif;
+  --k-ease: cubic-bezier(.16, 1, .3, 1);
+  --k-trans: all .4s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* 頁首麵包屑導覽 */
+.jollify-luxury-theme .k-topbar {
+  background: var(--k-deep) !important;
+  padding: 0.9rem 2rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+}
+
+.jollify-luxury-theme .k-breadcrumb {
+  font-family: var(--k-ui) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  text-decoration: none !important;
+  transition: color 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+
+.jollify-luxury-theme .k-breadcrumb svg {
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+.jollify-luxury-theme .k-breadcrumb:hover {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.jollify-luxury-theme .k-breadcrumb-sep {
+  color: rgba(255, 255, 255, 0.3) !important;
+  font-size: 13px !important;
+}
+
+.jollify-luxury-theme .k-breadcrumb-cur {
+  font-family: var(--k-ui) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: var(--k-light) !important;
+}
+
+/* Hero 區塊 */
+.jollify-luxury-theme .k-hero {
+  position: relative !important;
+  min-height: 70vh !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  overflow: hidden !important;
+  background: var(--k-deep) !important;
+}
+
+.jollify-luxury-theme .k-hero__bg {
+  position: absolute !important;
+  inset: 0 !important;
+  background-size: cover !important;
+  background-position: center !important;
+  transform: scale(1.02) !important;
+  transition: transform 10s ease-out !important;
+  will-change: transform !important;
+}
+
+.jollify-luxury-theme .k-hero.k-loaded .k-hero__bg {
+  transform: scale(1) !important;
+}
+
+.jollify-luxury-theme .k-hero__grad {
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(to top, rgba(21, 15, 29, 0.85) 0%, rgba(76, 42, 133, 0.25) 50%, rgba(21, 15, 29, 0.4) 100%) !important;
+}
+
+.jollify-luxury-theme .k-hero__body {
+  position: relative !important;
+  z-index: 2 !important;
+  padding: 3.5rem 2rem !important;
+  max-width: 900px !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+.jollify-luxury-theme .k-eyebrow {
+  display: inline-block !important;
+  font-family: var(--k-ui) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  color: var(--k-light) !important;
+  border: 1px solid var(--k-light) !important;
+  padding: 0.4rem 1rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.jollify-luxury-theme .k-hero__h1 {
+  font-family: var(--k-serif) !important;
+  font-size: clamp(1.8rem, 4vw, 3rem) !important;
+  font-weight: 700 !important;
+  color: var(--k-white) !important;
+  line-height: 1.25 !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.jollify-luxury-theme .k-hero__h1 em {
+  font-style: italic !important;
+  color: var(--k-light) !important;
+  font-weight: normal !important;
+}
+
+.jollify-luxury-theme .k-hero__sub {
+  font-family: var(--k-sans) !important;
+  font-size: 15px !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  max-width: 600px !important;
+  line-height: 1.8 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.jollify-luxury-theme .k-hero__tags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.6rem !important;
+  margin-top: 1.5rem !important;
+}
+
+.jollify-luxury-theme .k-tag {
+  font-family: var(--k-ui) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  padding: 0.3rem 0.8rem !important;
+  border-radius: 4px !important;
+}
+
+.jollify-luxury-theme .k-hero__btns {
+  display: flex !important;
+  gap: 1rem !important;
+  flex-wrap: wrap !important;
+  margin-top: 2rem !important;
+}
+
+/* 按鈕 */
+.jollify-luxury-theme .k-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  font-family: var(--k-ui) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  padding: 0.8rem 1.8rem !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: var(--k-trans) !important;
+  position: relative !important;
+  border-radius: 4px !important;
+}
+
+.jollify-luxury-theme .k-btn--teal {
+  background: var(--k-light) !important;
+  color: #ffffff !important;
+}
+
+.jollify-luxury-theme .k-btn--teal:hover {
+  background: var(--k-deep) !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(212, 169, 59, 0.25) !important;
+}
+
+.jollify-luxury-theme .k-btn--ghost {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+}
+
+.jollify-luxury-theme .k-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  transform: translateY(-2px) !important;
+}
+
+@media (max-width: 768px) {
+  .jollify-luxury-theme .k-hero {
+    min-height: 50vh !important;
+  }
+  .jollify-luxury-theme .k-hero__body {
+    padding: 2rem 1.5rem !important;
+  }
+  .jollify-luxury-theme .k-topbar {
+    padding: 0.75rem 1.5rem !important;
+  }
+}
+
