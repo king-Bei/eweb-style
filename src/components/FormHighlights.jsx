@@ -5,7 +5,7 @@ export default function FormHighlights({ data = {}, onChange }) {
   const items = data.items || [];
 
   const addItem = () => {
-    onChange({ ...data, items: [...items, { title: '', desc: '', img: '' }] });
+    onChange({ ...data, items: [...items, { title: '', subtitle: '', desc: '', img: '' }] });
   };
 
   const updateItem = (index, field, value) => {
@@ -49,6 +49,11 @@ export default function FormHighlights({ data = {}, onChange }) {
               {items.map((item, i) => (
                 <div key={i} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
                   <button onClick={() => removeItem(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer' }}>✖</button>
+
+                  <div style={{ marginBottom: '10px' }}>
+                    <label className="form-label text-xs font-semibold text-gray-500 block mb-1">小字標題 (如: 五星住宿)</label>
+                    <input type="text" className="form-control" value={item.subtitle || ''} onChange={e => updateItem(i, 'subtitle', e.target.value)} placeholder="例如: 五星住宿" />
+                  </div>
 
                   <div style={{ marginBottom: '10px' }}>
                     <label className="form-label text-xs font-semibold text-gray-500 block mb-1">特色標題</label>

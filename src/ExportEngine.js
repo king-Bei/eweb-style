@@ -99,6 +99,10 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             const title2Str = (hero_data?.title2 || '').replace(/\n/g, '<br>');
             const descStr = (hero_data?.description || '').replace(/\n/g, '<br>');
 
+            const consultUrl = cta?.cta_line_url || cta?.cta_register_url;
+            const consultTarget = consultUrl ? 'target="_blank"' : '';
+            const consultHref = consultUrl || '#cta';
+
             html += `
   <!-- ░░ 麵包屑導覽 ░░ -->
   <div class="k-topbar">
@@ -126,7 +130,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
       ${tagsHtml}
       <div class="k-hero__btns">
         <a href="#itinerary" class="k-btn k-btn--teal">查看完整行程</a>
-        <a href="#cta" class="k-btn k-btn--ghost">立即諮詢顧問</a>
+        <a href="${consultHref}" ${consultTarget} class="k-btn k-btn--ghost">立即諮詢顧問</a>
       </div>
     </div>
   </section>`;
@@ -144,7 +148,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             }
             const classicTitle1 = (hero_data?.title1 || '').replace(/\n/g, '<br>');
             const classicTitle2 = (hero_data?.title2 || '').replace(/\n/g, '<br>');
-            html += `<div class="j-hero wow fadeIn"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${classicTitle2}</span><h1 class="j-hero-title">${classicTitle1}</h1>${tagsHtml}</div></div>`;
+            html += `<div class="j-hero wow fadeIn" id="top"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${classicTitle2}</span><h1 class="j-hero-title">${classicTitle1}</h1>${tagsHtml}</div></div>`;
           }
         }
         break;
@@ -154,7 +158,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           const layout = highlights?.layout || 'grid';
           (highlights?.items || []).forEach((c, i) => {
             if (layout === 'grid') {
-              hlHtml += `<div class="j-hl-item wow fadeInUp" data-wow-delay="${i * 0.1}s"><svg class="j-hl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><h4 class="j-hl-title">${c.title || ''}</h4><p class="j-hl-desc">${c.desc || ''}</p></div>`;
+              const numStr = String(i + 1).padStart(2, '0');
+              const subHtml = c.subtitle ? `<div class="j-hl-category">${c.subtitle}</div>` : '';
+              hlHtml += `<div class="j-hl-item wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-hl-number">${numStr}</div>${subHtml}<h4 class="j-hl-title">${c.title || ''}</h4><p class="j-hl-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p></div>`;
             } else if (layout === 'card') {
               hlHtml += `
               <div class="j-hl-card-item wow fadeInUp" data-wow-delay="${i * 0.1}s">
@@ -182,7 +188,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           });
           if (hlHtml) {
             const wrapClass = layout === 'grid' ? 'j-hl-grid' : (layout === 'card' ? 'j-hl-card-grid' : 'j-hl-overlap-wrapper');
-            html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Highlights</span><h2>行程特色 ‧ 奢旅亮點</h2></div><div class="j-wrapper"><div class="${wrapClass}">${hlHtml}</div></div></div>`;
+            const sectionBg = (layout === 'grid' || layout === 'card') ? 'j-highlights-section' : '';
+            html += `<div class="j-section ${sectionBg}" id="highlights"><div class="j-heading wow fadeInUp"><span class="j-badge">Highlights</span><h2>行程特色 ‧ 奢旅亮點</h2></div><div class="j-wrapper"><div class="${wrapClass}">${hlHtml}</div></div></div>`;
           }
         }
         break;
@@ -209,7 +216,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           });
           if (spotHtml) {
             const wrapClass = spotLayout === 'grid' ? 'j-spot-grid-wrapper' : 'j-wrapper';
-            html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Scenic Spots</span><h2>精選景點 ‧ 探索之美</h2></div><div class="${wrapClass}">${spotHtml}</div></div>`;
+            html += `<div class="j-section" id="spots"><div class="j-heading wow fadeInUp"><span class="j-badge">Scenic Spots</span><h2>精選景點 ‧ 探索之美</h2></div><div class="${wrapClass}">${spotHtml}</div></div>`;
           }
         }
         break;
@@ -274,7 +281,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           });
 
           if (allGroupsHtml) {
-            html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Flight Information</span><h2>航程紀實 ‧ 優雅啟程</h2></div><div class="j-wrapper j-flights-wrapper">${allGroupsHtml}</div></div>`;
+            html += `<div class="j-section" id="flights"><div class="j-heading wow fadeInUp"><span class="j-badge">Flight Information</span><h2>航程紀實 ‧ 優雅啟程</h2></div><div class="j-wrapper j-flights-wrapper">${allGroupsHtml}</div></div>`;
           }
         }
         break;
@@ -292,7 +299,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           });
           if (hotelHtml) {
             let wrapClass = layout === 'grid' ? 'j-hotel-grid-wrapper' : 'j-wrapper';
-            html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Exclusive Stays</span><h2>嚴選旅宿 ‧ 奢華棲所</h2></div><div class="${wrapClass}">${hotelHtml}</div></div>`;
+            html += `<div class="j-section" id="hotels"><div class="j-heading wow fadeInUp"><span class="j-badge">Exclusive Stays</span><h2>嚴選旅宿 ‧ 奢華棲所</h2></div><div class="${wrapClass}">${hotelHtml}</div></div>`;
           }
         }
         break;
@@ -447,7 +454,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             </div>`;
           });
           if (nHtml) {
-            html += `<div class="j-section bg-light-gray"><div class="j-heading wow fadeInUp"><span class="j-badge">Notices</span><h2>報名注意事項</h2></div><div class="j-wrapper"><div class="j-accordion">${nHtml}</div></div></div>`;
+            html += `<div class="j-section bg-light-gray" id="notices"><div class="j-heading wow fadeInUp"><span class="j-badge">Notices</span><h2>報名注意事項</h2></div><div class="j-wrapper"><div class="j-accordion">${nHtml}</div></div></div>`;
           }
         }
         break;
@@ -484,7 +491,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             rHtml += `<a href="${c.link || '#'}" target="_blank" class="j-rec-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-rec-img" style="background-image:url('${c.img || ''}')"></div><div class="j-rec-txt"><h5>${c.t || ''}</h5><span class="j-rec-btn">查看行程 &rarr;</span></div></a>`;
           });
           if (rHtml) {
-            html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Recommended</span><h2>探索更多奢華旅程</h2></div><div class="j-wrapper"><div class="j-rec-grid">${rHtml}</div></div></div>`;
+            html += `<div class="j-section" id="recommended"><div class="j-heading wow fadeInUp"><span class="j-badge">Recommended</span><h2>探索更多奢華旅程</h2></div><div class="j-wrapper"><div class="j-rec-grid">${rHtml}</div></div></div>`;
           }
         }
         break;

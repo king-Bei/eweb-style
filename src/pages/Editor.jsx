@@ -357,6 +357,25 @@ ${html}
     doc.close();
   };
 
+  const scrollToIframe = (anchorId) => {
+    if (!iframeRef.current) return;
+    try {
+      const iframeWindow = iframeRef.current.contentWindow;
+      const iframeDoc = iframeRef.current.contentDocument || iframeWindow.document;
+      
+      let target = iframeDoc.getElementById(anchorId);
+      if (!target && anchorId === 'top') {
+        target = iframeDoc.getElementById('jollify-tour-module') || iframeDoc.body;
+      }
+      
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch (e) {
+      console.error('Iframe scroll failed', e);
+    }
+  };
+
   const handleRefreshPreview = () => {
     setPreviewVersion(version => version + 1);
   };
@@ -548,7 +567,7 @@ ${html}
     }
 
     return (
-      <div key={key} className="bg-white border border-gray-200 rounded-xl p-5 mb-6 shadow-sm relative transition-all duration-200 hover:shadow-md">
+      <div key={key} id={`form-${key}`} className="bg-white border border-gray-200 rounded-xl p-5 mb-6 shadow-sm relative transition-all duration-200 hover:shadow-md">
         <div className="flex justify-between items-center pb-3 mb-4 border-b border-gray-100">
           <span className="font-bold text-gray-800 flex items-center gap-2">
             <span className="bg-purple-50 text-[var(--c-pri)] text-xs px-3 py-1 rounded-full font-bold">
@@ -834,6 +853,19 @@ ${html}
           )}
 
           <div className="editor-form-scroll" style={{ pointerEvents: isLocked ? 'none' : 'auto', opacity: isLocked ? 0.8 : 1 }}>
+            {/* 左側表單快速導覽頁籤 */}
+            <div className="flex gap-2 overflow-x-auto pb-3 mb-4 border-b border-gray-100 scrollbar-none sticky top-0 bg-gray-50/90 backdrop-blur-[2px] py-2.5 px-4 z-[5] -mx-6 shadow-sm">
+              <button onClick={() => document.getElementById('form-hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">主視覺</button>
+              <button onClick={() => document.getElementById('form-highlights')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">行程特色</button>
+              <button onClick={() => document.getElementById('form-spots')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">精選景點</button>
+              <button onClick={() => document.getElementById('form-flights')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">航班資訊</button>
+              <button onClick={() => document.getElementById('form-hotels')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">嚴選旅宿</button>
+              <button onClick={() => document.getElementById('form-days')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">每日行程</button>
+              <button onClick={() => document.getElementById('form-notices')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">注意事項</button>
+              <button onClick={() => document.getElementById('form-cta')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">報名諮詢</button>
+              <button onClick={() => document.getElementById('form-recommended')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">推薦行程</button>
+            </div>
+
             <div className="editor-form-card">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
@@ -846,19 +878,19 @@ ${html}
             {theme === 'classic' ? (
               <>
                 {moduleOrder.map(key => renderModuleForm(key))}
-                <FormCTA data={cta} onChange={setCta} />
+                <div id="form-cta"><FormCTA data={cta} onChange={setCta} /></div>
               </>
             ) : (
               <>
-                <FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} />
-                <FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} />
-                <FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} />
-                <FormFlights data={flights} onChange={setFlights} />
-                <FormHotels data={hotels} onChange={setHotels} />
-                <FormDays data={days} onChange={setDays} />
-                <FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} />
-                <FormCTA data={cta} onChange={setCta} />
-                <FormRecommended data={itinerary.recommended} onChange={(d) => setItinerary({ ...itinerary, recommended: d })} />
+                <div id="form-hero"><FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} /></div>
+                <div id="form-highlights"><FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} /></div>
+                <div id="form-spots"><FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} /></div>
+                <div id="form-flights"><FormFlights data={flights} onChange={setFlights} /></div>
+                <div id="form-hotels"><FormHotels data={hotels} onChange={setHotels} /></div>
+                <div id="form-days"><FormDays data={days} onChange={setDays} /></div>
+                <div id="form-notices"><FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} /></div>
+                <div id="form-cta"><FormCTA data={cta} onChange={setCta} /></div>
+                <div id="form-recommended"><FormRecommended data={itinerary.recommended} onChange={(d) => setItinerary({ ...itinerary, recommended: d })} /></div>
               </>
             )}
           </div>
@@ -880,7 +912,20 @@ ${html}
             </div>
           </div>
 
-          <div className="editor-preview-canvas">
+          <div className="editor-preview-canvas" style={{ display: 'flex', flexDirection: 'column' }}>
+            {/* 右側預覽快速導覽頁籤 */}
+            <div className="flex gap-2 overflow-x-auto pb-2.5 mb-3 px-2 scrollbar-none border-b border-gray-200 bg-gray-50 py-2 z-10 w-full rounded-lg shadow-sm items-center">
+              <span className="text-xs text-gray-500 font-bold whitespace-nowrap pl-1">🔍 預覽跳轉：</span>
+              <button onClick={() => scrollToIframe('top')} className="px-2.5 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 hover:border-[var(--luxury-gold)] hover:text-black hover:bg-gray-50 whitespace-nowrap transition-all shadow-sm">頂部</button>
+              <button onClick={() => scrollToIframe('highlights')} className="px-2.5 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 hover:border-[var(--luxury-gold)] hover:text-black hover:bg-gray-50 whitespace-nowrap transition-all shadow-sm">特色</button>
+              <button onClick={() => scrollToIframe('spots')} className="px-2.5 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 hover:border-[var(--luxury-gold)] hover:text-black hover:bg-gray-50 whitespace-nowrap transition-all shadow-sm">景點</button>
+              <button onClick={() => scrollToIframe('flights')} className="px-2.5 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 hover:border-[var(--luxury-gold)] hover:text-black hover:bg-gray-50 whitespace-nowrap transition-all shadow-sm">航班</button>
+              <button onClick={() => scrollToIframe('hotels')} className="px-2.5 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 hover:border-[var(--luxury-gold)] hover:text-black hover:bg-gray-50 whitespace-nowrap transition-all shadow-sm">住宿</button>
+              <button onClick={() => scrollToIframe('itinerary')} className="px-2.5 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 hover:border-[var(--luxury-gold)] hover:text-black hover:bg-gray-50 whitespace-nowrap transition-all shadow-sm">日程</button>
+              <button onClick={() => scrollToIframe('notices')} className="px-2.5 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 hover:border-[var(--luxury-gold)] hover:text-black hover:bg-gray-50 whitespace-nowrap transition-all shadow-sm">須知</button>
+              <button onClick={() => scrollToIframe('recommended')} className="px-2.5 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 hover:border-[var(--luxury-gold)] hover:text-black hover:bg-gray-50 whitespace-nowrap transition-all shadow-sm">推薦</button>
+            </div>
+
             <div className={`editor-preview-frame ${previewMode === 'mobile' ? 'mobile' : 'desktop'}`}>
               {previewMode === 'desktop' && (
                 <div className="browser-mockup-header">
