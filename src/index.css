@@ -352,10 +352,10 @@ body {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0; /* 改為滿版 */
 }
 
 .editor-preview-frame {
@@ -368,12 +368,12 @@ body {
 
 .editor-preview-frame.desktop {
   width: 100%;
-  max-width: 1400px;
-  aspect-ratio: 16 / 9;
-  height: auto;
-  max-height: 100%;
-  border-radius: 10px;
-  border: 1px solid #d9dee6;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+  border: none;
 }
 
 .browser-mockup-header {
@@ -425,6 +425,7 @@ body {
   flex: 0 0 auto;
   border: 12px solid #111827;
   border-radius: 36px;
+  margin: 24px;
 }
 
 .editor-preview-frame iframe {
