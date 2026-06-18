@@ -95,7 +95,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               tagsHtml += `</div>`;
             }
 
-            const title1Str = (hero_data?.title1 || '').replace(/x|×/g, '<em>×</em>');
+            const title1Str = (hero_data?.title1 || '').replace(/x|×/g, '<em>×</em>').replace(/\n/g, '<br>');
+            const title2Str = (hero_data?.title2 || '').replace(/\n/g, '<br>');
+            const descStr = (hero_data?.description || '').replace(/\n/g, '<br>');
 
             html += `
   <!-- ░░ 麵包屑導覽 ░░ -->
@@ -118,9 +120,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
       <span class="k-eyebrow">${hero_data?.subtitle || 'FEATURED ITINERARY · 精選行程'}</span>
       <h1 class="k-hero__h1">
         ${title1Str}<br>
-        ${hero_data?.title2 || ''}
+        ${title2Str}
       </h1>
-      <p class="k-hero__sub">${hero_data?.description || ''}</p>
+      <p class="k-hero__sub">${descStr}</p>
       ${tagsHtml}
       <div class="k-hero__btns">
         <a href="#itinerary" class="k-btn k-btn--teal">查看完整行程</a>
@@ -140,7 +142,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                 tagsHtml += `</div>`;
               }
             }
-            html += `<div class="j-hero wow fadeIn"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${hero_data?.title2 || ''}</span><h1 class="j-hero-title">${hero_data?.title1 || ''}</h1>${tagsHtml}</div></div>`;
+            const classicTitle1 = (hero_data?.title1 || '').replace(/\n/g, '<br>');
+            const classicTitle2 = (hero_data?.title2 || '').replace(/\n/g, '<br>');
+            html += `<div class="j-hero wow fadeIn"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${classicTitle2}</span><h1 class="j-hero-title">${classicTitle1}</h1>${tagsHtml}</div></div>`;
           }
         }
         break;

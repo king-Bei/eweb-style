@@ -1132,8 +1132,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           if (!g.outbound || g.inbound) return false;
           const outCode = String(g.outbound.airline_code || '').trim().toUpperCase();
           const outZh = String(g.outbound.airline_name_zh || '').trim().toUpperCase();
-          return (flightCode && outCode && flightCode === outCode) || 
-                 (flightZh && outZh && flightZh === outZh);
+          return (flightCode && outCode && flightCode === outCode) ||
+            (flightZh && outZh && flightZh === outZh);
         });
 
         if (sameAirlineGroup) {
@@ -1276,7 +1276,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   let featuresHtml = '';
   if (highlights?.visible !== false && highlights?.items?.length) {
     const cards = highlights.items.map((c, i) => `
-      <div class="bg-white p-8 border border-jollify-purple/10 shadow-sm animate-trigger slide-up delay-${Math.min((i+1)*100, 700)}">
+      <div class="bg-white p-8 border border-jollify-purple/10 shadow-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
         <div class="w-12 h-12 bg-jollify-purple/10 text-jollify-purple flex items-center justify-center rounded-full mb-6">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         </div>
@@ -1319,7 +1319,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     }).join('');
     const totalDays = days.items.length;
     const toChineseNum = (n) => {
-      const cn = ['零','一','二','三','四','五','六','七','八','九','十'];
+      const cn = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
       if (n <= 10) return cn[n] || n;
       if (n < 20) return '十' + (n % 10 === 0 ? '' : cn[n % 10]);
       return cn[Math.floor(n / 10)] + '十' + (n % 10 === 0 ? '' : cn[n % 10]);
@@ -1478,7 +1478,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   let recommendedHtml = '';
   if (recommended?.visible !== false && recommended?.items?.length) {
     const rCards = recommended.items.map((c, i) => `
-      <a href="${esc(c.link || '#')}" target="_blank" class="block group relative overflow-hidden h-64 md:h-80 w-full rounded-sm animate-trigger slide-up delay-${Math.min((i+1)*100, 700)}">
+      <a href="${esc(c.link || '#')}" target="_blank" class="block group relative overflow-hidden h-64 md:h-80 w-full rounded-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
         <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image:url('${esc(c.img || '')}')"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/90 via-jollify-dark/40 to-transparent"></div>
         <div class="absolute bottom-6 left-6 right-6">
@@ -1508,7 +1508,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const lastPageNum = 4 + (days?.items?.length || 0) + (hotels?.items?.length || 0) + (hasNotices ? 1 : 0);
   const ctaTitle = safe(cta?.cta_title, '開啟您的尊榮篇章');
   const ctaDesc = safe(cta?.cta_desc, '地面代理專屬尊榮企劃報價，由專屬顧問親自服務。');
-  const lineBtn = cta?.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-[#06C755] text-white font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-[#05b04b] transition-all duration-300 shadow-lg">LINE 諮詢客服</a>` : '';
+  const lineBtn = cta?.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-[#06C755] text-white font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-[#05b04b] transition-all duration-300 shadow-lg">客服</a>` : '';
   const regBtn = cta?.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg">立即報名</a>` : '';
   const ctaSection = `
     <section id="page-${lastPageNum}" class="magazine-section bg-jollify-dark text-white relative" data-title="報價與諮詢">
@@ -1529,7 +1529,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   // ── CTA floating button ────────────────────────────────────────
   const floatBtn = (cta?.visible !== false && (cta?.cta_register_url || cta?.cta_line_url)) ? `
     <div class="fixed bottom-6 right-6 z-[9000] flex flex-col gap-3 items-end">
-      ${cta.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="flex items-center bg-[#06C755] hover:bg-[#05b04b] text-white rounded-full px-5 py-3 shadow-lg transition-transform hover:scale-105"><img src="/material-alias/Shared_data/LINE.png" alt="LINE" class="w-5 h-5 object-contain mr-2" /><span class="font-bold">LINE 客服</span></a>` : ''}
+      ${cta.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="flex items-center bg-[#06C755] hover:bg-[#05b04b] text-white rounded-full px-5 py-3 shadow-lg transition-transform hover:scale-105"><img src="/material-alias/Shared_data/LINE.png" alt="LINE" class="w-5 h-5 object-contain mr-2" /><span class="font-bold">客服</span></a>` : ''}
       ${cta.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" class="flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl hover:scale-105 font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>` : ''}
     </div>` : '';
 
@@ -1553,7 +1553,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <div class="absolute inset-2 rounded-full border border-jollify-purple/30 border-b-jollify-purple animate-spin" style="animation-duration:3s;animation-direction:reverse;"></div>
           <div class="absolute inset-0 flex items-center justify-center"><span class="text-jollify-gold font-serif text-2xl font-semibold">J</span></div>
         </div>
-        <h2 class="text-white text-xl tracking-[0.2em] font-light">${esc(safe(itinerary?.hero_data?.title1, '精彩行程'))}</h2>
+        <h2 class="text-white text-xl tracking-[0.2em] font-light">${esc(safe(itinerary?.hero_data?.title1, '精彩行程')).replace(/\n/g, '<br>')}</h2>
         <div class="w-32 h-[1px] bg-jollify-gold/30 mx-auto overflow-hidden">
           <div class="h-full bg-jollify-gold w-0 progress-inner transition-all duration-700"></div>
         </div>
@@ -1579,8 +1579,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <span class="w-6 h-[1px] bg-jollify-gold"></span>
         </div>
         <h1 class="text-5xl md:text-8xl font-black tracking-[0.15em] mb-8 leading-tight font-serif text-transparent bg-clip-text bg-gradient-to-r from-white via-jollify-gold-light to-white">
-          ${esc(safe(itinerary?.hero_data?.title1, '未命名行程'))}<br>
-          <span class="text-2xl md:text-5xl italic font-light tracking-[0.1em] text-jollify-gold-light mt-4 block font-serif">${esc(safe(itinerary?.hero_data?.title2, ''))}</span>
+          ${esc(safe(itinerary?.hero_data?.title1, '未命名行程')).replace(/\n/g, '<br>')}<br>
+          <span class="text-2xl md:text-5xl italic font-light tracking-[0.1em] text-jollify-gold-light mt-4 block font-serif">${esc(safe(itinerary?.hero_data?.title2, '')).replace(/\n/g, '<br>')}</span>
         </h1>
         <div class="w-20 h-[1px] bg-gradient-to-r from-transparent via-jollify-gold to-transparent my-4"></div>
         <p class="text-base md:text-xl font-light tracking-[0.25em] text-gray-200 font-sans mt-4">${esc(tags)}</p>
