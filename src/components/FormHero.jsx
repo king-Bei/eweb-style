@@ -20,11 +20,20 @@ export default function FormHero({ heroData = {}, onChange }) {
 
           {heroData.visible !== false && (
             <>
+              <label className="form-label" style={{ color: 'white' }}>標題排版樣式</label>
+              <select name="titleStyle" className="form-control" value={heroData.titleStyle || 'classic'} onChange={handleChange} style={{ marginBottom: '10px' }}>
+                <option value="classic">經典版</option>
+                <option value="alternative">另外一版 (如圖示)</option>
+              </select>
+
               <label className="form-label" style={{ color: 'white' }}>主標題</label>
               <input type="text" name="title1" className="form-control" value={heroData.title1 || ''} onChange={handleChange} placeholder="馬爾地夫 ‧ 水上別墅蜜月奢旅" />
 
               <label className="form-label" style={{ color: 'white' }}>副標題</label>
               <input type="text" name="title2" className="form-control" value={heroData.title2 || ''} onChange={handleChange} placeholder="Maldives Honeymoon ‧ 7 Days" />
+
+              <label className="form-label" style={{ color: 'white' }}>內容敘述 (可選)</label>
+              <textarea name="description" className="form-control" rows={3} value={heroData.description || ''} onChange={handleChange} placeholder="從 AYANA 五星度假村的靜謐，走進世界自然遺產..." style={{ marginBottom: '10px' }} />
 
               <label className="form-label" style={{ color: 'white' }}>封面圖片網址</label>
               <input type="text" name="image" className="form-control" value={heroData.image || ''} onChange={handleChange} placeholder="https://" />
