@@ -14,6 +14,14 @@
   background: var(--c-bg, #fff) !important;
   padding-bottom: 50px;
 }
+.jollify-luxury-theme h1,
+.jollify-luxury-theme h2,
+.jollify-luxury-theme h3,
+.jollify-luxury-theme h4,
+.jollify-luxury-theme h5,
+.jollify-luxury-theme h6 {
+  font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif !important;
+}
 .jollify-luxury-theme button, .jollify-luxury-theme input, .jollify-luxury-theme select, .jollify-luxury-theme textarea { font-family: inherit !important; }
 .jollify-luxury-theme .j-wrapper { max-width: 1000px !important; margin: 0 auto !important; padding: 0 20px !important; }
 .jollify-luxury-theme .j-section { padding: 60px 0 !important; }
