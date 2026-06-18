@@ -49,19 +49,43 @@ export default function FormDays({ data = {}, onChange }) {
       </div>
       {!isCollapsed && (
         <div className="module-body" style={{ padding: '20px' }}>
-          <div style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #f0f0f0' }}>
-            <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1.5 block">行程圖面放置方式</label>
-            <select
-              className="form-control"
-              value={data.layout || 'leftimg'}
-              onChange={e => onChange({ ...data, layout: e.target.value })}
-              style={{ width: '100%', maxWidth: '280px', padding: '6px 12px', fontSize: '14px', borderRadius: '6px', border: '1px solid #ccc' }}
-            >
-              <option value="leftimg">左圖右文 (經典預設)</option>
-              <option value="rightimg">右圖左文 (交錯對稱)</option>
-              <option value="topimg">上圖下文 (雜誌大圖)</option>
-              <option value="timeline">時序時間軸 (新版型)</option>
-            </select>
+          {/* 區塊標題設定 */}
+          <div className="mb-4 grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+            <div>
+              <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊主標題 (Main Title)</label>
+              <input type="text" className="form-control" style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }} placeholder="每日行程" value={data.title || ''} onChange={e => onChange({ ...data, title: e.target.value })} />
+            </div>
+            <div>
+              <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊英文副標 (Badge)</label>
+              <input type="text" className="form-control" style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }} placeholder="Daily Itinerary" value={data.subtitle || ''} onChange={e => onChange({ ...data, subtitle: e.target.value })} />
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #f0f0f0', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+            <div>
+              <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1.5 block">行程圖面放置方式</label>
+              <select
+                className="form-control"
+                value={data.layout || 'leftimg'}
+                onChange={e => onChange({ ...data, layout: e.target.value })}
+                style={{ width: '220px', padding: '6px 12px', fontSize: '14px', borderRadius: '6px', border: '1px solid #ccc' }}
+              >
+                <option value="leftimg">左圖右文 (經典預設)</option>
+                <option value="rightimg">右圖左文 (交錯對稱)</option>
+                <option value="topimg">上圖下文 (雜誌大圖)</option>
+                <option value="timeline">時序時間軸 (新版型)</option>
+              </select>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '10px' }}>
+              <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={data.points_bold === true}
+                  onChange={e => onChange({ ...data, points_bold: e.target.checked })}
+                />
+                條列重點加粗顯示
+              </label>
+            </div>
           </div>
 
           {data.visible !== false && (

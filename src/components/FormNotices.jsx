@@ -57,6 +57,18 @@ export default function FormNotices({ data = {}, onChange }) {
 
           {data.visible !== false && (
             <>
+              {/* 區塊標題設定 */}
+              <div className="mb-4 grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <div>
+                  <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊主標題 (Main Title)</label>
+                  <input type="text" className="form-control" style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }} placeholder="報名注意事項" value={data.title || ''} onChange={e => onChange({ ...data, title: e.target.value })} />
+                </div>
+                <div>
+                  <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊英文副標 (Badge)</label>
+                  <input type="text" className="form-control" style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }} placeholder="Notices" value={data.subtitle || ''} onChange={e => onChange({ ...data, subtitle: e.target.value })} />
+                </div>
+              </div>
+
               <div className="mb-4 flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <span className="text-sm font-bold text-gray-700">🔍 從資料庫匯入注意事項範本</span>
                 <button className="btn-outline-gold px-3 py-1 text-sm flex items-center gap-1" onClick={() => setShowTemplates(!showTemplates)}>

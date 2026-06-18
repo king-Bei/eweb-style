@@ -20,7 +20,7 @@ const EMPTY_FLIGHT = {
 const EMPTY_GROUP = {
   group_name: '去程',
   direction: 'outbound',
-  layout: 'timeline',
+  layout: 'card',
   items: []
 };
 
@@ -56,14 +56,14 @@ function migrateToGroups(data) {
   const groups = groupOrder.map(name => ({
     group_name: name,
     direction: name.includes('回') ? 'return' : 'outbound',
-    layout: 'timeline',
+    layout: 'card',
     items: groupMap[name]
   }));
 
   return { ...data, groups };
 }
 
-export default function FormFlights({ data = {}, onChange }) {
+export default function FormFlights({ data = {}, onChange, theme = 'classic' }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [collapsedGroups, setCollapsedGroups] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
@@ -113,7 +113,7 @@ export default function FormFlights({ data = {}, onChange }) {
           matchedGroups.push({
             group_name: flight.airline_name_zh || flight.airline_code || '回程航班',
             direction: 'return',
-            layout: 'timeline',
+            layout: 'card',
             items: [{ ...flight, tag: '回程' }]
           });
         }
@@ -121,7 +121,7 @@ export default function FormFlights({ data = {}, onChange }) {
         matchedGroups.push({
           group_name: flight.airline_name_zh || flight.airline_code || '去程航班',
           direction: 'outbound',
-          layout: 'timeline',
+          layout: 'card',
           items: [{ ...flight, tag: '去程' }]
         });
       }
@@ -149,7 +149,7 @@ export default function FormFlights({ data = {}, onChange }) {
       return {
         group_name: g.group_name || `航班組別 ${idx + 1}`,
         direction: dir,
-        layout: 'timeline',
+        layout: 'card',
         items: g.items
       };
     });
@@ -350,6 +350,32 @@ export default function FormFlights({ data = {}, onChange }) {
         <div className="module-body" style={{ padding: '20px' }}>
           {data.visible !== false && (
             <>
+              {/* 模組大標題與副標題設定 */}
+              <div className="mb-4 grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <div>
+                  <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊主標題 (Main Title)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }}
+                    placeholder="航程紀實 ‧ 優雅啟程"
+                    value={data.title || ''}
+                    onChange={e => onChange({ ...data, title: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊英文副標 (Subtitle / Badge)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }}
+                    placeholder="Flight Information"
+                    value={data.subtitle || ''}
+                    onChange={e => onChange({ ...data, subtitle: e.target.value })}
+                  />
+                </div>
+              </div>
+
               {/* Global search */}
               <div className="mb-4 flex gap-2 items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <span className="text-sm font-bold text-gray-700 whitespace-nowrap">🔍 從資料庫匯入：</span>
@@ -367,29 +393,31 @@ export default function FormFlights({ data = {}, onChange }) {
                 </button>
               </div>
 
-              <div className="mb-4 flex flex-wrap gap-3 items-center bg-purple-50 p-3 rounded-lg border border-purple-100">
-                <span className="text-sm font-bold text-[var(--c-pri)] whitespace-nowrap">雜誌風航班版型</span>
-                <select
-                  className="form-control"
-                  style={{ marginBottom: 0, padding: '6px 10px', width: '220px', fontSize: '13px' }}
-                  value={migratedData.magazine_layout || 'auto'}
-                  onChange={e => onChange({ ...migratedData, magazine_layout: e.target.value })}
-                >
-                  <option value="auto">自動判斷</option>
-                  <option value="roundtrip_card">雙卡往返</option>
-                  <option value="multi_segment">多段航程</option>
-                  <option value="domestic_connection">中段銜接</option>
-                </select>
-                <span className="text-xs text-gray-500">經典版則使用每個組別自己的呈現方式。</span>
-                <button
-                  type="button"
-                  onClick={autoGroupByAirline}
-                  className="btn-outline-gold px-3 py-1.5 text-xs font-bold flex items-center gap-1 bg-white ml-auto"
-                  title="將所有航段依航空公司自動整理為去回程組別"
-                >
-                  ✈️ 依航空自動分組
-                </button>
-              </div>
+              {theme === 'magazine' && (
+                <div className="mb-4 flex flex-wrap gap-3 items-center bg-purple-50 p-3 rounded-lg border border-purple-100">
+                  <span className="text-sm font-bold text-[var(--c-pri)] whitespace-nowrap">雜誌風航班版型</span>
+                  <select
+                    className="form-control"
+                    style={{ marginBottom: 0, padding: '6px 10px', width: '220px', fontSize: '13px' }}
+                    value={migratedData.magazine_layout || 'auto'}
+                    onChange={e => onChange({ ...migratedData, magazine_layout: e.target.value })}
+                  >
+                    <option value="auto">自動判斷</option>
+                    <option value="roundtrip_card">雙卡往返</option>
+                    <option value="multi_segment">多段航程</option>
+                    <option value="domestic_connection">中段銜接</option>
+                  </select>
+                  <span className="text-xs text-gray-500">經典版則使用每個組別自己的呈現方式。</span>
+                  <button
+                    type="button"
+                    onClick={autoGroupByAirline}
+                    className="btn-outline-gold px-3 py-1.5 text-xs font-bold flex items-center gap-1 bg-white ml-auto"
+                    title="將所有航段依航空公司自動整理為去回程組別"
+                  >
+                    ✈️ 依航空自動分組
+                  </button>
+                </div>
+              )}
 
               {/* Search Results */}
               {searchResults.length > 0 && (
@@ -532,6 +560,7 @@ export default function FormFlights({ data = {}, onChange }) {
                                 <th className="p-2 border border-gray-200 font-bold" style={{ minWidth: '60px' }}>航代</th>
                                 <th className="p-2 border border-gray-200 font-bold">中/英航空</th>
                                 <th className="p-2 border border-gray-200 font-bold">航班號</th>
+                                <th className="p-2 border border-gray-200 font-bold" style={{ minWidth: '76px' }}>標註</th>
                                 <th className="p-2 border border-gray-200 font-bold">起點</th>
                                 <th className="p-2 border border-gray-200 font-bold">終點</th>
                                 <th className="p-2 border border-gray-200 font-bold">起/降時間</th>
@@ -572,6 +601,19 @@ export default function FormFlights({ data = {}, onChange }) {
                                     />
                                   </td>
                                   <td className="p-2 border border-gray-200">
+                                    <select
+                                      className="form-control text-xs"
+                                      style={{ marginBottom: 0, padding: '4px', height: '30px', width: '72px' }}
+                                      value={item.tag || ''}
+                                      onChange={e => updateItem(gi, ii, 'tag', e.target.value)}
+                                    >
+                                      <option value="">(無)</option>
+                                      <option value="去程">去程</option>
+                                      <option value="回程">回程</option>
+                                      <option value="中段">中段</option>
+                                    </select>
+                                  </td>
+                                  <td className="p-2 border border-gray-200">
                                     <div className="flex flex-col gap-1">
                                       <input type="text" className="form-control text-xs" style={{ marginBottom: 0, padding: '4px', height: '26px', width: '76px' }} value={item.dep_location_zh || ''} onChange={e => updateItem(gi, ii, 'dep_location_zh', e.target.value)} placeholder="台北" />
                                       <input type="text" className="form-control text-xs" style={{ marginBottom: 0, padding: '4px', height: '26px', width: '76px' }} value={item.dep_location_en || ''} onChange={e => updateItem(gi, ii, 'dep_location_en', e.target.value)} onBlur={() => applyCityCode(gi, ii, 'dep')} placeholder="TPE" />
@@ -591,7 +633,7 @@ export default function FormFlights({ data = {}, onChange }) {
                                   </td>
                                   <td className="p-2 border border-gray-200 text-center">
                                     <div className="flex flex-col gap-1 items-center">
-                                      <button onClick={() => saveToDatabase(item)} className="text-[var(--luxury-gold)] hover:text-black flex items-center gap-1 text-xs" style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="儲存至航班資料庫">
+                                      <button type="button" onClick={() => saveToDatabase(item)} className="text-[var(--luxury-gold)] hover:text-black flex items-center gap-1 text-xs" style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="儲存至航班資料庫">
                                         <Save size={12} /> 存庫
                                       </button>
                                       <div className="flex gap-2 justify-center my-0.5">
@@ -614,7 +656,7 @@ export default function FormFlights({ data = {}, onChange }) {
                                           ▼
                                         </button>
                                       </div>
-                                      <button onClick={() => removeItem(gi, ii)} className="text-red-500 hover:text-red-700 text-xs" style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="刪除航段">✖ 刪除</button>
+                                      <button type="button" onClick={() => removeItem(gi, ii)} className="text-red-500 hover:text-red-700 text-xs" style={{ background: 'none', border: 'none', cursor: 'pointer' }} title="刪除航段">✖ 刪除</button>
                                     </div>
                                   </td>
                                 </tr>

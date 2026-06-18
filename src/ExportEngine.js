@@ -189,7 +189,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           if (hlHtml) {
             const wrapClass = layout === 'grid' ? 'j-hl-grid' : (layout === 'card' ? 'j-hl-card-grid' : 'j-hl-overlap-wrapper');
             const sectionBg = (layout === 'grid' || layout === 'card') ? 'j-highlights-section' : '';
-            html += `<div class="j-section ${sectionBg}" id="highlights"><div class="j-heading wow fadeInUp"><span class="j-badge">Highlights</span><h2>行程特色 ‧ 奢旅亮點</h2></div><div class="j-wrapper"><div class="${wrapClass}">${hlHtml}</div></div></div>`;
+            const hlTitle = highlights?.title || '行程特色 ‧ 奢旅亮點';
+            const hlSubtitle = highlights?.subtitle || 'Highlights';
+            html += `<div class="j-section ${sectionBg}" id="highlights"><div class="j-heading wow fadeInUp"><span class="j-badge">${hlSubtitle}</span><h2>${hlTitle}</h2></div><div class="j-wrapper"><div class="${wrapClass}">${hlHtml}</div></div></div>`;
           }
         }
         break;
@@ -216,7 +218,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           });
           if (spotHtml) {
             const wrapClass = spotLayout === 'grid' ? 'j-spot-grid-wrapper' : 'j-wrapper';
-            html += `<div class="j-section" id="spots"><div class="j-heading wow fadeInUp"><span class="j-badge">Scenic Spots</span><h2>精選景點 ‧ 探索之美</h2></div><div class="${wrapClass}">${spotHtml}</div></div>`;
+            const spotsTitle = spots?.title || '精選景點 ‧ 探索之美';
+            const spotsSubtitle = spots?.subtitle || 'Scenic Spots';
+            html += `<div class="j-section" id="spots"><div class="j-heading wow fadeInUp"><span class="j-badge">${spotsSubtitle}</span><h2>${spotsTitle}</h2></div><div class="${wrapClass}">${spotHtml}</div></div>`;
           }
         }
         break;
@@ -257,7 +261,14 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               innerHtml = `<div class="j-editorial-flight-box">${innerHtml}</div>`;
             } else if (gLayout === 'card') {
               gItems.forEach((c, i) => {
-                innerHtml += `<div class="j-flight-card wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-fc-airline">${c.airline_code || ''} <strong>${c.airline_name_zh || ''}</strong> <span>${c.airline_name_en || ''}</span></div><div class="j-fc-body"><div class="j-fc-station"><div class="j-fc-time">${c.dep_time || c.fTime || ''}</div><div class="j-fc-city">${c.dep_location_zh || ''}</div><div class="j-fc-code">${c.dep_location_en || ''}</div></div><div class="j-fc-middle"><div class="j-fc-no">${c.flight_no || c.fn || ''}</div><div class="j-fc-arrow">✈</div></div><div class="j-fc-station"><div class="j-fc-time">${c.arr_time || c.tTime || ''}</div><div class="j-fc-city">${c.arr_location_zh || ''}</div><div class="j-fc-code">${c.arr_location_en || ''}</div></div></div></div>`;
+                const tagText = c.tag || directionLabel || gName;
+                let tagClass = '';
+                if (tagText.includes('回')) {
+                  tagClass = 'return';
+                } else if (tagText.includes('中')) {
+                  tagClass = 'mid';
+                }
+                innerHtml += `<div class="j-flight-card wow fadeInUp" data-wow-delay="${i * 0.08}s"><div class="j-fc-airline">${c.airline_code || ''} <strong>${c.airline_name_zh || ''}</strong> <span>${c.airline_name_en || ''}</span><span class="j-fc-tag ${tagClass}">${tagText}</span></div><div class="j-fc-body"><div class="j-fc-station"><div class="j-fc-time">${c.dep_time || c.fTime || ''}</div><div class="j-fc-city">${c.dep_location_zh || ''}</div><div class="j-fc-code">${c.dep_location_en || ''}</div></div><div class="j-fc-middle"><div class="j-fc-no">${c.flight_no || c.fn || ''}</div><div class="j-fc-arrow">✈</div></div><div class="j-fc-station"><div class="j-fc-time">${c.arr_time || c.tTime || ''}</div><div class="j-fc-city">${c.arr_location_zh || ''}</div><div class="j-fc-code">${c.arr_location_en || ''}</div></div></div></div>`;
               });
               innerHtml = `<div class="j-flight-card-grid">${innerHtml}</div>`;
             } else if (gLayout === 'boarding') {
@@ -281,7 +292,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           });
 
           if (allGroupsHtml) {
-            html += `<div class="j-section" id="flights"><div class="j-heading wow fadeInUp"><span class="j-badge">Flight Information</span><h2>航程紀實 ‧ 優雅啟程</h2></div><div class="j-wrapper j-flights-wrapper">${allGroupsHtml}</div></div>`;
+            const flightsSubtitle = flights?.subtitle || 'Flight Information';
+            const flightsTitle = flights?.title || '航程紀實 ‧ 優雅啟程';
+            html += `<div class="j-section" id="flights"><div class="j-heading wow fadeInUp"><span class="j-badge">${flightsSubtitle}</span><h2>${flightsTitle}</h2></div><div class="j-wrapper j-flights-wrapper">${allGroupsHtml}</div></div>`;
           }
         }
         break;
@@ -298,8 +311,10 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             }
           });
           if (hotelHtml) {
-            let wrapClass = layout === 'grid' ? 'j-hotel-grid-wrapper' : 'j-wrapper';
-            html += `<div class="j-section" id="hotels"><div class="j-heading wow fadeInUp"><span class="j-badge">Exclusive Stays</span><h2>嚴選旅宿 ‧ 奢華棲所</h2></div><div class="${wrapClass}">${hotelHtml}</div></div>`;
+            const hotelsTitle = hotels?.title || '嚴選旅宿 ‧ 奢華棲所';
+            const hotelsSubtitle = hotels?.subtitle || 'Exclusive Stays';
+            const wrapClass = layout === 'grid' ? 'j-hotel-grid-wrapper' : 'j-wrapper';
+            html += `<div class="j-section" id="hotels"><div class="j-heading wow fadeInUp"><span class="j-badge">${hotelsSubtitle}</span><h2>${hotelsTitle}</h2></div><div class="${wrapClass}">${hotelHtml}</div></div>`;
           }
         }
         break;
@@ -317,7 +332,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               if (c.points) {
                 const lines = c.points.split('\n').filter(p => p.trim());
                 if (lines.length > 0) {
-                  tlHtml += `<div class="k-tl">`;
+                  const boldClass = days?.points_bold === true ? ' j-points-bold' : '';
+                  tlHtml += `<div class="k-tl${boldClass}">`;
                   lines.forEach(line => {
                     const parts = line.split('|');
                     let lbl = '', note = '';
@@ -380,8 +396,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               <div class="j-section bg-light-gray k-sec k-sec--mist" id="itinerary">
                 <div class="j-wrapper k-wrap">
                   <div class="wow fadeInUp" style="margin-bottom:3rem; text-align:center;">
-                    <p class="k-label" style="display:inline-block; font-size: 11px; letter-spacing: 3px; background: var(--c-sec); color: #fff; padding: 5px 15px; border-radius: 20px; text-transform: uppercase; margin-bottom:15px;">每日行程</p>
-                    <h2 class="k-h2" style="font-size:32px; color:var(--c-pri); font-weight:bold; letter-spacing:2px; margin:0;">${totalDays} 天 ${totalNights} 夜完整規劃</h2>
+                    <p class="k-label" style="display:inline-block; font-size: 11px; letter-spacing: 3px; background: var(--c-sec); color: #fff; padding: 5px 15px; border-radius: 20px; text-transform: uppercase; margin-bottom:15px;">${days?.subtitle || '每日行程'}</p>
+                    <h2 class="k-h2" style="font-size:32px; color:var(--c-pri); font-weight:bold; letter-spacing:2px; margin:0;">${days?.title ? days.title : `${totalDays} 天 ${totalNights} 夜完整規劃`}</h2>
                     <div class="k-rule" style="width:50px; height:2px; background:var(--c-sec); margin:15px auto 0 auto;"></div>
                   </div>
                   <div class="k-days">${daysHtml}</div>
@@ -415,7 +431,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                           <span class="day-route">${c.route || ''}</span>
                           <h3 class="day-title">${c.title || ''}</h3>
                           <p class="day-lead">${(c.lead || '').replace(/\n/g, '<br>')}</p>
-                          <ul class="day-points">${pointsHtml}</ul>
+                          <ul class="day-points${days?.points_bold === true ? ' j-points-bold' : ''}">${pointsHtml}</ul>
                           ${c.meals?.show !== false ? `<div class="day-meals-row">
                               <span><strong>B</strong>${c.meals?.breakfast || '機上餐食或自理'}</span>
                               <span><strong>L</strong>${c.meals?.lunch || '機上餐食或自理'}</span>
@@ -430,7 +446,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               </div>`;
             });
             if (tabsHtml) {
-              html += `<div class="j-section"><div class="j-heading wow fadeInUp"><span class="j-badge">Daily Itinerary</span><h2>每日行程</h2></div><div class="j-wrapper"><div class="j-magazine-box"><div class="j-tabs-row">${tabsHtml}</div><div class="j-panels-row">${panelsHtml}</div></div></div></div>`;
+              const daysTitle = days?.title || '每日行程';
+              const daysSubtitle = days?.subtitle || 'Daily Itinerary';
+              html += `<div class="j-section" id="itinerary"><div class="j-heading wow fadeInUp"><span class="j-badge">${daysSubtitle}</span><h2>${daysTitle}</h2></div><div class="j-wrapper"><div class="j-magazine-box"><div class="j-tabs-row">${tabsHtml}</div><div class="j-panels-row">${panelsHtml}</div></div></div></div>`;
             }
           }
         }
@@ -454,7 +472,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             </div>`;
           });
           if (nHtml) {
-            html += `<div class="j-section bg-light-gray" id="notices"><div class="j-heading wow fadeInUp"><span class="j-badge">Notices</span><h2>報名注意事項</h2></div><div class="j-wrapper"><div class="j-accordion">${nHtml}</div></div></div>`;
+            const noticesTitle = notices?.title || '報名注意事項';
+            const noticesSubtitle = notices?.subtitle || 'Notices';
+            html += `<div class="j-section bg-light-gray" id="notices"><div class="j-heading wow fadeInUp"><span class="j-badge">${noticesSubtitle}</span><h2>${noticesTitle}</h2></div><div class="j-wrapper"><div class="j-accordion">${nHtml}</div></div></div>`;
           }
         }
         break;

@@ -33,6 +33,18 @@ export default function FormHighlights({ data = {}, onChange }) {
 
           {data.visible !== false && (
             <>
+              {/* 區塊標題設定 */}
+              <div className="mb-4 grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <div>
+                  <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊主標題 (Main Title)</label>
+                  <input type="text" className="form-control" style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }} placeholder="行程特色 ‧ 奢旅亮點" value={data.title || ''} onChange={e => onChange({ ...data, title: e.target.value })} />
+                </div>
+                <div>
+                  <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊英文副標 (Badge)</label>
+                  <input type="text" className="form-control" style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }} placeholder="Highlights" value={data.subtitle || ''} onChange={e => onChange({ ...data, subtitle: e.target.value })} />
+                </div>
+              </div>
+
               <div style={{ marginBottom: '20px' }}>
                 <label className="form-label text-sm font-bold text-gray-700 block mb-1">特色版面選擇</label>
                 <select

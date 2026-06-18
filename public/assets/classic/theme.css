@@ -390,11 +390,11 @@
 .jollify-luxury-theme .k-hero__tags {
     display: flex !important;
     flex-wrap: wrap !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     gap: 10px !important;
     margin-top: 25px !important;
     max-width: 800px !important;
-    margin-left: auto !important;
+    margin-left: 0 !important;
     margin-right: auto !important;
 }
 .jollify-luxury-theme .k-tag {
@@ -831,8 +831,11 @@
 .jollify-luxury-theme .k-hero__tags {
   display: flex !important;
   flex-wrap: wrap !important;
+  justify-content: flex-start !important;
   gap: 0.6rem !important;
   margin-top: 1.5rem !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
 }
 
 .jollify-luxury-theme .k-tag {
@@ -909,5 +912,36 @@
   .jollify-luxury-theme .k-topbar {
     padding: 0.75rem 1.5rem !important;
   }
+}
+
+/* 航班卡片去回程標記 */
+.jollify-luxury-theme .j-fc-tag {
+    display: inline-block !important;
+    font-size: 10px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    font-weight: bold !important;
+    letter-spacing: 1px !important;
+    margin-left: auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    line-height: 1.2 !important;
+}
+.jollify-luxury-theme .j-fc-tag.return {
+    background: rgba(212, 169, 59, 0.25) !important;
+    color: #ffe6a3 !important;
+    border: 1px solid rgba(212, 169, 59, 0.4) !important;
+}
+.jollify-luxury-theme .j-fc-tag.mid {
+    background: rgba(76, 175, 80, 0.25) !important;
+    color: #a3ffa6 !important;
+    border: 1px solid rgba(76, 175, 80, 0.45) !important;
+}
+
+/* 每日行程條列重點加粗 */
+.jollify-luxury-theme .j-points-bold li,
+.jollify-luxury-theme .j-points-bold .k-tl__ev {
+    font-weight: bold !important;
 }
 

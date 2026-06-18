@@ -56,6 +56,11 @@ export default function Editor({ forcedTheme = null }) {
   // Preview Mode & Export Output
   const [theme, setTheme] = useState('classic');
   const [baseConfig, setBaseConfig] = useState({});
+
+  // 儲存進度狀態
+  const [saveProgress, setSaveProgress] = useState(0);
+  const [saveProgressText, setSaveProgressText] = useState('');
+  const [showSaveProgress, setShowSaveProgress] = useState(false);
   const [previewMode, setPreviewMode] = useState('desktop');
   const [autoPreview, setAutoPreview] = useState(false);
   const [previewVersion, setPreviewVersion] = useState(0);
@@ -255,6 +260,10 @@ export default function Editor({ forcedTheme = null }) {
 
   const handleSave = async () => {
     setSaving(true);
+    setShowSaveProgress(true);
+    setSaveProgress(10);
+    setSaveProgressText('準備儲存專案中...');
+    
     try {
       const user = await authApi.getUser();
       const config = {
@@ -271,6 +280,8 @@ export default function Editor({ forcedTheme = null }) {
         module_order: moduleOrder
       };
 
+      setSaveProgress(20);
+      setSaveProgressText('正在儲存行程基本資料 (1/5)...');
       await itineraryApi.update(id, {
         title: itinerary.title,
         hero_data: itinerary.hero_data,
@@ -285,16 +296,21 @@ export default function Editor({ forcedTheme = null }) {
         last_modifier_name: user?.name || user?.id || '未知'
       });
 
+      setSaveProgress(40);
+      setSaveProgressText('正在儲存航班資訊 (2/5)...');
       await flightApi.save(id, flights.items || []);
+
+      setSaveProgress(60);
+      setSaveProgressText('正在儲存每日行程說明 (3/5)...');
       const daysToSave = (days.items || []).map((content, idx) => ({ day_index: idx + 1, content }));
       await daysApi.save(id, daysToSave);
+
+      setSaveProgress(80);
+      setSaveProgressText('正在儲存嚴選旅宿住宿 (4/5)...');
       await hotelsApi.save(id, hotels.items || []);
 
-      alert('儲存成功！');
-      localStorage.setItem(backupSavedKey, String(Date.now()));
-      localStorage.removeItem(backupKey);
-      setPendingBackup(null);
-
+      setSaveProgress(90);
+      setSaveProgressText('正在建立歷史版本備份 (5/5)...');
       try {
         await itineraryApi.saveVersion(id, {
           itinerary,
@@ -310,9 +326,22 @@ export default function Editor({ forcedTheme = null }) {
       } catch (err) {
         console.warn('版本備份失敗', err);
       }
+
+      setSaveProgress(100);
+      setSaveProgressText('儲存成功！');
+      localStorage.setItem(backupSavedKey, String(Date.now()));
+      localStorage.removeItem(backupKey);
+      setPendingBackup(null);
+
+      setTimeout(() => {
+        setShowSaveProgress(false);
+      }, 800);
+
     } catch (err) {
       console.error(err);
+      setSaveProgressText('儲存失敗！');
       alert('儲存失敗');
+      setShowSaveProgress(false);
     } finally {
       setSaving(false);
     }
@@ -545,7 +574,7 @@ ${html}
         formComponent = <FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} />;
         break;
       case 'flights':
-        formComponent = <FormFlights data={flights} onChange={setFlights} />;
+        formComponent = <FormFlights data={flights} onChange={setFlights} theme={theme} />;
         break;
       case 'hotels':
         formComponent = <FormHotels data={hotels} onChange={setHotels} />;
@@ -885,7 +914,7 @@ ${html}
                 <div id="form-hero"><FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} /></div>
                 <div id="form-highlights"><FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} /></div>
                 <div id="form-spots"><FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} /></div>
-                <div id="form-flights"><FormFlights data={flights} onChange={setFlights} /></div>
+                <div id="form-flights"><FormFlights data={flights} onChange={setFlights} theme={theme} /></div>
                 <div id="form-hotels"><FormHotels data={hotels} onChange={setHotels} /></div>
                 <div id="form-days"><FormDays data={days} onChange={setDays} /></div>
                 <div id="form-notices"><FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} /></div>
@@ -957,6 +986,35 @@ ${html}
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {showSaveProgress && (
+        <div className="fixed inset-0 bg-black/45 backdrop-blur-[6px] z-[10000] flex items-center justify-center p-4 transition-all duration-300 animate-fade-in">
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] w-full max-w-sm overflow-hidden p-6 border border-gray-100 flex flex-col items-center text-center">
+            <div className="relative w-16 h-16 mb-4 flex items-center justify-center">
+              {saveProgress < 100 ? (
+                <div className="w-12 h-12 border-[3.5px] border-gray-200 border-t-[var(--c-pri)] rounded-full animate-spin"></div>
+              ) : (
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-200 animate-bounce">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            
+            <h3 className="text-base font-bold text-gray-800 mb-1">正在儲存專案</h3>
+            <p className="text-xs text-gray-500 mb-4 h-5">{saveProgressText}</p>
+            
+            <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-2 relative">
+              <div 
+                className="bg-gradient-to-r from-[var(--c-pri)] to-[var(--luxury-gold)] h-full rounded-full transition-all duration-300 ease-out" 
+                style={{ width: `${saveProgress}%` }}
+              ></div>
+            </div>
+            <span className="text-xs font-bold text-[var(--c-pri)]">{saveProgress}%</span>
           </div>
         </div>
       )}
