@@ -22,8 +22,8 @@ export default function FormHero({ heroData = {}, onChange }) {
             <>
               <label className="form-label" style={{ color: 'white' }}>標題排版樣式</label>
               <select name="titleStyle" className="form-control" value={heroData.titleStyle || 'classic'} onChange={handleChange} style={{ marginBottom: '10px' }}>
-                <option value="classic">經典版</option>
-                <option value="alternative">另外一版 (如圖示)</option>
+                <option value="classic">版本一</option>
+                <option value="alternative">版本二</option>
               </select>
 
               <label className="form-label" style={{ color: 'white' }}>主標題</label>

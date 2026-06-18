@@ -508,8 +508,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
   return html.replace(/https:\/\/jollifytravel\.com/g, '');
 };
 
-export const generateCss = (theme = 'classic') => {
-  let finalCss = baseCss + '\n\n/* --- Theme Styles --- */\n\n';
+export const generateCss = (theme = 'classic', isExport = false) => {
+  let finalCss = isExport ? '/* --- Theme Styles --- */\n\n' : (baseCss + '\n\n/* --- Theme Styles --- */\n\n');
   if (theme === 'classic') {
     finalCss += classicThemeCss;
   }
