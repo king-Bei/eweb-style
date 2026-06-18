@@ -35,7 +35,7 @@ export default function FormCTA({ data = {}, onChange }) {
               </div>
               <div>
                 <label className="form-label font-bold text-[#06C755] flex items-center gap-1">
-                  LINE 線上客服 (加好友網址)
+                  LINE 客服 (加好友網址)
                 </label>
                 <input
                   type="text"

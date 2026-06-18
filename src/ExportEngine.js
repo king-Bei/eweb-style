@@ -437,7 +437,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
     html += `<link rel="stylesheet" href="${origin}/assets/classic/theme.css">\n`;
   }
 
-  return html;
+  return html.replace(/https:\/\/jollifytravel\.com/g, '');
 };
 
 export const generateCss = (theme = 'classic') => {

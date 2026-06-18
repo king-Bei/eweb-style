@@ -1603,5 +1603,5 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     ${ctaSection}
 
     </div>
-  `;
+  `.replace(/https:\/\/jollifytravel\.com/g, '');
 };
