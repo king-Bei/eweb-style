@@ -375,7 +375,7 @@ ${html}
       html: theme === 'classic'
         ? engine.generateHtml(itinerary, flights, days, hotels, cta, '', moduleOrder)
         : engine.generateHtml(itinerary, flights, days, hotels, cta),
-      css: engine.generateCss(),
+      css: engine.generateCss(theme, true),
       js: engine.generateJs(),
       head: headPreloads.trim()
     });
