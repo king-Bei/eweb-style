@@ -1,3 +1,8 @@
+:root {
+  --c-pri: #4c2a85;
+  --c-sec: #d4a93b;
+  --c-bg: #fff;
+}
 .jollify-luxury-theme { font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif !important; color: #333 !important; line-height: 1.6 !important; width: 100% !important; background: var(--c-bg, #fff) !important; padding-bottom:50px;}
 .jollify-luxury-theme button, .jollify-luxury-theme input, .jollify-luxury-theme select, .jollify-luxury-theme textarea { font-family: inherit !important; }
 .jollify-luxury-theme .j-wrapper { max-width: 1000px !important; margin: 0 auto !important; padding: 0 20px !important; }

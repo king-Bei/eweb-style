@@ -67,7 +67,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
   let html = `
 <style>
 /* 科威後台專用：全域主題變數，可在此直接修改顏色 */
-.jollify-luxury-theme {
+:root, .jollify-luxury-theme {
   --c-pri: #4c2a85; /* 主色 */
   --c-sec: #d4a93b; /* 次色 */
   --c-bg: #ffffff;  /* 背景色 */
