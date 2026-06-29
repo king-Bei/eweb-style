@@ -1,9 +1,10 @@
 import React from 'react';
+import { DEFAULT_CTA_REGISTER_URL } from '../constants';
 
 export default function FormCTA({ data = {}, onChange }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
   // data contains cta_register_url and cta_line_url
-  const registerUrl = data.cta_register_url || '';
+  const registerUrl = data.cta_register_url || DEFAULT_CTA_REGISTER_URL;
   const lineUrl = data.cta_line_url || '';
 
   return (
@@ -42,9 +43,9 @@ export default function FormCTA({ data = {}, onChange }) {
                   className="form-control"
                   value={registerUrl}
                   onChange={e => onChange({ ...data, cta_register_url: e.target.value })}
-                  placeholder="https://forms.gle/..."
+                  placeholder={DEFAULT_CTA_REGISTER_URL}
                 />
-                <p className="text-xs text-gray-500 mt-1">留白則不顯示報名按鈕</p>
+                <p className="text-xs text-gray-500 mt-1">預設連至 Jollify 客製旅遊表單</p>
               </div>
               <div>
                 <label className="form-label font-bold text-[#06C755] flex items-center gap-1">

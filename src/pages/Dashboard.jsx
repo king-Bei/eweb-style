@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { itineraryApi, authApi } from '../api';
-import { LogOut, Plus, Edit2, Trash2, Copy, Settings as SettingsIcon, LayoutTemplate, Palette, CheckCircle2 } from 'lucide-react';
+import { LogOut, Plus, Edit2, Trash2, Settings as SettingsIcon, LayoutTemplate, Palette, CheckCircle2 } from 'lucide-react';
 
 export default function Dashboard({ onLogout }) {
   const [itineraries, setItineraries] = useState([]);
@@ -25,7 +25,7 @@ export default function Dashboard({ onLogout }) {
     fetchItineraries();
   }, []);
 
-  const fetchItineraries = async () => {
+  async function fetchItineraries() {
     try {
       const data = await itineraryApi.getAll();
       setItineraries(data);
@@ -35,7 +35,7 @@ export default function Dashboard({ onLogout }) {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleCreate = async () => {
     try {

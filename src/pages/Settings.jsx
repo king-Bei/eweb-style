@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { noticeTemplateApi } from '../api';
 import { ArrowLeft, Plus, Save, Trash2, Edit2 } from 'lucide-react';
+import NoticeContentEditor from '../components/NoticeContentEditor';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function Settings() {
     fetchTemplates();
   }, []);
 
-  const fetchTemplates = async () => {
+  async function fetchTemplates() {
     try {
       const data = await noticeTemplateApi.getAll();
       setTemplates(data);
@@ -25,7 +26,7 @@ export default function Settings() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleEdit = (tmpl) => {
     setEditingId(tmpl.id);
@@ -101,7 +102,13 @@ export default function Settings() {
                 </div>
                 <div className="col-span-2">
                   <label className="form-label font-bold text-[var(--c-pri)]">說明內容 *</label>
-                  <textarea className="form-control" rows={5} value={form.content} onChange={e => setForm({...form, content: e.target.value})} required placeholder="輸入完整說明事項..."></textarea>
+                  <NoticeContentEditor
+                    value={form.content}
+                    onChange={content => setForm({ ...form, content })}
+                    rows={5}
+                    required
+                    placeholder="輸入完整說明事項..."
+                  />
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-2">

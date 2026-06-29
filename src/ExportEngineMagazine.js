@@ -1,4 +1,7 @@
 
+import { DEFAULT_CTA_REGISTER_URL } from './constants';
+import { NOTICE_INFO_ICON } from './exportIcons';
+
 function formatNoticeDesc(desc) {
   if (!desc) return '';
   const lines = desc.split('\n');
@@ -1454,7 +1457,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       <div class="j-magazine-accordion-item border border-jollify-purple/10 rounded-lg overflow-hidden bg-white shadow-sm mb-4 transition-all duration-300 animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
         <button class="j-magazine-accordion-header w-full text-left px-6 py-5 flex items-center justify-between focus:outline-none" type="button">
           <div class="flex items-center gap-4">
-            <span class="bg-jollify-purple text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">${i + 1}</span>
+            <span class="bg-jollify-purple text-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">${NOTICE_INFO_ICON}</span>
             <span class="text-xl md:text-2xl font-serif font-bold text-jollify-purple-dark">${esc(notice.t || notice.title || '注意事項')}</span>
           </div>
           <span class="j-magazine-accordion-icon w-4 h-4 relative transition-transform duration-300 shrink-0 ml-4">
@@ -1518,7 +1521,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const ctaTitle = safe(cta?.title || cta?.cta_title, '開啟您的尊榮篇章');
   const ctaDesc = safe(cta?.cta_desc, '地面代理專屬尊榮企劃報價，由專屬顧問親自服務。');
   const lineBtn = cta?.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-[#06C755] text-white font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-[#05b04b] transition-all duration-300 shadow-lg">客服</a>` : '';
-  const regBtn = cta?.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" ${destinationClick} class="w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg">立即報名</a>` : '';
+  const registerUrl = cta?.cta_register_url || DEFAULT_CTA_REGISTER_URL;
+  const regBtn = `<a href="${esc(registerUrl)}" target="_blank" ${destinationClick} class="w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg">立即報名</a>`;
   const ctaSection = `
     <section id="page-${lastPageNum}" class="magazine-section bg-jollify-dark text-white relative" data-title="報價與諮詢">
       <div class="max-w-4xl mx-auto w-full text-center relative z-20 px-6 py-12 border border-jollify-gold/20 rounded-sm glass-premium-dark animate-trigger scale-up delay-200">
@@ -1536,10 +1540,10 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     </section>`;
 
   // ── CTA floating button ────────────────────────────────────────
-  const floatBtn = (cta?.visible !== false && (cta?.cta_register_url || cta?.cta_line_url)) ? `
+  const floatBtn = (cta?.visible !== false && (registerUrl || cta?.cta_line_url)) ? `
     <div class="fixed bottom-6 right-6 z-[9000] flex flex-col gap-3 items-end">
       ${cta.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="flex items-center bg-[#06C755] hover:bg-[#05b04b] text-white rounded-full px-5 py-3 shadow-lg transition-transform hover:scale-105"><img src="/material-alias/Shared_data/LINE.png" alt="LINE" class="w-5 h-5 object-contain mr-2" /><span class="font-bold">客服</span></a>` : ''}
-      ${cta.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" ${destinationClick} class="flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl hover:scale-105 font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>` : ''}
+      <a href="${esc(registerUrl)}" target="_blank" ${destinationClick} class="flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl hover:scale-105 font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>
     </div>` : '';
 
   return `

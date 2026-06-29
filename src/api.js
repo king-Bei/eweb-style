@@ -202,10 +202,13 @@ export const itineraryApi = {
 // 航班資訊相關
 export const flightApi = {
   async save(itineraryId, flightDataArray) {
-    // 簡單的同步方式：先刪除舊的再新增新的
-    await supabase.from('itinerary_flights').delete().eq('itinerary_id', itineraryId);
+    const { error: deleteError } = await supabase.from('itinerary_flights').delete().eq('itinerary_id', itineraryId);
+    if (deleteError) throw deleteError;
     if (flightDataArray && flightDataArray.length > 0) {
-      const inserts = flightDataArray.map(f => ({ itinerary_id: itineraryId, flight_data: f }));
+      const inserts = flightDataArray.map((flight, index) => ({
+        itinerary_id: itineraryId,
+        flight_data: { ...flight, __sort_index: index }
+      }));
       const { data, error } = await supabase.from('itinerary_flights').insert(inserts).select();
       if (error) throw error;
       return data;
@@ -217,7 +220,8 @@ export const flightApi = {
 // 每日行程相關
 export const daysApi = {
   async save(itineraryId, daysArray) {
-    await supabase.from('itinerary_days').delete().eq('itinerary_id', itineraryId);
+    const { error: deleteError } = await supabase.from('itinerary_days').delete().eq('itinerary_id', itineraryId);
+    if (deleteError) throw deleteError;
     if (daysArray && daysArray.length > 0) {
       const inserts = daysArray.map(d => ({
         itinerary_id: itineraryId,
@@ -235,11 +239,12 @@ export const daysApi = {
 // 嚴選住宿相關
 export const hotelsApi = {
   async save(itineraryId, hotelsArray) {
-    await supabase.from('itinerary_hotels').delete().eq('itinerary_id', itineraryId);
+    const { error: deleteError } = await supabase.from('itinerary_hotels').delete().eq('itinerary_id', itineraryId);
+    if (deleteError) throw deleteError;
     if (hotelsArray && hotelsArray.length > 0) {
-      const inserts = hotelsArray.map(h => ({
+      const inserts = hotelsArray.map((hotel, index) => ({
         itinerary_id: itineraryId,
-        hotel_group_data: h
+        hotel_group_data: { ...hotel, __sort_index: index }
       }));
       const { data, error } = await supabase.from('itinerary_hotels').insert(inserts).select();
       if (error) throw error;

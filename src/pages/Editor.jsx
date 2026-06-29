@@ -28,6 +28,32 @@ import FormMap from '../components/FormMap';
 import FormNotices from '../components/FormNotices';
 import FormRecommended from '../components/FormRecommended';
 import FormCTA from '../components/FormCTA';
+import { DEFAULT_CTA_REGISTER_URL } from '../constants';
+
+const DEFAULT_MODULE_ORDER = ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
+
+const normalizeModuleOrder = (order) => {
+  const normalized = Array.isArray(order)
+    ? order.filter((key, index) => DEFAULT_MODULE_ORDER.includes(key) && order.indexOf(key) === index)
+    : [];
+  DEFAULT_MODULE_ORDER.forEach(key => {
+    if (!normalized.includes(key)) normalized.push(key);
+  });
+  return normalized;
+};
+
+const orderedRelationData = (rows, field) => (Array.isArray(rows) ? [...rows] : [])
+  .sort((a, b) => {
+    const aOrder = Number(a?.[field]?.__sort_index);
+    const bOrder = Number(b?.[field]?.__sort_index);
+    if (Number.isFinite(aOrder) && Number.isFinite(bOrder)) return aOrder - bOrder;
+    return 0;
+  })
+  .map(row => {
+    const value = { ...(row?.[field] || {}) };
+    delete value.__sort_index;
+    return value;
+  });
 
 export default function Editor({ forcedTheme = null }) {
   const { id } = useParams();
@@ -45,7 +71,7 @@ export default function Editor({ forcedTheme = null }) {
     notices: {},
     recommended: {}
   });
-  const [moduleOrder, setModuleOrder] = useState(['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended']);
+  const [moduleOrder, setModuleOrder] = useState(DEFAULT_MODULE_ORDER);
   const [status, setStatus] = useState('草稿');
   const [publishDateNote, setPublishDateNote] = useState('');
   const [flights, setFlights] = useState({});
@@ -84,12 +110,6 @@ export default function Editor({ forcedTheme = null }) {
   const backupSavedKey = `backup_saved_itinerary_${id}`;
 
   useEffect(() => {
-    if (id) {
-      loadData();
-    }
-  }, [id]);
-
-  useEffect(() => {
     if (!loading) {
       if (!hasSkippedInitialBackupRef.current) {
         hasSkippedInitialBackupRef.current = true;
@@ -97,7 +117,17 @@ export default function Editor({ forcedTheme = null }) {
       }
 
       // 1. Local Backup
-      const backupData = { itinerary, flights, days, hotels, cta, timestamp: Date.now() };
+      const backupData = {
+        itinerary,
+        flights,
+        days,
+        hotels,
+        cta,
+        moduleOrder,
+        status,
+        publishDateNote,
+        timestamp: Date.now()
+      };
       localStorage.setItem(backupKey, JSON.stringify(backupData));
 
       // 2. Broadcast changes
@@ -105,32 +135,11 @@ export default function Editor({ forcedTheme = null }) {
         channelRef.current.send({
           type: 'broadcast',
           event: 'UPDATE_DATA',
-          payload: { itinerary, flights, days, hotels, cta }
+          payload: { itinerary, flights, days, hotels, cta, moduleOrder, status, publishDateNote }
         });
       }
     }
-  }, [itinerary, flights, days, hotels, cta, loading, theme]);
-
-  useEffect(() => {
-    if (loading) return;
-
-    if (!hasRenderedInitialPreviewRef.current) {
-      hasRenderedInitialPreviewRef.current = true;
-      updatePreview();
-      return;
-    }
-
-    if (previewVersion !== lastPreviewVersionRef.current) {
-      lastPreviewVersionRef.current = previewVersion;
-      updatePreview();
-      return;
-    }
-
-    if (!autoPreview) return;
-
-    const timer = window.setTimeout(updatePreview, 900);
-    return () => window.clearTimeout(timer);
-  }, [itinerary, flights, days, hotels, cta, loading, theme, autoPreview, previewVersion]);
+  }, [itinerary, flights, days, hotels, cta, moduleOrder, status, publishDateNote, loading, theme, backupKey]);
 
   // Realtime Setup
   useEffect(() => {
@@ -156,12 +165,24 @@ export default function Editor({ forcedTheme = null }) {
 
       channel.on('broadcast', { event: 'UPDATE_DATA' }, payload => {
         isReceivingRef.current = true;
-        const { itinerary: i, flights: f, days: d, hotels: h, cta: c } = payload.payload;
+        const {
+          itinerary: i,
+          flights: f,
+          days: d,
+          hotels: h,
+          cta: c,
+          moduleOrder: order,
+          status: nextStatus,
+          publishDateNote: nextPublishDateNote
+        } = payload.payload;
         if (i) setItinerary(i);
         if (f) setFlights(f);
         if (d) setDays(d);
         if (h) setHotels(h);
         if (c) setCta(c);
+        if (order) setModuleOrder(normalizeModuleOrder(order));
+        if (nextStatus) setStatus(nextStatus);
+        if (nextPublishDateNote !== undefined) setPublishDateNote(nextPublishDateNote);
         setTimeout(() => isReceivingRef.current = false, 500);
       });
 
@@ -181,7 +202,7 @@ export default function Editor({ forcedTheme = null }) {
     };
   }, [id]);
 
-  const loadData = async () => {
+  async function loadData() {
     try {
       const data = await itineraryApi.getById(id);
       if (!forcedTheme && data.config?.theme === 'magazine') {
@@ -198,37 +219,45 @@ export default function Editor({ forcedTheme = null }) {
         map_data: data.map_data || {}
       });
 
-      const defaultOrder = ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
-      let loadedOrder = data.config?.module_order || defaultOrder;
-      loadedOrder = loadedOrder.filter(k => defaultOrder.includes(k));
-      defaultOrder.forEach(k => {
-        if (!loadedOrder.includes(k)) {
-          loadedOrder.push(k);
-        }
-      });
-      setModuleOrder(loadedOrder);
+      setModuleOrder(normalizeModuleOrder(data.config?.module_order));
 
       setStatus(data.status || '草稿');
       setPublishDateNote(data.publish_date_note || '');
 
-      const f_items = data.itinerary_flights ? data.itinerary_flights.map(f => f.flight_data) : [];
-      setFlights({ visible: data.config?.flights_visible !== false, items: f_items });
+      const savedFlightState = data.config?.flightEditorState;
+      const f_items = orderedRelationData(data.itinerary_flights, 'flight_data');
+      setFlights(savedFlightState && typeof savedFlightState === 'object'
+        ? {
+            ...savedFlightState,
+            visible: data.config?.flights_visible !== false,
+            magazine_layout: savedFlightState.magazine_layout || 'auto',
+            items: Array.isArray(savedFlightState.items)
+              ? savedFlightState.items
+              : (savedFlightState.groups || []).flatMap(group => group.items || [])
+          }
+        : {
+            visible: data.config?.flights_visible !== false,
+            title: '',
+            subtitle: '',
+            magazine_layout: 'auto',
+            items: f_items
+          });
 
-      const d_items = data.itinerary_days ? data.itinerary_days.sort((a, b) => a.day_index - b.day_index).map(d => d.content) : [];
+      const d_items = data.itinerary_days ? [...data.itinerary_days].sort((a, b) => a.day_index - b.day_index).map(d => d.content) : [];
       setDays({
         visible: data.config?.days_visible !== false,
         layout: data.config?.daysLayout || 'leftimg',
         items: d_items
       });
 
-      const h_items = data.itinerary_hotels ? data.itinerary_hotels.map(h => h.hotel_group_data) : [];
+      const h_items = orderedRelationData(data.itinerary_hotels, 'hotel_group_data');
       setHotels({ visible: data.config?.hotels_visible !== false, layout: data.config?.hotelLayout || 'overlap', items: h_items });
 
       setCta({
         visible: data.config?.cta_visible !== false,
         title: data.config?.cta_title || '',
         subtitle: data.config?.cta_subtitle || '',
-        cta_register_url: data.config?.cta_register_url || '',
+        cta_register_url: data.config?.cta_register_url || DEFAULT_CTA_REGISTER_URL,
         cta_line_url: data.config?.cta_line_url || ''
       });
 
@@ -249,7 +278,9 @@ export default function Editor({ forcedTheme = null }) {
           if (backup.timestamp && backup.timestamp > dbTime + 10000) {
             setPendingBackup(backup);
           }
-        } catch (e) { }
+        } catch {
+          localStorage.removeItem(backupKey);
+        }
       }
 
     } catch (err) {
@@ -258,7 +289,7 @@ export default function Editor({ forcedTheme = null }) {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleSave = async () => {
     setSaving(true);
@@ -272,6 +303,7 @@ export default function Editor({ forcedTheme = null }) {
         ...baseConfig,
         theme: forcedTheme || theme,
         flights_visible: flights.visible,
+        flightEditorState: flights,
         days_visible: days.visible,
         daysLayout: days.layout || 'leftimg',
         hotels_visible: hotels.visible,
@@ -279,7 +311,7 @@ export default function Editor({ forcedTheme = null }) {
         cta_visible: cta.visible,
         cta_title: cta.title || '',
         cta_subtitle: cta.subtitle || '',
-        cta_register_url: cta.cta_register_url,
+        cta_register_url: cta.cta_register_url || DEFAULT_CTA_REGISTER_URL,
         cta_line_url: cta.cta_line_url,
         module_order: moduleOrder
       };
@@ -299,6 +331,7 @@ export default function Editor({ forcedTheme = null }) {
         publish_date_note: publishDateNote,
         last_modifier_name: user?.name || user?.id || '未知'
       });
+      setBaseConfig(config);
 
       setSaveProgress(40);
       setSaveProgressText('正在儲存航班資訊 (2/5)...');
@@ -351,7 +384,7 @@ export default function Editor({ forcedTheme = null }) {
     }
   };
 
-  const updatePreview = () => {
+  function updatePreview() {
     if (!iframeRef.current) return;
     const engine = theme === 'magazine' ? MagazineEngine : ClassicEngine;
     const html = theme === 'magazine'
@@ -388,7 +421,38 @@ ${html}
     doc.open();
     doc.write(fullDoc);
     doc.close();
-  };
+  }
+
+  useEffect(() => {
+    // Route changes are the single source of truth for loading editor state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (id) loadData();
+    // loadData intentionally runs only when the itinerary route changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    if (!hasRenderedInitialPreviewRef.current) {
+      hasRenderedInitialPreviewRef.current = true;
+      updatePreview();
+      return;
+    }
+
+    if (previewVersion !== lastPreviewVersionRef.current) {
+      lastPreviewVersionRef.current = previewVersion;
+      updatePreview();
+      return;
+    }
+
+    if (!autoPreview) return;
+
+    const timer = window.setTimeout(updatePreview, 900);
+    return () => window.clearTimeout(timer);
+    // updatePreview reads the state values listed below to render the iframe.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itinerary, flights, days, hotels, cta, loading, theme, autoPreview, previewVersion]);
 
   const scrollToIframe = (anchorId) => {
     if (!iframeRef.current) return;
@@ -483,6 +547,9 @@ ${html}
     if (pendingBackup.days) setDays(pendingBackup.days);
     if (pendingBackup.hotels) setHotels(pendingBackup.hotels);
     if (pendingBackup.cta) setCta(pendingBackup.cta);
+    if (pendingBackup.moduleOrder) setModuleOrder(normalizeModuleOrder(pendingBackup.moduleOrder));
+    if (pendingBackup.status) setStatus(pendingBackup.status);
+    if (pendingBackup.publishDateNote !== undefined) setPublishDateNote(pendingBackup.publishDateNote);
     setPendingBackup(null);
   };
 
@@ -496,7 +563,7 @@ ${html}
       const versions = await itineraryApi.getVersions(id);
       setHistoryVersions(versions);
       setShowHistoryModal(true);
-    } catch (err) {
+    } catch {
       alert('無法載入歷史紀錄');
     }
   };
@@ -519,13 +586,14 @@ ${html}
       if (snapshot.publish_date_note !== undefined) setPublishDateNote(snapshot.publish_date_note || '');
       if (snapshot.theme || snapshot.config?.theme) setTheme(snapshot.theme || snapshot.config.theme);
       if (snapshot.config?.module_order) {
-        setModuleOrder(snapshot.config.module_order);
+        setModuleOrder(normalizeModuleOrder(snapshot.config.module_order));
       } else {
-        setModuleOrder(['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'recommended']);
+        setModuleOrder(DEFAULT_MODULE_ORDER);
       }
+      if (snapshot.config) setBaseConfig(snapshot.config);
       setShowHistoryModal(false);
       alert('已還原版本，請記得點擊「儲存變更」以確認覆蓋。');
-    } catch (err) {
+    } catch {
       alert('還原失敗');
     }
   };
@@ -566,7 +634,7 @@ ${html}
       recommended: '推薦行程/更多旅程'
     };
 
-    let formComponent = null;
+    let formComponent;
     switch (key) {
       case 'hero':
         formComponent = <FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} />;
@@ -713,43 +781,6 @@ ${html}
                 <Code size={14} /> 匯出代碼
               </button>
             </div>
-          </div>
-
-          <div className="editor-legacy-header">
-            <div className="flex items-center gap-3">
-              <button className="text-gray-500 hover:text-black transition-colors" onClick={() => navigate('/dashboard')} title="回管理台">
-                <ArrowLeft size={20} />
-              </button>
-              <div>
-                <h2 className="text-lg font-bold text-gray-800 m-0 leading-tight">行程編輯</h2>
-                {isLocked && <span className="text-xs text-red-500 font-bold flex items-center gap-1"><Lock size={12} /> 已上架鎖定中</span>}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {activeUsers.length > 0 && (
-                <div className="flex items-center gap-1 text-xs text-gray-500 mr-2" title="目前在線編輯人員">
-                  <Users size={12} /> {activeUsers.length}人在線
-                </div>
-              )}
-              <button className="btn-outline-gold px-2 py-1" onClick={handleLoadHistory}><History size={16} /></button>
-              <button
-                className="btn-gold flex items-center gap-2 px-4 py-2"
-                onClick={handleSave}
-                disabled={saving || isLocked}
-                style={isLocked ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-              >
-                <Save size={16} /> {saving ? '儲存中...' : (isLocked ? '已鎖定' : '儲存變更')}
-              </button>
-            </div>
-          </div>
-
-          <div className="editor-legacy-theme-strip px-4 py-3 bg-white border-b border-gray-200 flex justify-between items-center z-10 relative">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              {theme === 'magazine' ? <><BookOpen size={14} /> 雜誌風格</> : <><BookOpen size={14} /> 經典風格</>}
-            </div>
-            <button className="btn-outline-gold flex items-center gap-2 px-3 py-1 text-sm" onClick={handleExport}>
-              <Code size={14} /> 匯出代碼
-            </button>
           </div>
 
           {pendingBackup && (

@@ -246,9 +246,7 @@ body {
   position: relative;
 }
 
-.editor-mobile-toolbar,
-.editor-legacy-header,
-.editor-legacy-theme-strip {
+.editor-mobile-toolbar {
   display: none;
 }
 

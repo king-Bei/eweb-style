@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { noticeTemplateApi } from '../api';
-import { Search } from 'lucide-react';
+import NoticeContentEditor from './NoticeContentEditor';
 
 export default function FormNotices({ data = {}, onChange }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
@@ -8,19 +8,19 @@ export default function FormNotices({ data = {}, onChange }) {
   const [templates, setTemplates] = useState([]);
   const [showTemplates, setShowTemplates] = useState(false);
 
-  useEffect(() => {
-    if (showTemplates) {
-      loadTemplates();
-    }
-  }, [showTemplates]);
-
-  const loadTemplates = async () => {
+  async function loadTemplates() {
     try {
       const data = await noticeTemplateApi.getAll();
       setTemplates(data);
     } catch (err) {
       console.error(err);
     }
+  }
+
+  const toggleTemplates = async () => {
+    const shouldOpen = !showTemplates;
+    setShowTemplates(shouldOpen);
+    if (shouldOpen && templates.length === 0) await loadTemplates();
   };
 
   const addItem = () => {
@@ -71,7 +71,7 @@ export default function FormNotices({ data = {}, onChange }) {
 
               <div className="mb-4 flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <span className="text-sm font-bold text-gray-700">🔍 從資料庫匯入注意事項範本</span>
-                <button className="btn-outline-gold px-3 py-1 text-sm flex items-center gap-1" onClick={() => setShowTemplates(!showTemplates)}>
+                <button className="btn-outline-gold px-3 py-1 text-sm flex items-center gap-1" onClick={toggleTemplates}>
                   {showTemplates ? '關閉範本庫' : '展開範本庫'}
                 </button>
               </div>
@@ -98,7 +98,7 @@ export default function FormNotices({ data = {}, onChange }) {
                   <label className="form-label">注意標題</label>
                   <input type="text" className="form-control" value={item.t} onChange={e => updateItem(i, 't', e.target.value)} placeholder="例如: 簽證注意事項" />
                   <label className="form-label">說明內容</label>
-                  <textarea className="form-control" rows={3} value={item.desc} onChange={e => updateItem(i, 'desc', e.target.value)}></textarea>
+                  <NoticeContentEditor value={item.desc} onChange={value => updateItem(i, 'desc', value)} rows={3} />
                 </div>
               ))}
               <button onClick={addItem} className="btn-outline-gold" style={{ width: '100%', padding: '8px' }}>+ 新增注意事項</button>

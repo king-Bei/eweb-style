@@ -1,5 +1,11 @@
 import baseCss from '../public/主題css/sely.css?raw';
 import classicThemeCss from '../public/assets/classic/theme.css?raw';
+import { DEFAULT_CTA_REGISTER_URL } from './constants';
+import { NOTICE_INFO_ICON } from './exportIcons';
+
+const PILL_ICON_STYLE = 'width:1em;height:1em;vertical-align:-0.15em;margin-right:.4em';
+const HOTEL_ICON = `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="${PILL_ICON_STYLE}"><path d="M10 22v-6.57"/><path d="M14 15.43V22"/><path d="M15 16a5 5 0 0 0-6 0"/><path d="M8 7h.01"/><path d="M12 7h.01"/><path d="M16 7h.01"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><rect width="16" height="20" x="4" y="2" rx="2"/></svg>`;
+const MEAL_ICON = `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="${PILL_ICON_STYLE}"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z"/><path d="M21 15v7"/></svg>`;
 
 function formatNoticeDesc(desc) {
   if (!desc) return '';
@@ -108,7 +114,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             const title2Str = (hero_data?.title2 || '').replace(/\n/g, '<br>');
             const descStr = (hero_data?.description || '').replace(/\n/g, '<br>');
 
-            const consultHref = cta?.cta_register_url || 'https://jollifytravel.com/bespoke/';
+            const consultHref = cta?.cta_register_url || DEFAULT_CTA_REGISTER_URL;
             const consultTarget = 'target="_blank"';
             const consultClick = destinationClick;
 
@@ -364,16 +370,16 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                 pillsHtml += `<span class="k-pill k-pill--star">⭐ ${c.image.label}</span>`;
               }
               if (c.stay) {
-                pillsHtml += `<span class="k-pill k-pill--hotel">🏨 ${c.stay}</span>`;
+                pillsHtml += `<span class="k-pill k-pill--hotel">${HOTEL_ICON}<span>${c.stay}</span></span>`;
               }
               if (c.image?.subtitle) {
                 pillsHtml += `<span class="k-pill">🛏️ ${c.image.subtitle}</span>`;
               }
               if (c.meals?.show !== false && c.meals) {
                 const { breakfast, lunch, dinner } = c.meals;
-                if (breakfast) pillsHtml += `<span class="k-pill">🍽️ 早: ${breakfast}</span>`;
-                if (lunch) pillsHtml += `<span class="k-pill">🍽️ 午: ${lunch}</span>`;
-                if (dinner) pillsHtml += `<span class="k-pill">🍽️ 晚: ${dinner}</span>`;
+                if (breakfast) pillsHtml += `<span class="k-pill">${MEAL_ICON}<span>早: ${breakfast}</span></span>`;
+                if (lunch) pillsHtml += `<span class="k-pill">${MEAL_ICON}<span>午: ${lunch}</span></span>`;
+                if (dinner) pillsHtml += `<span class="k-pill">${MEAL_ICON}<span>晚: ${dinner}</span></span>`;
               }
 
               daysHtml += `
@@ -457,7 +463,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             nHtml += `
             <div class="j-accordion-item wow fadeInUp" data-wow-delay="${i * 0.1}s">
               <button class="j-accordion-header" type="button">
-                <span class="j-n-num">${i + 1}</span>
+                <span class="j-n-num">${NOTICE_INFO_ICON}</span>
                 <span class="j-accordion-title">${c.t || ''}</span>
                 <span class="j-accordion-icon"></span>
               </button>
@@ -516,13 +522,14 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
   });
 
   // 10. Floating CTA
-  if (cta?.visible !== false && (cta?.cta_register_url || cta?.cta_line_url)) {
+  const registerUrl = cta?.cta_register_url || DEFAULT_CTA_REGISTER_URL;
+  if (cta?.visible !== false && (registerUrl || cta?.cta_line_url)) {
     html += '<div class="j-floating-cta">';
     if (cta.cta_line_url) {
       html += `<a href="${cta.cta_line_url}" target="_blank" class="j-cta-btn j-cta-line"><img src="/material-alias/Shared_data/LINE.png" alt="LINE" style="width:20px;height:20px;object-fit:contain;" />LINE 客服</a>`;
     }
-    if (cta.cta_register_url) {
-      html += `<a href="${cta.cta_register_url}" target="_blank" ${destinationClick} class="j-cta-btn j-cta-register">我要報名</a>`;
+    if (registerUrl) {
+      html += `<a href="${registerUrl}" target="_blank" ${destinationClick} class="j-cta-btn j-cta-register">我要報名</a>`;
     }
     html += '</div>';
   }
@@ -534,7 +541,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
     html += `<link rel="stylesheet" href="${origin}/assets/classic/theme.css">\n`;
   }
 
-  return html.replace(/https:\/\/jollifytravel\.com/g, '');
+  return html
+    .replace(/https:\/\/jollifytravel\.com/g, '')
+    .replace(/href="\/bespoke\/"/g, `href="${DEFAULT_CTA_REGISTER_URL}"`);
 };
 
 export const generateCss = (theme = 'classic', isExport = false) => {
