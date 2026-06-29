@@ -51,7 +51,8 @@ export default function Settings() {
       fetchTemplates();
     } catch (err) {
       console.error(err);
-      alert('儲存失敗');
+      const detail = [err?.code, err?.message].filter(Boolean).join('：');
+      alert(detail ? `儲存失敗\n${detail}` : '儲存失敗，請檢查資料庫權限');
       setLoading(false);
     }
   };

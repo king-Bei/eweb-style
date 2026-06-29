@@ -469,21 +469,25 @@ export const noticeTemplateApi = {
     return data;
   },
   async save(templateData) {
+    const payload = {
+      title: String(templateData.title || '').trim(),
+      content: String(templateData.content || '').trim(),
+      category: String(templateData.category || '').trim() || null,
+      updated_at: new Date().toISOString()
+    };
     if (templateData.id) {
-      // Update
       const { data, error } = await supabase
         .from('notice_templates')
-        .update({ ...templateData, updated_at: new Date().toISOString() })
+        .update(payload)
         .eq('id', templateData.id)
         .select()
         .single();
       if (error) throw error;
       return data;
     } else {
-      // Insert
       const { data, error } = await supabase
         .from('notice_templates')
-        .insert([templateData])
+        .insert([payload])
         .select()
         .single();
       if (error) throw error;
