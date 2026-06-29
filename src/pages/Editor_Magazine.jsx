@@ -36,7 +36,7 @@ const transitionOptions = [
 
 const transitionCss = `
   .builder-transition { animation-duration: .75s; animation-fill-mode: both; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
-  .builder-image-credit { display: block; margin-top: .35rem; color: #6b7280; font: 400 11px/1.4 Arial, "Microsoft JhengHei", sans-serif; text-align: right; }
+  .builder-image-credit { position: absolute; right: 8px; bottom: 8px; z-index: 30; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 7px; border-radius: 2px; background: rgba(0,0,0,.58); color: #fff; font: 400 10px/1.4 Arial, "Microsoft JhengHei", sans-serif; pointer-events: none; }
   .builder-transition-fade-up { animation-name: builderFadeUp; }
   .builder-transition-slide-left { animation-name: builderSlideLeft; }
   .builder-transition-slide-right { animation-name: builderSlideRight; }
@@ -241,6 +241,7 @@ const decorateImageCredits = (section) => {
     credit.dataset.builderCredit = 'true';
     credit.className = 'builder-image-credit';
     credit.textContent = `圖片來源：${source}`;
+    if (image.parentElement) image.parentElement.style.position = 'relative';
     image.insertAdjacentElement('afterend', credit);
   });
   return section;

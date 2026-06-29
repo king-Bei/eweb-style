@@ -9,8 +9,8 @@ const HOTEL_ICON = `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stro
 const MEAL_ICON = `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="${PILL_ICON_STYLE}"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z"/><path d="M21 15v7"/></svg>`;
 
 const escapeCredit = value => String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const imageCredit = (source, overlay = false) => source
-  ? `<small class="j-image-credit" style="${overlay ? 'position:absolute;right:10px;bottom:10px;z-index:25;background:rgba(0,0,0,.58);color:#fff;padding:3px 7px;border-radius:3px;' : 'display:block;text-align:right;color:#777;margin-top:5px;'}font-size:10px;line-height:1.4;">圖片來源：${escapeCredit(source)}</small>`
+const imageCredit = source => source
+  ? `<small class="j-image-credit" style="position:absolute;right:8px;bottom:8px;z-index:25;max-width:calc(100% - 16px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.58);color:#fff;padding:3px 7px;border-radius:2px;font-size:10px;line-height:1.4;pointer-events:none;">圖片來源：${escapeCredit(source)}</small>`
   : '';
 
 function formatNoticeDesc(desc) {
@@ -174,7 +174,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             } else if (layout === 'card') {
               hlHtml += `
               <div class="j-hl-card-item wow fadeInUp" data-wow-delay="${i * 0.1}s">
-                <div class="j-hl-card-img">
+                <div class="j-hl-card-img" style="position:relative;">
                   ${c.img ? `<img src="${c.img}" alt="${c.title || ''}">${imageCredit(c.image_source)}` : `<div class="j-hl-img-placeholder">✦</div>`}
                 </div>
                 <div class="j-hl-card-info">
@@ -186,7 +186,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               const isRev = i % 2 !== 0 ? 'reverse' : '';
               hlHtml += `
               <div class="j-hl-overlap-item ${isRev} wow fadeInUp">
-                <div class="j-hl-overlap-img">
+                <div class="j-hl-overlap-img" style="position:relative;">
                   ${c.img ? `<img src="${c.img}" alt="${c.title || ''}">${imageCredit(c.image_source)}` : `<div class="j-hl-img-placeholder">✦</div>`}
                 </div>
                 <div class="j-hl-overlap-info">
@@ -218,12 +218,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               });
             }
             if (spotLayout === 'fullimg') {
-              spotHtml += `<div class="j-spot-fullimg wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-fi-img"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-fi-caption">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
+              spotHtml += `<div class="j-spot-fullimg wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-fi-img" style="position:relative;"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-fi-caption">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
             } else if (spotLayout === 'ltr') {
               const isRev = i % 2 !== 0 ? 'reverse' : '';
-              spotHtml += `<div class="j-spot-ltr ${isRev} wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-ltr-img"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-ltr-text">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
+              spotHtml += `<div class="j-spot-ltr ${isRev} wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-ltr-img" style="position:relative;"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-ltr-text">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
             } else {
-              spotHtml += `<div class="j-spot-grid-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-grid-img"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-grid-info">${tagHtml}<h4 class="j-spot-name">${c.name || ''}</h4><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
+              spotHtml += `<div class="j-spot-grid-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-grid-img" style="position:relative;"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-grid-info">${tagHtml}<h4 class="j-spot-name">${c.name || ''}</h4><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
             }
           });
           if (spotHtml) {
@@ -315,9 +315,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           (hotels?.items || []).filter(c => c.visible !== false).forEach((c, i) => {
             if (layout === 'overlap') {
               const isRev = i % 2 !== 0 ? 'reverse' : '';
-              hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name">${c.name || ''}</h3><p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
+              hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name">${c.name || ''}</h3>${c.name_en ? `<div style="margin-top:-6px;margin-bottom:14px;color:#777;font-size:13px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
             } else {
-              hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}<div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4>${c.name || ''}</h4><p>${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
+              hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div style="position:relative;"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4>${c.name || ''}</h4>${c.name_en ? `<div style="margin-top:-5px;margin-bottom:10px;color:#777;font-size:12px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p>${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
             }
           });
           if (hotelHtml) {
@@ -432,7 +432,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               panelsHtml += `
               <div id="panel-${dayNum}" class="day-panel j-day-panel ${act}" style="${sty}">
                   <div class="day-grid j-day-layout-${daysLayout}${hasImg ? '' : ' no-image'}">
-                      ${hasImg ? `<div class="day-image-area">
+                      ${hasImg ? `<div class="day-image-area" style="position:relative;">
                           <div class="day-stamp">${c.image?.label || ''}</div>
                           <img src="${c.image?.url}" alt="Day ${dayNum}">
                           ${imageCredit(c.image?.source)}
@@ -502,7 +502,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
       <span class="j-badge">Route Map</span>
       <h2>${mapTitle}</h2>
     </div>
-    <div class="j-map-img-box wow fadeInUp" style="width: 100%; max-width: 100%;">
+    <div class="j-map-img-box wow fadeInUp" style="position:relative;width:100%;max-width:1200px;margin:0 auto;">
       <img
         src="${mapUrl}"
         alt="${mapTitle}"

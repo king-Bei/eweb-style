@@ -1,6 +1,7 @@
 -- 景點資料庫：可在 Supabase SQL Editor 獨立重複執行。
 CREATE TABLE IF NOT EXISTS spot_templates (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    country_code text,
     country_zh text NOT NULL,
     country_en text,
     city_zh text,
@@ -14,6 +15,8 @@ CREATE TABLE IF NOT EXISTS spot_templates (
     updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
     CONSTRAINT spot_templates_country_name_unique UNIQUE (country_zh, name_zh)
 );
+
+ALTER TABLE spot_templates ADD COLUMN IF NOT EXISTS country_code text;
 
 CREATE INDEX IF NOT EXISTS spot_templates_country_zh_idx ON spot_templates (country_zh);
 CREATE INDEX IF NOT EXISTS spot_templates_name_zh_idx ON spot_templates (name_zh);

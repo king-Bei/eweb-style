@@ -300,7 +300,9 @@ export const spotTemplateApi = {
     if (keyword) {
       request = request.or(`name_zh.ilike.%${keyword}%,name_en.ilike.%${keyword}%,city_zh.ilike.%${keyword}%,tag.ilike.%${keyword}%`);
     }
-    if (countryKeyword) request = request.ilike('country_zh', `%${countryKeyword}%`);
+    if (countryKeyword) {
+      request = request.or(`country_code.ilike.%${countryKeyword.toUpperCase()}%,country_zh.ilike.%${countryKeyword}%,country_en.ilike.%${countryKeyword}%`);
+    }
 
     const { data, error } = await request.limit(20);
     if (error) throw error;
@@ -308,12 +310,15 @@ export const spotTemplateApi = {
   },
 
   async save(spot) {
+    const countryCode = String(spot.country_code || '').trim().toUpperCase();
     const countryZh = String(spot.country_zh || spot.country || '').trim();
     const nameZh = String(spot.name_zh || spot.name || '').trim();
+    if (!countryCode) throw new Error('請先輸入國家代碼');
     if (!countryZh) throw new Error('請先輸入國家');
     if (!nameZh) throw new Error('請先輸入景點名稱');
 
     const payload = {
+      country_code: countryCode,
       country_zh: countryZh,
       country_en: String(spot.country_en || '').trim() || null,
       city_zh: String(spot.city_zh || '').trim() || null,
@@ -331,6 +336,74 @@ export const spotTemplateApi = {
       .upsert(payload, { onConflict: 'country_zh,name_zh' })
       .select()
       .single();
+    if (error) throw error;
+    return data;
+  }
+};
+
+// 飯店資料庫 (Hotel Templates) 相關
+export const hotelTemplateApi = {
+  async search(query = '', country = '') {
+    const keyword = String(query).trim().replace(/[(),]/g, ' ');
+    const countryKeyword = String(country).trim().replace(/[(),]/g, ' ');
+    if (!keyword && !countryKeyword) return [];
+
+    let request = supabase
+      .from('hotel_templates')
+      .select('*')
+      .order('country_code', { ascending: true })
+      .order('name_zh', { ascending: true });
+    if (keyword) {
+      request = request.or(`name_zh.ilike.%${keyword}%,name_en.ilike.%${keyword}%,city_zh.ilike.%${keyword}%,description.ilike.%${keyword}%`);
+    }
+    if (countryKeyword) {
+      request = request.or(`country_code.ilike.%${countryKeyword.toUpperCase()}%,country_zh.ilike.%${countryKeyword}%,country_en.ilike.%${countryKeyword}%`);
+    }
+
+    const { data, error } = await request.limit(20);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async save(hotel) {
+    const countryCode = String(hotel.country_code || '').trim().toUpperCase();
+    const nameZh = String(hotel.name_zh || hotel.name || '').trim();
+    if (!countryCode) throw new Error('請先輸入國家代碼');
+    if (!nameZh) throw new Error('請先輸入飯店名稱');
+
+    const payload = {
+      country_code: countryCode,
+      country_zh: String(hotel.country_zh || hotel.country || '').trim() || null,
+      country_en: String(hotel.country_en || '').trim() || null,
+      city_zh: String(hotel.city_zh || '').trim() || null,
+      name_zh: nameZh,
+      name_en: String(hotel.name_en || '').trim() || null,
+      stars: String(hotel.stars || '').trim() || null,
+      description: String(hotel.desc || hotel.description || '').trim() || null,
+      image_url: String(hotel.img || hotel.image_url || '').trim() || null,
+      image_source: String(hotel.image_source || '').trim() || null,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('hotel_templates')
+      .upsert(payload, { onConflict: 'country_code,name_zh' })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+};
+
+// 既有國家資料表
+export const countryCodeApi = {
+  async get(code) {
+    if (!code) return null;
+    const { data, error } = await supabase
+      .from('countries')
+      .select('*')
+      .eq('code', code.trim().toUpperCase())
+      .maybeSingle();
     if (error) throw error;
     return data;
   }

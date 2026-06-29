@@ -1,5 +1,6 @@
 import React from 'react';
 import ImageAttributionInput from './ImageAttributionInput';
+import CountryCodeFields from './CountryCodeFields';
 import { spotTemplateApi } from '../api';
 import { Database, Plus, Save, Search } from 'lucide-react';
 
@@ -13,7 +14,7 @@ export default function FormSpots({ data = {}, onChange }) {
   const [isSearching, setIsSearching] = React.useState(false);
 
   const addItem = () => {
-    onChange({ ...data, items: [...items, { visible: true, country: '', country_en: '', city_zh: '', name: '', name_en: '', img: '', image_source: '', desc: '', tag: '' }] });
+    onChange({ ...data, items: [...items, { visible: true, country_code: '', country: '', country_en: '', city_zh: '', name: '', name_en: '', img: '', image_source: '', desc: '', tag: '' }] });
   };
 
   const updateItem = (index, field, value) => {
@@ -28,7 +29,7 @@ export default function FormSpots({ data = {}, onChange }) {
   };
 
   const databaseErrorMessage = error => error?.code === 'PGRST205' || error?.code === '42P01'
-    ? '尚未建立景點資料庫，請先在 Supabase 執行 supabase-spot-templates.sql。'
+    ? '尚未建立旅遊資料庫，請先在 Supabase 執行 supabase-travel-library.sql。'
     : (error?.message || '景點資料庫操作失敗');
 
   const searchDatabase = async () => {
@@ -49,6 +50,7 @@ export default function FormSpots({ data = {}, onChange }) {
   const addFromDatabase = template => {
     const item = {
       visible: true,
+      country_code: template.country_code || '',
       country: template.country_zh || '',
       country_en: template.country_en || '',
       city_zh: template.city_zh || '',
@@ -104,11 +106,11 @@ export default function FormSpots({ data = {}, onChange }) {
                 <div className="grid grid-cols-1 gap-2 md:grid-cols-[160px_1fr_auto]">
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control uppercase"
                     style={{ marginBottom: 0 }}
                     value={searchCountry}
-                    onChange={e => setSearchCountry(e.target.value)}
-                    placeholder="國家，例如：日本"
+                    onChange={e => setSearchCountry(e.target.value.toUpperCase())}
+                    placeholder="國家代碼，例如：JP"
                   />
                   <input
                     type="search"
@@ -129,7 +131,7 @@ export default function FormSpots({ data = {}, onChange }) {
                       <div key={result.id} className="flex items-center gap-3 p-3">
                         <div className="min-w-0 flex-1">
                           <strong className="block truncate text-sm text-gray-800">{result.name_zh}{result.name_en ? ` / ${result.name_en}` : ''}</strong>
-                          <span className="text-xs text-gray-500">{[result.country_zh, result.city_zh, result.tag].filter(Boolean).join(' · ')}</span>
+                          <span className="text-xs text-gray-500">{[result.country_code, result.country_zh, result.city_zh, result.tag].filter(Boolean).join(' · ')}</span>
                         </div>
                         <button type="button" className="btn-outline-gold flex items-center gap-1 px-2 py-1 text-xs" onClick={() => addFromDatabase(result)}>
                           <Plus size={13} /> 加入
@@ -157,14 +159,13 @@ export default function FormSpots({ data = {}, onChange }) {
                     顯示此景點
                   </label>
                   <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="form-label">國家（必填）</label>
-                      <input type="text" className="form-control" value={item.country || ''} onChange={e => updateItem(i, 'country', e.target.value)} placeholder="例如：日本" />
-                    </div>
-                    <div>
-                      <label className="form-label">國家英文</label>
-                      <input type="text" className="form-control" value={item.country_en || ''} onChange={e => updateItem(i, 'country_en', e.target.value)} placeholder="Japan" />
-                    </div>
+                    <CountryCodeFields
+                      value={item}
+                      onChange={updates => {
+                        const nextItems = items.map((current, index) => index === i ? { ...current, ...updates } : current);
+                        onChange({ ...data, items: nextItems });
+                      }}
+                    />
                     <div>
                       <label className="form-label">城市／地區</label>
                       <input type="text" className="form-control" value={item.city_zh || ''} onChange={e => updateItem(i, 'city_zh', e.target.value)} placeholder="例如：京都" />
