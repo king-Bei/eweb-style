@@ -284,6 +284,58 @@ export const flightTemplateApi = {
   }
 };
 
+// 景點資料庫 (Spot Templates) 相關
+export const spotTemplateApi = {
+  async search(query = '', country = '') {
+    const keyword = String(query).trim().replace(/[(),]/g, ' ');
+    const countryKeyword = String(country).trim().replace(/[(),]/g, ' ');
+    if (!keyword && !countryKeyword) return [];
+
+    let request = supabase
+      .from('spot_templates')
+      .select('*')
+      .order('country_zh', { ascending: true })
+      .order('name_zh', { ascending: true });
+
+    if (keyword) {
+      request = request.or(`name_zh.ilike.%${keyword}%,name_en.ilike.%${keyword}%,city_zh.ilike.%${keyword}%,tag.ilike.%${keyword}%`);
+    }
+    if (countryKeyword) request = request.ilike('country_zh', `%${countryKeyword}%`);
+
+    const { data, error } = await request.limit(20);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async save(spot) {
+    const countryZh = String(spot.country_zh || spot.country || '').trim();
+    const nameZh = String(spot.name_zh || spot.name || '').trim();
+    if (!countryZh) throw new Error('請先輸入國家');
+    if (!nameZh) throw new Error('請先輸入景點名稱');
+
+    const payload = {
+      country_zh: countryZh,
+      country_en: String(spot.country_en || '').trim() || null,
+      city_zh: String(spot.city_zh || '').trim() || null,
+      name_zh: nameZh,
+      name_en: String(spot.name_en || '').trim() || null,
+      description: String(spot.desc || spot.description || '').trim() || null,
+      tag: String(spot.tag || '').trim() || null,
+      image_url: String(spot.img || spot.image_url || '').trim() || null,
+      image_source: String(spot.image_source || '').trim() || null,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('spot_templates')
+      .upsert(payload, { onConflict: 'country_zh,name_zh' })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+};
+
 // 航空公司 / 城市代碼字典
 export const codeLookupApi = {
   async getAirline(code) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import ImageAttributionInput from './ImageAttributionInput';
 
 export default function FormMap({ data = {}, onChange }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
@@ -36,6 +37,7 @@ export default function FormMap({ data = {}, onChange }) {
             onChange={e => onChange({ ...data, embed_url: e.target.value })}
             placeholder="https://example.com/images/map.jpg"
           />
+          <ImageAttributionInput value={data.image_source || ''} onChange={image_source => onChange({ ...data, image_source })} />
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 
 import { DEFAULT_CTA_REGISTER_URL } from './constants';
 import { NOTICE_INFO_ICON } from './exportIcons';
+import { prepareHtmlImagesForPreview } from './utils/imageUrls';
 
 function formatNoticeDesc(desc) {
   if (!desc) return '';
@@ -1066,11 +1067,17 @@ export const generateJs = () => {
 
 export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const highlights = itinerary?.highlights;
+  const spots = itinerary?.spots;
   const recommended = itinerary?.recommended;
+  const visibleFlights = (flights?.items || []).filter(item => item.visible !== false);
+  const visibleHighlights = (highlights?.items || []).filter(item => item.visible !== false);
+  const visibleSpots = (spots?.items || []).filter(item => item.visible !== false);
+  const visibleHotels = (hotels?.items || []).filter(item => item.visible !== false);
 
   // ── Helpers ───────────────────────────────────────────────────
   const esc = (v) => (v == null ? '' : String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
   const safe = (v, fallback = '') => v != null && v !== '' ? v : fallback;
+  const imageCredit = source => source ? `<small class="absolute right-3 bottom-3 z-30 rounded-sm bg-black/60 px-2 py-1 font-sans text-[10px] leading-tight text-white">圖片來源：${esc(source)}</small>` : '';
   const destinationTitle = String(itinerary?.hero_data?.title1 || itinerary?.title || '').trim();
   const destinationValue = JSON.stringify(destinationTitle)
     .replace(/&/g, '&amp;')
@@ -1085,7 +1092,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
 
   // ── Flights HTML ───────────────────────────────────────────────
   let flightsHtml = '';
-  if (flights?.visible !== false && flights?.items?.length) {
+  if (flights?.visible !== false && visibleFlights.length) {
     const citynames = {
       TPE: 'TAIPEI', TSA: 'TAIPEI', KHH: 'KAOHSIUNG', RMQ: 'TAICHUNG',
       HAN: 'HANOI', SGN: 'HO CHI MINH', DAD: 'DA NANG', CXR: 'NHA TRANG', PQC: 'PHU QUOC',
@@ -1135,7 +1142,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       return '航班方案';
     };
     const flightGroups = [];
-    (flights.items || []).forEach((flight) => {
+    visibleFlights.forEach((flight) => {
       if (isReturnFlight(flight)) {
         const flightCode = String(flight.airline_code || '').trim().toUpperCase();
         const flightZh = String(flight.airline_name_zh || '').trim().toUpperCase();
@@ -1192,10 +1199,10 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
         </div>`;
     }).join('');
     const renderMultiSegment = () => {
-      const lead = flights.items[0] || {};
+      const lead = visibleFlights[0] || {};
       const code = String(lead.airline_code || '').toUpperCase();
-      const outboundSegments = flights.items.filter(f => !isReturnFlight(f));
-      const inboundSegments = flights.items.filter(f => isReturnFlight(f));
+      const outboundSegments = visibleFlights.filter(f => !isReturnFlight(f));
+      const inboundSegments = visibleFlights.filter(f => isReturnFlight(f));
       const route = [
         codeOf(outboundSegments[0] || lead, 'dep'),
         codeOf((outboundSegments[outboundSegments.length - 1] || lead), 'arr')
@@ -1232,13 +1239,13 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
             </div>
           </div>
           <div class="flight-direction-grid">
-            ${renderColumn('去程航段', 'Outbound Segments', outboundSegments.length ? outboundSegments : flights.items.slice(0, Math.ceil(flights.items.length / 2)), 'outbound')}
-            ${renderColumn('回程航段', 'Return Segments', inboundSegments.length ? inboundSegments : flights.items.slice(Math.ceil(flights.items.length / 2)), 'inbound')}
+            ${renderColumn('去程航段', 'Outbound Segments', outboundSegments.length ? outboundSegments : visibleFlights.slice(0, Math.ceil(visibleFlights.length / 2)), 'outbound')}
+            ${renderColumn('回程航段', 'Return Segments', inboundSegments.length ? inboundSegments : visibleFlights.slice(Math.ceil(visibleFlights.length / 2)), 'inbound')}
           </div>
         </div>`;
     };
     const renderConnectionChain = () => {
-      const rows = flights.items.map((f, i) => {
+      const rows = visibleFlights.map((f, i) => {
         const domestic = String(f?.tag || '').includes('國內') || String(f?.tag || '').includes('中段');
         return `
           <div class="connection-step ${domestic ? 'domestic' : ''}">
@@ -1257,11 +1264,11 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <div class="connection-chain">${rows}</div>
         </div>`;
     };
-    const sameAirlineCount = new Set((flights.items || []).map(f => String(f.airline_code || '').toUpperCase()).filter(Boolean)).size;
+    const sameAirlineCount = new Set(visibleFlights.map(f => String(f.airline_code || '').toUpperCase()).filter(Boolean)).size;
     const requestedLayout = flights.magazine_layout || 'auto';
     const resolvedLayout = requestedLayout !== 'auto'
       ? requestedLayout
-      : ((flights.items.length >= 4 && sameAirlineCount <= 1) ? 'multi_segment' : (flights.items.length <= 2 ? 'roundtrip_card' : 'domestic_connection'));
+      : ((visibleFlights.length >= 4 && sameAirlineCount <= 1) ? 'multi_segment' : (visibleFlights.length <= 2 ? 'roundtrip_card' : 'domestic_connection'));
     const cards = resolvedLayout === 'multi_segment'
       ? renderMultiSegment()
       : resolvedLayout === 'domestic_connection'
@@ -1286,8 +1293,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
 
   // ── Features HTML (Highlights) ─────────────────────────────────
   let featuresHtml = '';
-  if (highlights?.visible !== false && highlights?.items?.length) {
-    const cards = highlights.items.map((c, i) => `
+  if (highlights?.visible !== false && visibleHighlights.length) {
+    const cards = visibleHighlights.map((c, i) => `
       <div class="bg-white p-8 border border-jollify-purple/10 shadow-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
         <div class="w-12 h-12 bg-jollify-purple/10 text-jollify-purple flex items-center justify-center rounded-full mb-6">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
@@ -1309,6 +1316,35 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           ${cards}
         </div>
+      </div>
+    </section>`;
+  }
+
+  // ── Scenic spots HTML ─────────────────────────────────────────
+  let spotsHtml = '';
+  if (spots?.visible !== false && visibleSpots.length) {
+    const cards = visibleSpots.map((spot, i) => `
+      <article class="bg-white border border-jollify-purple/10 shadow-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
+        <div class="relative h-64 overflow-hidden">
+          <img src="${esc(spot.img || '')}" alt="${esc(spot.name || '精選景點')}" class="w-full h-full object-cover img-elegant">
+          ${imageCredit(spot.image_source)}
+        </div>
+        <div class="p-7">
+          ${spot.tag ? `<p class="text-jollify-gold text-xs tracking-[0.2em] font-sans font-bold mb-3">${esc(spot.tag)}</p>` : ''}
+          <h3 class="text-2xl font-serif font-bold text-jollify-purple-dark mb-3">${esc(spot.name || '')}</h3>
+          <p class="text-jollify-gray font-sans text-sm leading-relaxed">${esc(spot.desc || '')}</p>
+        </div>
+      </article>
+    `).join('');
+    spotsHtml = `
+    <section id="page-spots" class="magazine-section bg-jollify-cream" data-title="精選景點">
+      <div class="max-w-6xl mx-auto w-full relative z-10 px-4 md:px-8 py-16">
+        <div class="text-center mb-14 animate-trigger">
+          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">SCENIC SPOTS</p>
+          <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">${esc(spots.title || '精選景點 ‧ 探索之美')}</h2>
+          <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">${cards}</div>
       </div>
     </section>`;
   }
@@ -1390,6 +1426,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       <div class="flex ${imgSide} w-full h-full min-h-screen">
         <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger ${imgAnim}">
           <img src="${esc(img)}" alt="Day ${i + 1}" class="w-full h-full object-cover img-elegant">
+          ${imageCredit(day.image?.source)}
           <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/40 to-transparent"></div>
           <span class="absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans ${tagBg} px-4 py-2 backdrop-blur-md">${imgLabel}</span>
         </div>
@@ -1412,8 +1449,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
 
   // ── Hotels HTML ────────────────────────────────────────────────
   let hotelsHtml = '';
-  if (hotels?.visible !== false && hotels?.items?.length) {
-    hotelsHtml = hotels.items.map((hotel, i) => {
+  if (hotels?.visible !== false && visibleHotels.length) {
+    hotelsHtml = visibleHotels.map((hotel, i) => {
       const pageNum = i + 4 + (days?.items?.length || 0);
       const isDark = (i % 2 !== 0);
       const bg = isDark ? 'bg-jollify-dark text-white' : 'bg-jollify-cream text-jollify-dark';
@@ -1424,8 +1461,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       const layout = (i % 2 === 0) ? 'flex-col md:flex-row' : 'flex-col md:flex-row-reverse';
       const imgAnim = (i % 2 === 0) ? 'slide-right' : 'slide-left';
       const txtAnim = (i % 2 === 0) ? 'slide-left' : 'slide-right';
-      const img = hotel.image || 'https://images.unsplash.com/photo-1542314831-c6a420808643?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
-      const desc = (hotel.description || '').replace(/\n/g, '<br>');
+      const img = hotel.image || hotel.img || 'https://images.unsplash.com/photo-1542314831-c6a420808643?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
+      const desc = (hotel.description || hotel.desc || '').replace(/\n/g, '<br>');
       const linkHtml = hotel.link ? `<a href="${esc(hotel.link)}" target="_blank" class="inline-flex items-center gap-3 text-xs tracking-[0.2em] ${accentColor} transition-colors font-semibold uppercase mt-8">探索飯店 →</a>` : '';
       return `
     <section id="page-${pageNum}" class="magazine-section ${bg}" data-title="${esc((hotel.name || '旅宿').substring(0, 8))}">
@@ -1434,6 +1471,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <div class="relative group">
             <div class="absolute inset-0 translate-x-4 translate-y-4 border ${borderColor} z-0 transition-transform group-hover:translate-x-6 group-hover:translate-y-6"></div>
             <img src="${esc(img)}" class="relative z-10 w-full h-[50vh] md:h-[70vh] object-cover shadow-2xl img-elegant">
+            ${imageCredit(hotel.image_source)}
           </div>
         </div>
         <div class="w-full md:w-1/2 animate-trigger ${txtAnim} delay-300">
@@ -1492,6 +1530,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     const rCards = recommended.items.map((c, i) => `
       <a href="${esc(c.link || '#')}" target="_blank" class="block group relative overflow-hidden h-64 md:h-80 w-full rounded-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
         <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image:url('${esc(c.img || '')}')"></div>
+        ${imageCredit(c.image_source)}
         <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/90 via-jollify-dark/40 to-transparent"></div>
         <div class="absolute bottom-6 left-6 right-6">
           <h5 class="text-white font-serif font-bold text-xl md:text-2xl mb-2 line-clamp-2">${esc(c.t || c.title || '')}</h5>
@@ -1546,7 +1585,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       <a href="${esc(registerUrl)}" target="_blank" ${destinationClick} class="flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl hover:scale-105 font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>
     </div>` : '';
 
-  return `
+  return prepareHtmlImagesForPreview(`
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1582,6 +1621,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     <section id="page-1" class="magazine-section p-0 m-0 h-screen w-full relative bg-jollify-dark" data-title="封面導引">
       <div class="absolute inset-0 z-0">
         <img src="${esc(safe(itinerary?.hero_data?.image, 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'))}" alt="Cover" class="w-full h-full object-cover img-elegant opacity-50">
+        ${imageCredit(itinerary?.hero_data?.image_source)}
       </div>
       <div class="absolute inset-0 bg-gradient-to-b from-jollify-dark/80 via-transparent to-jollify-dark/95 z-10"></div>
       <div class="absolute inset-8 border border-jollify-gold/25 pointer-events-none z-20 hidden md:block"></div>
@@ -1608,6 +1648,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
 
     ${flightsHtml}
     ${featuresHtml}
+    ${spotsHtml}
     ${highlightsHtml}
     ${daysDetailHtml}
     ${hotelsHtml}
@@ -1616,5 +1657,5 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     ${ctaSection}
 
     </div>
-  `.replace(/https:\/\/jollifytravel\.com/g, '');
+  `);
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import ImageAttributionInput from './ImageAttributionInput';
 
 export default function FormHero({ heroData = {}, onChange }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
@@ -40,6 +41,7 @@ export default function FormHero({ heroData = {}, onChange }) {
 
               <label className="form-label" style={{ color: 'white' }}>封面圖片網址</label>
               <input type="text" name="image" className="form-control" value={heroData.image || ''} onChange={handleChange} placeholder="https://" />
+              <ImageAttributionInput value={heroData.image_source || ''} onChange={image_source => onChange({ ...heroData, image_source })} />
 
               <label className="form-label" style={{ color: 'white' }}>宣傳標籤 (Tags，每行一個)</label>
               <textarea name="tags" className="form-control" rows={4} value={heroData.tags || ''} onChange={handleChange} placeholder="入住 AYANA 系列五星度假村&#10;科摩多巨蜥近距離探訪" />

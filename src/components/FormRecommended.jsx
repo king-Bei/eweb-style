@@ -1,11 +1,12 @@
 import React from 'react';
+import ImageAttributionInput from './ImageAttributionInput';
 
 export default function FormRecommended({ data = {}, onChange }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
   const items = data.items || [];
 
   const addItem = () => {
-    onChange({ ...data, items: [...items, { t: '', img: '', link: '' }] });
+    onChange({ ...data, items: [...items, { t: '', img: '', image_source: '', link: '' }] });
   };
 
   const updateItem = (index, field, value) => {
@@ -44,6 +45,7 @@ export default function FormRecommended({ data = {}, onChange }) {
                     <div>
                       <label className="form-label">圖片網址</label>
                       <input type="text" className="form-control" value={item.img} onChange={e => updateItem(i, 'img', e.target.value)} />
+                      <ImageAttributionInput value={item.image_source || ''} onChange={value => updateItem(i, 'image_source', value)} />
                     </div>
                     <div>
                       <label className="form-label">連結網址</label>

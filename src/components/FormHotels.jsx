@@ -1,4 +1,5 @@
 import React from 'react';
+import ImageAttributionInput from './ImageAttributionInput';
 
 export default function FormHotels({ data = {}, onChange }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
@@ -6,7 +7,7 @@ export default function FormHotels({ data = {}, onChange }) {
   const layout = data.layout || 'overlap';
 
   const addItem = () => {
-    onChange({ ...data, items: [...items, { img: '', stars: '★★★★★', name: '', desc: '' }] });
+    onChange({ ...data, items: [...items, { visible: true, img: '', image_source: '', stars: '★★★★★', name: '', desc: '' }] });
   };
 
   const updateItem = (index, field, value) => {
@@ -55,8 +56,12 @@ export default function FormHotels({ data = {}, onChange }) {
               </div>
 
               {items.map((item, i) => (
-                <div key={i} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
+                <div key={i} className={item.visible === false ? 'opacity-50' : ''} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
                   <button onClick={() => removeItem(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer' }}>✖</button>
+                  <label className="flex items-center gap-2 mb-3 text-sm font-bold text-gray-700 w-fit cursor-pointer">
+                    <input type="checkbox" checked={item.visible !== false} onChange={e => updateItem(i, 'visible', e.target.checked)} />
+                    顯示此住宿
+                  </label>
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     <div className="col-span-2">
                       <label className="form-label text-xs">飯店名稱</label>
@@ -69,6 +74,7 @@ export default function FormHotels({ data = {}, onChange }) {
                     <div className="col-span-2">
                       <label className="form-label text-xs">圖片網址</label>
                       <input type="text" className="form-control" value={item.img} onChange={e => updateItem(i, 'img', e.target.value)} />
+                      <ImageAttributionInput value={item.image_source || ''} onChange={value => updateItem(i, 'image_source', value)} />
                     </div>
                     <div className="col-span-2">
                       <label className="form-label text-xs">介紹文字</label>

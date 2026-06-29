@@ -1,4 +1,5 @@
 import React from 'react';
+import ImageAttributionInput from './ImageAttributionInput';
 
 export default function FormDays({ data = {}, onChange }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
@@ -13,7 +14,7 @@ export default function FormDays({ data = {}, onChange }) {
           route: '',
           title: '',
           lead: '',
-          image: { url: '', label: '', subtitle: '' },
+          image: { url: '', source: '', label: '', subtitle: '' },
           points: '',
           meals: { breakfast: '', lunch: '', dinner: '' },
           stay: ''
@@ -117,6 +118,7 @@ export default function FormDays({ data = {}, onChange }) {
                       <div className="grid grid-cols-2 gap-2">
                         <div className="col-span-2">
                           <input type="text" className="form-control text-sm" value={item.image?.url || ''} onChange={e => updateItem(i, 'image.url', e.target.value)} placeholder="圖片網址" />
+                          <ImageAttributionInput value={item.image?.source || ''} onChange={value => updateItem(i, 'image.source', value)} />
                         </div>
                         <div>
                           <input type="text" className="form-control text-sm" value={item.image?.label || ''} onChange={e => updateItem(i, 'image.label', e.target.value)} placeholder="圖片大標籤 (如: FIRST DAY)" />

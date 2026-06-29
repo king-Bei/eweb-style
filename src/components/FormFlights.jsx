@@ -3,6 +3,7 @@ import { codeLookupApi, flightTemplateApi } from '../api';
 import { Search, Save, Plus, ChevronDown, ChevronRight, Trash2 } from 'lucide-react';
 
 const EMPTY_FLIGHT = {
+  visible: true,
   tag: '去程',
   airline_code: '',
   airline_name_zh: '',
@@ -557,6 +558,7 @@ export default function FormFlights({ data = {}, onChange, theme = 'classic' }) 
                           <table className="w-full text-left text-sm whitespace-nowrap mb-3 border-collapse">
                             <thead>
                               <tr className="bg-gray-100 text-gray-700">
+                                <th className="p-2 border border-gray-200 font-bold text-center" style={{ minWidth: '58px' }}>顯示</th>
                                 <th className="p-2 border border-gray-200 font-bold" style={{ minWidth: '60px' }}>航代</th>
                                 <th className="p-2 border border-gray-200 font-bold">中/英航空</th>
                                 <th className="p-2 border border-gray-200 font-bold">航班號</th>
@@ -569,7 +571,15 @@ export default function FormFlights({ data = {}, onChange, theme = 'classic' }) 
                             </thead>
                             <tbody>
                               {group.items.map((item, ii) => (
-                                <tr key={ii} className="hover:bg-gray-50">
+                                <tr key={ii} className={`hover:bg-gray-50 ${item.visible === false ? 'opacity-50' : ''}`}>
+                                  <td className="p-2 border border-gray-200 text-center">
+                                    <input
+                                      type="checkbox"
+                                      checked={item.visible !== false}
+                                      onChange={e => updateItem(gi, ii, 'visible', e.target.checked)}
+                                      title="是否在預覽與輸出中顯示此航段"
+                                    />
+                                  </td>
                                   <td className="p-2 border border-gray-200">
                                     <input
                                       type="text"

@@ -29,6 +29,8 @@ import FormNotices from '../components/FormNotices';
 import FormRecommended from '../components/FormRecommended';
 import FormCTA from '../components/FormCTA';
 import { DEFAULT_CTA_REGISTER_URL } from '../constants';
+import useUnsavedChangesWarning from '../hooks/useUnsavedChangesWarning';
+import { prepareHtmlImagesForKowei, toPreviewImageUrl } from '../utils/imageUrls';
 
 const DEFAULT_MODULE_ORDER = ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
 
@@ -55,12 +57,26 @@ const orderedRelationData = (rows, field) => (Array.isArray(rows) ? [...rows] : 
     return value;
   });
 
+const serializeEditorState = ({ itinerary, flights, days, hotels, cta, moduleOrder, status, publishDateNote, theme }) => JSON.stringify({
+  itinerary,
+  flights,
+  days,
+  hotels,
+  cta,
+  moduleOrder,
+  status,
+  publishDateNote,
+  theme
+});
+
 export default function Editor({ forcedTheme = null }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const iframeRef = useRef(null);
+  const savedSnapshotRef = useRef(null);
 
   // State for itinerary data
   const [itinerary, setItinerary] = useState({
@@ -108,6 +124,18 @@ export default function Editor({ forcedTheme = null }) {
   const lastPreviewVersionRef = useRef(0);
   const backupKey = `backup_itinerary_${id}`;
   const backupSavedKey = `backup_saved_itinerary_${id}`;
+  useUnsavedChangesWarning(isDirty);
+  const currentSnapshot = serializeEditorState({
+    itinerary,
+    flights,
+    days,
+    hotels,
+    cta,
+    moduleOrder,
+    status,
+    publishDateNote,
+    theme
+  });
 
   useEffect(() => {
     if (!loading) {
@@ -140,6 +168,16 @@ export default function Editor({ forcedTheme = null }) {
       }
     }
   }, [itinerary, flights, days, hotels, cta, moduleOrder, status, publishDateNote, loading, theme, backupKey]);
+
+  useEffect(() => {
+    if (loading) return;
+    if (savedSnapshotRef.current === null) {
+      savedSnapshotRef.current = currentSnapshot;
+      setIsDirty(false);
+      return;
+    }
+    setIsDirty(currentSnapshot !== savedSnapshotRef.current);
+  }, [currentSnapshot, loading]);
 
   // Realtime Setup
   useEffect(() => {
@@ -369,6 +407,8 @@ export default function Editor({ forcedTheme = null }) {
       localStorage.setItem(backupSavedKey, String(Date.now()));
       localStorage.removeItem(backupKey);
       setPendingBackup(null);
+      savedSnapshotRef.current = currentSnapshot;
+      setIsDirty(false);
 
       setTimeout(() => {
         setShowSaveProgress(false);
@@ -479,19 +519,20 @@ ${html}
 
   const handleExport = () => {
     const engine = theme === 'magazine' ? MagazineEngine : ClassicEngine;
+    const generatedHtml = theme === 'classic'
+      ? engine.generateHtml(itinerary, flights, days, hotels, cta, '', moduleOrder)
+      : engine.generateHtml(itinerary, flights, days, hotels, cta);
 
     let headPreloads = '';
-    if (itinerary.hero_data?.image_url) {
-      headPreloads += `<link rel="preload" as="image" href="${itinerary.hero_data.image_url}">\n`;
+    if (itinerary.hero_data?.image) {
+      headPreloads += `<link rel="preload" as="image" href="${toPreviewImageUrl(itinerary.hero_data.image)}">\n`;
     }
     // 如果有其他常用 CDN，也可在此預載
     headPreloads += `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Noto+Serif+TC:wght@300;400;600;700&display=swap" rel="stylesheet">\n`;
 
     setExportCodes({
-      html: theme === 'classic'
-        ? engine.generateHtml(itinerary, flights, days, hotels, cta, '', moduleOrder)
-        : engine.generateHtml(itinerary, flights, days, hotels, cta),
-      css: engine.generateCss(theme, true),
+      html: prepareHtmlImagesForKowei(generatedHtml),
+      css: prepareHtmlImagesForKowei(engine.generateCss(theme, true)),
       js: engine.generateJs(),
       head: headPreloads.trim()
     });

@@ -1,11 +1,12 @@
 import React from 'react';
+import ImageAttributionInput from './ImageAttributionInput';
 
 export default function FormHighlights({ data = {}, onChange }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
   const items = data.items || [];
 
   const addItem = () => {
-    onChange({ ...data, items: [...items, { title: '', subtitle: '', desc: '', img: '' }] });
+    onChange({ ...data, items: [...items, { visible: true, title: '', subtitle: '', desc: '', img: '', image_source: '' }] });
   };
 
   const updateItem = (index, field, value) => {
@@ -59,8 +60,12 @@ export default function FormHighlights({ data = {}, onChange }) {
               </div>
 
               {items.map((item, i) => (
-                <div key={i} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
+                <div key={i} className={item.visible === false ? 'opacity-50' : ''} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
                   <button onClick={() => removeItem(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer' }}>✖</button>
+                  <label className="flex items-center gap-2 mb-3 text-sm font-bold text-gray-700 w-fit cursor-pointer">
+                    <input type="checkbox" checked={item.visible !== false} onChange={e => updateItem(i, 'visible', e.target.checked)} />
+                    顯示此亮點
+                  </label>
 
                   <div style={{ marginBottom: '10px' }}>
                     <label className="form-label text-xs font-semibold text-gray-500 block mb-1">小字標題 (如: 五星住宿)</label>
@@ -76,6 +81,7 @@ export default function FormHighlights({ data = {}, onChange }) {
                     <div style={{ marginBottom: '10px' }}>
                       <label className="form-label text-xs font-semibold text-gray-500 block mb-1">特色圖片網址</label>
                       <input type="text" className="form-control" value={item.img || ''} onChange={e => updateItem(i, 'img', e.target.value)} placeholder="https://example.com/image.jpg" />
+                      <ImageAttributionInput value={item.image_source || ''} onChange={value => updateItem(i, 'image_source', value)} />
                     </div>
                   )}
 

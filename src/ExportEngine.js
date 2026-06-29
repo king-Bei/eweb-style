@@ -2,10 +2,16 @@ import baseCss from '../public/主題css/sely.css?raw';
 import classicThemeCss from '../public/assets/classic/theme.css?raw';
 import { DEFAULT_CTA_REGISTER_URL } from './constants';
 import { NOTICE_INFO_ICON } from './exportIcons';
+import { prepareHtmlImagesForPreview } from './utils/imageUrls';
 
 const PILL_ICON_STYLE = 'width:1em;height:1em;vertical-align:-0.15em;margin-right:.4em';
 const HOTEL_ICON = `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="${PILL_ICON_STYLE}"><path d="M10 22v-6.57"/><path d="M14 15.43V22"/><path d="M15 16a5 5 0 0 0-6 0"/><path d="M8 7h.01"/><path d="M12 7h.01"/><path d="M16 7h.01"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><rect width="16" height="20" x="4" y="2" rx="2"/></svg>`;
 const MEAL_ICON = `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="${PILL_ICON_STYLE}"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z"/><path d="M21 15v7"/></svg>`;
+
+const escapeCredit = value => String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const imageCredit = (source, overlay = false) => source
+  ? `<small class="j-image-credit" style="${overlay ? 'position:absolute;right:10px;bottom:10px;z-index:25;background:rgba(0,0,0,.58);color:#fff;padding:3px 7px;border-radius:3px;' : 'display:block;text-align:right;color:#777;margin-top:5px;'}font-size:10px;line-height:1.4;">圖片來源：${escapeCredit(source)}</small>`
+  : '';
 
 function formatNoticeDesc(desc) {
   if (!desc) return '';
@@ -122,6 +128,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
   <!-- ░░ HERO ░░ -->
   <section class="k-hero" id="top">
     <div class="k-hero__bg" style="background-image:url('${hero_data?.image || ''}');"></div>
+    ${imageCredit(hero_data?.image_source, true)}
     <div class="k-hero__grad"></div>
     <div class="k-hero__body">
       <span class="k-eyebrow">${hero_data?.subtitle || 'FEATURED ITINERARY · 精選行程'}</span>
@@ -151,7 +158,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             }
             const classicTitle1 = (hero_data?.title1 || '').replace(/\n/g, '<br>');
             const classicTitle2 = (hero_data?.title2 || '').replace(/\n/g, '<br>');
-            html += `<div class="j-hero wow fadeIn" id="top"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner"><div class="j-hero-content"><span class="j-hero-sub">${classicTitle2}</span><h1 class="j-hero-title">${classicTitle1}</h1>${tagsHtml}</div></div>`;
+            html += `<div class="j-hero wow fadeIn" id="top"><div class="j-hero-overlay"></div><img src="${hero_data?.image || ''}" alt="Banner">${imageCredit(hero_data?.image_source, true)}<div class="j-hero-content"><span class="j-hero-sub">${classicTitle2}</span><h1 class="j-hero-title">${classicTitle1}</h1>${tagsHtml}</div></div>`;
           }
         }
         break;
@@ -159,7 +166,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         if (highlights?.visible !== false) {
           let hlHtml = '';
           const layout = highlights?.layout || 'grid';
-          (highlights?.items || []).forEach((c, i) => {
+          (highlights?.items || []).filter(c => c.visible !== false).forEach((c, i) => {
             if (layout === 'grid') {
               const numStr = String(i + 1).padStart(2, '0');
               const subHtml = c.subtitle ? `<div class="j-hl-category">${c.subtitle}</div>` : '';
@@ -168,7 +175,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               hlHtml += `
               <div class="j-hl-card-item wow fadeInUp" data-wow-delay="${i * 0.1}s">
                 <div class="j-hl-card-img">
-                  ${c.img ? `<img src="${c.img}" alt="${c.title || ''}">` : `<div class="j-hl-img-placeholder">✦</div>`}
+                  ${c.img ? `<img src="${c.img}" alt="${c.title || ''}">${imageCredit(c.image_source)}` : `<div class="j-hl-img-placeholder">✦</div>`}
                 </div>
                 <div class="j-hl-card-info">
                   <h4 class="j-hl-card-title">${c.title || ''}</h4>
@@ -180,7 +187,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               hlHtml += `
               <div class="j-hl-overlap-item ${isRev} wow fadeInUp">
                 <div class="j-hl-overlap-img">
-                  ${c.img ? `<img src="${c.img}" alt="${c.title || ''}">` : `<div class="j-hl-img-placeholder">✦</div>`}
+                  ${c.img ? `<img src="${c.img}" alt="${c.title || ''}">${imageCredit(c.image_source)}` : `<div class="j-hl-img-placeholder">✦</div>`}
                 </div>
                 <div class="j-hl-overlap-info">
                   <h4 class="j-hl-overlap-title">${c.title || ''}</h4>
@@ -202,7 +209,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         if (spots?.visible !== false) {
           let spotHtml = '';
           const spotLayout = spots?.layout || 'fullimg';
-          (spots?.items || []).forEach((c, i) => {
+          (spots?.items || []).filter(c => c.visible !== false).forEach((c, i) => {
             let tagHtml = '';
             if (c.tag) {
               const tags = c.tag.split(/[\s,，、]+/).filter(t => t.trim());
@@ -211,12 +218,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               });
             }
             if (spotLayout === 'fullimg') {
-              spotHtml += `<div class="j-spot-fullimg wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-fi-img"><img src="${c.img || ''}" alt="${c.name || ''}"></div><div class="j-spot-fi-caption">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
+              spotHtml += `<div class="j-spot-fullimg wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-fi-img"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-fi-caption">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
             } else if (spotLayout === 'ltr') {
               const isRev = i % 2 !== 0 ? 'reverse' : '';
-              spotHtml += `<div class="j-spot-ltr ${isRev} wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-ltr-img"><img src="${c.img || ''}" alt="${c.name || ''}"></div><div class="j-spot-ltr-text">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
+              spotHtml += `<div class="j-spot-ltr ${isRev} wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-ltr-img"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-ltr-text">${tagHtml}<h3 class="j-spot-name">${c.name || ''}</h3><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
             } else {
-              spotHtml += `<div class="j-spot-grid-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-grid-img"><img src="${c.img || ''}" alt="${c.name || ''}"></div><div class="j-spot-grid-info">${tagHtml}<h4 class="j-spot-name">${c.name || ''}</h4><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
+              spotHtml += `<div class="j-spot-grid-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-spot-grid-img"><img src="${c.img || ''}" alt="${c.name || ''}">${imageCredit(c.image_source)}</div><div class="j-spot-grid-info">${tagHtml}<h4 class="j-spot-name">${c.name || ''}</h4><p class="j-spot-desc">${c.desc || ''}</p></div></div>`;
             }
           });
           if (spotHtml) {
@@ -246,7 +253,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           let allGroupsHtml = '';
 
           flightGroups.forEach(group => {
-            const gItems = group.items || [];
+            const gItems = (group.items || []).filter(item => item.visible !== false);
             if (gItems.length === 0) return;
             const gLayout = group.layout || 'timeline';
             const gName = group.group_name || '';
@@ -305,12 +312,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         if (hotels?.visible !== false) {
           let hotelHtml = '';
           const layout = hotels?.layout || 'overlap';
-          (hotels?.items || []).forEach((c, i) => {
+          (hotels?.items || []).filter(c => c.visible !== false).forEach((c, i) => {
             if (layout === 'overlap') {
               const isRev = i % 2 !== 0 ? 'reverse' : '';
-              hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel"></div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name">${c.name || ''}</h3><p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
+              hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name">${c.name || ''}</h3><p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
             } else {
-              hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><img src="${c.img || ''}" alt="Hotel"><div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4>${c.name || ''}</h4><p>${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
+              hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}<div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4>${c.name || ''}</h4><p>${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
             }
           });
           if (hotelHtml) {
@@ -428,6 +435,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
                       ${hasImg ? `<div class="day-image-area">
                           <div class="day-stamp">${c.image?.label || ''}</div>
                           <img src="${c.image?.url}" alt="Day ${dayNum}">
+                          ${imageCredit(c.image?.source)}
                           <div class="img-slot"><span class="slot-label">${c.image?.subtitle || ''}</span></div>
                       </div>` : ''}
                       <div class="day-text-area">
@@ -500,6 +508,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         alt="${mapTitle}"
         style="width: 100%; height: auto; display: block; max-width: 1200px; margin: 0 auto; border: none; box-shadow: none;"
       />
+      ${imageCredit(map_data?.image_source)}
     </div>
     ${mapDesc ? `<p class="j-map-desc" style="max-width: 800px; margin: 20px auto 0; text-align: center; color: #666; font-size: 14px;">${mapDesc}</p>` : ''}
   </div>
@@ -511,7 +520,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
         if (recommended?.visible !== false) {
           let rHtml = '';
           (recommended?.items || []).forEach((c, i) => {
-            rHtml += `<a href="${c.link || '#'}" target="_blank" class="j-rec-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-rec-img" style="background-image:url('${c.img || ''}')"></div><div class="j-rec-txt"><h5>${c.t || ''}</h5><span class="j-rec-btn">查看行程 &rarr;</span></div></a>`;
+            rHtml += `<a href="${c.link || '#'}" target="_blank" class="j-rec-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div class="j-rec-img" style="background-image:url('${c.img || ''}')"></div>${imageCredit(c.image_source, true)}<div class="j-rec-txt"><h5>${c.t || ''}</h5><span class="j-rec-btn">查看行程 &rarr;</span></div></a>`;
           });
           if (rHtml) {
             html += `<div class="j-section" id="recommended"><div class="j-heading wow fadeInUp"><span class="j-badge">Recommended</span><h2>探索更多奢華旅程</h2></div><div class="j-wrapper"><div class="j-rec-grid">${rHtml}</div></div></div>`;
@@ -541,9 +550,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
     html += `<link rel="stylesheet" href="${origin}/assets/classic/theme.css">\n`;
   }
 
-  return html
-    .replace(/https:\/\/jollifytravel\.com/g, '')
-    .replace(/href="\/bespoke\/"/g, `href="${DEFAULT_CTA_REGISTER_URL}"`);
+  return prepareHtmlImagesForPreview(html);
 };
 
 export const generateCss = (theme = 'classic', isExport = false) => {

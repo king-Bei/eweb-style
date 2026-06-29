@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { authApi, itineraryApi } from '../api';
+import useUnsavedChangesWarning from '../hooks/useUnsavedChangesWarning';
+import { prepareHtmlImagesForKowei, prepareHtmlImagesForPreview, toPreviewImageUrl } from '../utils/imageUrls';
 import {
   ArrowDown,
   ArrowLeft,
@@ -34,6 +36,7 @@ const transitionOptions = [
 
 const transitionCss = `
   .builder-transition { animation-duration: .75s; animation-fill-mode: both; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+  .builder-image-credit { display: block; margin-top: .35rem; color: #6b7280; font: 400 11px/1.4 Arial, "Microsoft JhengHei", sans-serif; text-align: right; }
   .builder-transition-fade-up { animation-name: builderFadeUp; }
   .builder-transition-slide-left { animation-name: builderSlideLeft; }
   .builder-transition-slide-right { animation-name: builderSlideRight; }
@@ -200,6 +203,7 @@ const ensureBuilderFields = (html) => {
 
   section.querySelectorAll('img').forEach((image, index) => {
     if (!image.dataset.builderField) image.dataset.builderField = `image-${index}`;
+    if (!image.hasAttribute('data-image-source')) image.dataset.imageSource = '';
   });
 
   return section.outerHTML;
@@ -220,10 +224,26 @@ const getPageFields = (html) => {
     id: image.dataset.builderField,
     label: image.alt || `圖片 ${index + 1}`,
     value: image.getAttribute('src') || '',
-    alt: image.alt || ''
+    alt: image.alt || '',
+    source: image.dataset.imageSource || ''
   }));
 
   return { text, images };
+};
+
+const decorateImageCredits = (section) => {
+  if (!section) return section;
+  section.querySelectorAll('[data-builder-credit]').forEach(credit => credit.remove());
+  section.querySelectorAll('img[data-image-source]').forEach(image => {
+    const source = image.dataset.imageSource?.trim();
+    if (!source) return;
+    const credit = section.ownerDocument.createElement('small');
+    credit.dataset.builderCredit = 'true';
+    credit.className = 'builder-image-credit';
+    credit.textContent = `圖片來源：${source}`;
+    image.insertAdjacentElement('afterend', credit);
+  });
+  return section;
 };
 
 const createBlankPageHtml = (id, title) => `
@@ -238,7 +258,7 @@ const createBlankPageHtml = (id, title) => `
           <p class="font-sans text-gray-600 leading-relaxed">點擊文字即可編輯內容。點擊右側圖片即可更換公開圖片網址。</p>
         </div>
         <div class="h-[50vh] overflow-hidden bg-gray-200">
-          <img src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80" alt="新增頁面圖片" class="w-full h-full object-cover img-elegant">
+          <img src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1200&q=80" alt="新增頁面圖片" data-image-source="Unsplash" class="w-full h-full object-cover img-elegant">
         </div>
       </div>
     </div>
@@ -260,6 +280,7 @@ export default function EditorMagazine() {
   const [originalPages, setOriginalPages] = useState([]);
   const [previewEnvironment, setPreviewEnvironment] = useState('editor');
   const [previewDevice, setPreviewDevice] = useState('desktop');
+  useUnsavedChangesWarning(dirty);
 
   const currentIndex = pages.findIndex(page => page.id === activePage);
   const currentPage = pages[currentIndex];
@@ -308,6 +329,7 @@ export default function EditorMagazine() {
 
         setPages(loadedPages);
         setActivePage(loadedPages[0]?.id || null);
+        setDirty(Array.isArray(saved?.pages) && JSON.stringify(saved.pages) !== JSON.stringify(databasePages || defaultPages));
       } catch (error) {
         console.error(error);
         alert('無法載入原始頁面');
@@ -325,7 +347,6 @@ export default function EditorMagazine() {
     if (!html) return pages;
     const next = pages.map(page => page.id === activePage ? { ...page, html } : page);
     setPages(next);
-    setDirty(false);
     return next;
   };
 
@@ -360,7 +381,6 @@ export default function EditorMagazine() {
   const selectPage = pageId => {
     captureCurrentPage();
     setActivePage(pageId);
-    setDirty(false);
   };
 
   const movePage = offset => {
@@ -379,6 +399,7 @@ export default function EditorMagazine() {
       next.splice(toIndex, 0, moved);
       return next;
     });
+    setDirty(true);
   };
 
   const dropPage = targetId => {
@@ -394,6 +415,7 @@ export default function EditorMagazine() {
       return next;
     });
     setDraggedPage(null);
+    setDirty(true);
   };
 
   const addPage = () => {
@@ -410,6 +432,7 @@ export default function EditorMagazine() {
     };
     setPages([...next, page]);
     setActivePage(id);
+    setDirty(true);
   };
 
   const duplicatePage = () => {
@@ -432,6 +455,7 @@ export default function EditorMagazine() {
     updated.splice(insertAt, 0, page);
     setPages(updated);
     setActivePage(id);
+    setDirty(true);
   };
 
   const deletePage = () => {
@@ -441,7 +465,7 @@ export default function EditorMagazine() {
     const next = pages.filter(page => page.id !== activePage);
     setPages(next);
     setActivePage(next[nextIndex]?.id || next[0]?.id);
-    setDirty(false);
+    setDirty(true);
   };
 
   const updateCurrentMeta = updates => {
@@ -450,7 +474,7 @@ export default function EditorMagazine() {
     setPages(current => current.map(page => (
       page.id === activePage ? { ...page, ...(html ? { html } : {}), ...updates } : page
     )));
-    setDirty(false);
+    setDirty(true);
   };
 
   const updatePageField = (fieldId, value) => {
@@ -473,6 +497,24 @@ export default function EditorMagazine() {
     setDirty(true);
   };
 
+  const updatePageImageSource = (fieldId, source) => {
+    const liveSection = iframeRef.current?.contentDocument?.querySelector('section');
+    const liveHtml = cleanSectionForSave(liveSection);
+    const sourceHtml = liveHtml || currentPage?.html;
+    if (!sourceHtml) return;
+
+    const documentNode = new DOMParser().parseFromString(sourceHtml, 'text/html');
+    const section = documentNode.querySelector('section');
+    const image = section?.querySelector(`img[data-builder-field="${fieldId}"]`);
+    if (!image) return;
+
+    image.dataset.imageSource = source;
+    setPages(current => current.map(page => (
+      page.id === activePage ? { ...page, html: section.outerHTML } : page
+    )));
+    setDirty(true);
+  };
+
   const resetProject = () => {
     if (!window.confirm('確定恢復原始 11 頁？目前新增與修改內容會被清除。')) return;
     localStorage.removeItem(getStorageKey(id));
@@ -489,8 +531,9 @@ export default function EditorMagazine() {
       section.id = `page-${index + 1}`;
       section.dataset.title = page.label;
       section.dataset.transition = page.transition || 'fade-up';
-      return section.outerHTML;
+      return decorateImageCredits(section).outerHTML;
     }).join('\n');
+    const koweiSections = prepareHtmlImagesForKowei(sections);
 
     const exportScript = `
       <script>
@@ -531,7 +574,7 @@ ${headHtml}
 <div class="kowei-host-shell">
 <main class="kowei-host-content">
 <div class="nav-dots" id="nav-dots"></div>
-${sections}
+${koweiSections}
 </main>
 </div>
 ${exportScript}
@@ -567,7 +610,7 @@ ${exportScript}
       </head>
       <body class="antialiased selection:bg-luxury-gold selection:text-white">
         ${previewEnvironment === 'kowei' ? '<div class="kowei-host-shell"><main class="kowei-host-content">' : ''}
-        ${section.outerHTML}
+        ${prepareHtmlImagesForPreview(decorateImageCredits(section).outerHTML)}
         ${previewEnvironment === 'kowei' ? '</main></div>' : ''}
         ${editorBridgeScript}
       </body>
@@ -731,12 +774,19 @@ ${exportScript}
                   {currentFields.images.map(field => (
                     <label key={field.id} className="brochure-editor-field brochure-image-field">
                       <span>{field.label}</span>
-                      <img src={field.value} alt={field.alt || field.label} />
+                      <img src={toPreviewImageUrl(field.value)} alt={field.alt || field.label} />
                       <input
                         type="url"
                         value={field.value}
-                        placeholder="https://..."
+                        placeholder="https://... 或 /images/..."
                         onChange={event => updatePageField(field.id, event.target.value)}
+                      />
+                      <span>圖片來源／出處</span>
+                      <input
+                        type="text"
+                        value={field.source}
+                        placeholder="例如：Jollify Travel、飯店官網、攝影師姓名"
+                        onChange={event => updatePageImageSource(field.id, event.target.value)}
                       />
                     </label>
                   ))}
