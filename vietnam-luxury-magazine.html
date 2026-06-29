@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北越雙灣 | 奢華六日秘境之旅 | 鑫囍探索 Jollify Travel</title>
+    <meta name="description" content="鑫囍探索尊榮呈獻——下龍灣、陸龍灣、河內古城六日奢華秘境之旅。入住頂級五星飯店，品味米其林精緻饗宴，搭乘喜悅號頂級遊船，開啟無與倫比的越式風華。">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Noto+Serif+TC:wght@200;300;400;600;700;900&family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'jollify': {
+                            'purple': '#4C2A85',
+                            'purple-dark': '#2D1654',
+                            'purple-light': '#6E45B2',
+                            'gold': '#D4A93B',
+                            'gold-dark': '#B58C28',
+                            'gold-light': '#E6C56E',
+                            'dark': '#150F1D',       /* 質感極深紫色調背景 */
+                            'dark-gray': '#2A2038',  /* 暗部灰紫 */
+                            'cream': '#FBF9FC',      /* 帶有淡紫氣息的奢華奶油白 */
+                            'gray': '#6A5E78'
+                        }
+                    },
+                    fontFamily: {
+                        'serif': ['"Cormorant Garamond"', '"Noto Serif TC"', 'serif'],
+                        'sans': ['"Montserrat"', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Noto Serif TC', serif;
+            background-color: #FBF9FC;
+            color: #150F1D;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* 自訂高級捲動軸，呼應鑫囍紫金主題 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #150F1D; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #4C2A85, #D4A93B); 
+            border-radius: 4px;
+        }
+
+        /* 雜誌頁面基本樣式 */
+        .magazine-section {
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 5rem 1.5rem;
+            overflow: hidden;
+        }
+
+        /* 頂級轉場動畫類別 */
+        .animate-trigger {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .animate-trigger.slide-left {
+            transform: translateX(-50px);
+        }
+
+        .animate-trigger.slide-right {
+            transform: translateX(50px);
+        }
+
+        .animate-trigger.scale-up {
+            transform: scale(0.95);
+        }
+
+        .animate-active {
+            opacity: 1 !important;
+            transform: translate(0) scale(1) !important;
+        }
+
+        /* 漸進式文字延遲 */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+        .delay-500 { transition-delay: 500ms; }
+        .delay-600 { transition-delay: 600ms; }
+        .delay-700 { transition-delay: 700ms; }
+
+        /* 右側懸浮導覽列的進階設計 */
+        .nav-dots {
+            position: fixed;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .dot-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            cursor: pointer;
+            group: pointer;
+        }
+
+        .dot-label {
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            color: #D4A93B;
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            margin-right: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(76, 42, 133, 0.35); /* 鑫囍紫的透明度 */
+            border: 1px solid rgba(212, 169, 59, 0.5); /* 鑫囍金邊框 */
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dot-wrapper:hover .dot-label {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .dot-wrapper:hover .dot {
+            background-color: #D4A93B;
+            transform: scale(1.4);
+        }
+
+        .dot-wrapper.active .dot {
+            background-color: #D4A93B;
+            box-shadow: 0 0 10px #D4A93B, 0 0 4px #4C2A85;
+            transform: scale(1.6);
+            border-color: #4C2A85;
+        }
+
+        .dark-bg-dots .dot {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-color: rgba(214, 169, 59, 0.6);
+        }
+        
+        .dark-bg-dots .dot-wrapper.active .dot {
+            background-color: #D4A93B;
+            box-shadow: 0 0 10px #D4A93B, 0 0 4px #FFFFFF;
+        }
+
+        /* 圖片高質感奢華濾鏡與慢速動態 */
+        .img-elegant {
+            filter: brightness(0.92) contrast(1.05) saturate(0.95);
+            transition: transform 12s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+        .overflow-hidden:hover .img-elegant {
+            transform: scale(1.08) rotate(0.5deg);
+        }
+
+        /* 玻璃微光質感 (Glassmorphism) */
+        .glass-premium {
+            background: rgba(251, 249, 252, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(76, 42, 133, 0.1);
+        }
+
+        .glass-premium-dark {
+            background: rgba(21, 15, 29, 0.82);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 169, 59, 0.15);
+        }
+
+        /* 頁面頂端閱讀進度條 */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #4C2A85, #D4A93B, #6E45B2);
+            width: 0%;
+            z-index: 100;
+            transition: width 0.1s ease;
+        }
+
+        /* 行程總覽項目的精緻懸浮設計 */
+        .itinerary-row {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .itinerary-row:hover {
+            background: rgba(212, 169, 59, 0.08);
+            border-left-color: #D4A93B !important;
+            padding-left: 2rem !important;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-jollify-gold selection:text-jollify-dark">
+
+    <!-- 頂端閱讀進度條 -->
+    <div id="progress-bar"></div>
+
+    <!-- 預載畫面 (Preloader) -->
+    <div id="preloader" class="fixed inset-0 bg-jollify-dark z-[9999] flex flex-col items-center justify-center transition-all duration-1000">
+        <div class="text-center space-y-6 px-4">
+            <p class="text-jollify-gold tracking-[0.4em] font-serif text-sm uppercase animate-pulse-slow">JOLLIFY TRAVEL PRESENTS</p>
+            <div class="relative w-24 h-24 mx-auto">
+                <!-- 奢華旋轉微光線圈 -->
+                <div class="absolute inset-0 rounded-full border-2 border-jollify-gold/20 border-t-jollify-gold animate-spin" style="animation-duration: 2s;"></div>
+                <div class="absolute inset-2 rounded-full border border-jollify-purple/30 border-b-jollify-purple animate-spin" style="animation-duration: 3s; animation-direction: reverse;"></div>
+                <!-- 核心奢華鑽石圖騰 -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-jollify-gold font-serif text-2xl font-semibold">J</span>
+                </div>
+            </div>
+            <h2 class="text-white text-xl tracking-[0.2em] font-light">正在開啟 ‧ 北越秘境雙灣之旅</h2>
+            <div class="w-32 h-[1px] bg-jollify-gold/30 mx-auto overflow-hidden">
+                <div class="h-full bg-jollify-gold w-0 progress-inner transition-all duration-700"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右側分頁導覽 -->
+    <div class="nav-dots" id="nav-dots"></div>
+
+    <!-- Page 1: 封面 (大器奢華封底概念) -->
+    <section id="page-1" class="magazine-section p-0 m-0 h-screen w-full relative bg-jollify-dark" data-title="封面導引">
+        <div class="absolute inset-0 z-0">
+            <!-- 嚴選高對比高飽和度壯麗下龍灣美景 -->
+            <img src="https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Halong Bay" class="w-full h-full object-cover img-elegant opacity-50">
+        </div>
+        <!-- 鑫囍專屬漸層遮罩：由品牌暗紫過渡至明淨 -->
+        <div class="absolute inset-0 bg-gradient-to-b from-jollify-dark/80 via-transparent to-jollify-dark/95 z-10"></div>
+        
+        <!-- 四角經典金邊框，營造實體典藏雜誌感 -->
+        <div class="absolute inset-8 border border-jollify-gold/25 pointer-events-none z-20 hidden md:block"></div>
+        
+        <div class="z-20 text-center text-white max-w-4xl mx-auto px-6 h-full flex flex-col justify-center items-center">
+            <div class="animate-trigger scale-up delay-100 flex items-center gap-3 mb-6">
+                <span class="w-6 h-[1px] bg-jollify-gold"></span>
+                <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs font-sans">Jollify Luxury Journey</p>
+                <span class="w-6 h-[1px] bg-jollify-gold"></span>
+            </div>
+            
+            <h1 class="text-5xl md:text-8xl font-black tracking-[0.15em] mb-8 leading-tight font-serif text-transparent bg-clip-text bg-gradient-to-r from-white via-jollify-gold-light to-white">
+                北越雙灣<br>
+                <span class="text-2xl md:text-5xl italic font-light tracking-[0.1em] text-jollify-gold-light mt-4 block font-serif">奢華六日秘境之旅</span>
+            </h1>
+            
+            <div class="w-20 h-[1px] bg-gradient-to-r from-transparent via-jollify-gold to-transparent my-4"></div>
+            
+            <p class="text-base md:text-xl font-light tracking-[0.25em] text-gray-200 font-sans mt-4">
+                下龍灣 ‧ 陸龍灣 ‧ 河內古城 ‧ 米其林經典饗宴
+            </p>
+            
+            <!-- 質感探索引導 -->
+            <div class="absolute bottom-16 left-1/2 -translate-x-1/2 text-center z-20 cursor-pointer" onclick="document.getElementById('page-2').scrollIntoView({ behavior: 'smooth' })">
+                <span class="text-xs tracking-[0.3em] text-jollify-gold hover:text-white transition-colors duration-300 block mb-2 font-sans">SCROLL TO DISCOVER</span>
+                <div class="w-5 h-8 border border-jollify-gold/40 rounded-full mx-auto p-1 flex justify-center">
+                    <div class="w-1 h-2 bg-jollify-gold rounded-full animate-bounce"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 2: 航班參考 (改用鑫囍奶油底色與精緻時間軸) -->
+    <section id="page-2" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="航班參考">
+        <div class="max-w-6xl mx-auto w-full relative z-10">
+            <div class="text-center mb-16 animate-trigger">
+                <p class="text-jollify-purple tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">PREMIUM FLIGHTS</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">尊榮啟航 ‧ 航班資訊</h2>
+                <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+                <!-- 長榮航空 01 -->
+                <div class="border border-jollify-purple/10 p-8 md:p-10 bg-white shadow-sm hover:shadow-xl transition-all duration-500 rounded-sm relative group animate-trigger slide-left delay-200">
+                    <div class="absolute top-0 right-0 bg-jollify-purple text-white text-xs px-4 py-1.5 tracking-wider font-sans font-medium">優雅首選 ‧ 早去午回</div>
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 bg-jollify-purple/10 rounded-full flex items-center justify-center text-jollify-purple font-serif text-lg font-bold">BR</div>
+                        <div>
+                            <h3 class="text-xl font-bold tracking-wider text-jollify-purple-dark">長榮航空 (EVA AIR)</h3>
+                            <p class="text-xs text-jollify-gold tracking-widest font-sans font-semibold mt-1">TAIPEI ⇄ HANOI</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 時間軸 -->
+                    <div class="space-y-6 font-sans text-sm relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-jollify-purple/20">
+                        <div class="flex items-start gap-6 relative">
+                            <span class="w-6 h-6 rounded-full bg-jollify-purple/10 border-2 border-jollify-purple flex items-center justify-center text-[10px] text-jollify-purple font-bold z-10 mt-1">去</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center border-b border-jollify-purple/5 pb-2">
+                                    <span class="font-medium text-jollify-gray">去程 BR 397</span>
+                                    <span class="font-bold text-jollify-purple-dark text-base">TPE 09:00 ➔ HAN 11:05</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-6 relative">
+                            <span class="w-6 h-6 rounded-full bg-jollify-gold/10 border-2 border-jollify-gold flex items-center justify-center text-[10px] text-jollify-gold-dark font-bold z-10 mt-1">回</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center pb-2">
+                                    <span class="font-medium text-jollify-gray">回程 BR 398</span>
+                                    <span class="font-bold text-jollify-purple-dark text-base">HAN 12:05 ➔ TPE 15:55</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 長榮航空 02 -->
+                <div class="border border-jollify-purple/10 p-8 md:p-10 bg-white shadow-sm hover:shadow-xl transition-all duration-500 rounded-sm relative group animate-trigger slide-right delay-200">
+                    <div class="absolute top-0 right-0 bg-jollify-dark-gray text-white text-xs px-4 py-1.5 tracking-wider font-sans font-medium">從容愜意 ‧ 午去晚回</div>
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 bg-jollify-purple/10 rounded-full flex items-center justify-center text-jollify-purple font-serif text-lg font-bold">BR</div>
+                        <div>
+                            <h3 class="text-xl font-bold tracking-wider text-jollify-purple-dark">長榮航空 (EVA AIR)</h3>
+                            <p class="text-xs text-jollify-gold tracking-widest font-sans font-semibold mt-1">TAIPEI ⇄ HANOI</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 時間軸 -->
+                    <div class="space-y-6 font-sans text-sm relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-jollify-purple/20">
+                        <div class="flex items-start gap-6 relative">
+                            <span class="w-6 h-6 rounded-full bg-jollify-purple/10 border-2 border-jollify-purple flex items-center justify-center text-[10px] text-jollify-purple font-bold z-10 mt-1">去</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center border-b border-jollify-purple/5 pb-2">
+                                    <span class="font-medium text-jollify-gray">去程 BR 385</span>
+                                    <span class="font-bold text-jollify-purple-dark text-base">TPE 14:40 ➔ HAN 16:50</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-6 relative">
+                            <span class="w-6 h-6 rounded-full bg-jollify-gold/10 border-2 border-jollify-gold flex items-center justify-center text-[10px] text-jollify-gold-dark font-bold z-10 mt-1">回</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center pb-2">
+                                    <span class="font-medium text-jollify-gray">回程 BR 386</span>
+                                    <span class="font-bold text-jollify-purple-dark text-base">HAN 18:00 ➔ TPE 21:55</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 中華航空 01 -->
+                <div class="border border-jollify-purple/10 p-8 md:p-10 bg-white shadow-sm hover:shadow-xl transition-all duration-500 rounded-sm relative group animate-trigger slide-left delay-400">
+                    <div class="absolute top-0 right-0 bg-jollify-purple text-white text-xs px-4 py-1.5 tracking-wider font-sans font-medium">優雅首選 ‧ 早去午回</div>
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 bg-jollify-purple/10 rounded-full flex items-center justify-center text-jollify-purple font-serif text-lg font-bold">CI</div>
+                        <div>
+                            <h3 class="text-xl font-bold tracking-wider text-jollify-purple-dark">中華航空 (CHINA AIRLINES)</h3>
+                            <p class="text-xs text-jollify-gold tracking-widest font-sans font-semibold mt-1">TAIPEI ⇄ HANOI</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 時間軸 -->
+                    <div class="space-y-6 font-sans text-sm relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-jollify-purple/20">
+                        <div class="flex items-start gap-6 relative">
+                            <span class="w-6 h-6 rounded-full bg-jollify-purple/10 border-2 border-jollify-purple flex items-center justify-center text-[10px] text-jollify-purple font-bold z-10 mt-1">去</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center border-b border-jollify-purple/5 pb-2">
+                                    <span class="font-medium text-jollify-gray">去程 CI 791</span>
+                                    <span class="font-bold text-jollify-purple-dark text-base">TPE 08:20 ➔ HAN 10:30</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-6 relative">
+                            <span class="w-6 h-6 rounded-full bg-jollify-gold/10 border-2 border-jollify-gold flex items-center justify-center text-[10px] text-jollify-gold-dark font-bold z-10 mt-1">回</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center pb-2">
+                                    <span class="font-medium text-jollify-gray">回程 CI 792</span>
+                                    <span class="font-bold text-jollify-purple-dark text-base">HAN 11:30 ➔ TPE 15:20</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 中華航空 02 -->
+                <div class="border border-jollify-purple/10 p-8 md:p-10 bg-white shadow-sm hover:shadow-xl transition-all duration-500 rounded-sm relative group animate-trigger slide-right delay-400">
+                    <div class="absolute top-0 right-0 bg-jollify-dark-gray text-white text-xs px-4 py-1.5 tracking-wider font-sans font-medium">精緻從容 ‧ 午去晚回</div>
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 bg-jollify-purple/10 rounded-full flex items-center justify-center text-jollify-purple font-serif text-lg font-bold">CI</div>
+                        <div>
+                            <h3 class="text-xl font-bold tracking-wider text-jollify-purple-dark">中華航空 (CHINA AIRLINES)</h3>
+                            <p class="text-xs text-jollify-gold tracking-widest font-sans font-semibold mt-1">TAIPEI ⇄ HANOI</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 時間軸 -->
+                    <div class="space-y-6 font-sans text-sm relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1px] before:bg-jollify-purple/20">
+                        <div class="flex items-start gap-6 relative">
+                            <span class="w-6 h-6 rounded-full bg-jollify-purple/10 border-2 border-jollify-purple flex items-center justify-center text-[10px] text-jollify-purple font-bold z-10 mt-1">去</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center border-b border-jollify-purple/5 pb-2">
+                                    <span class="font-medium text-jollify-gray">去程 CI 793</span>
+                                    <span class="font-bold text-jollify-purple-dark text-base">TPE 14:35 ➔ HAN 16:50</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-6 relative">
+                            <span class="w-6 h-6 rounded-full bg-jollify-gold/10 border-2 border-jollify-gold flex items-center justify-center text-[10px] text-jollify-gold-dark font-bold z-10 mt-1">回</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center pb-2">
+                                    <span class="font-medium text-jollify-gray">回程 CI 794</span>
+                                    <span class="font-bold text-jollify-purple-dark text-base">HAN 17:50 ➔ TPE 21:45</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 3: 每日行程總覽 (改為深色尊榮紫背景，並加入精緻觸感互動 hover 效果) -->
+    <section id="page-3" class="magazine-section bg-jollify-dark text-white" data-title="行程總覽">
+        <div class="max-w-5xl mx-auto w-full relative z-10">
+            <div class="text-center mb-16 animate-trigger">
+                <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">EXCLUSIVE ITINERARY</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-transparent bg-clip-text bg-gradient-to-r from-white to-jollify-gold-light">
+                    六日行程 ‧ 精采總覽
+                </h2>
+                <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
+            </div>
+
+            <!-- 時間軸列表 -->
+            <div class="space-y-4 font-sans max-w-4xl mx-auto">
+                
+                <!-- Day 1 Row -->
+                <div onclick="document.getElementById('page-4').scrollIntoView({ behavior: 'smooth' })" 
+                     class="itinerary-row flex flex-col md:flex-row items-center border-b border-jollify-gold/15 pb-4 cursor-pointer p-4 border-l-4 border-l-transparent rounded-r-md">
+                    <div class="text-jollify-gold text-2xl font-serif font-bold w-full md:w-32 mb-2 md:mb-0">DAY 01</div>
+                    <div class="flex-1 w-full">
+                        <h4 class="text-lg font-bold tracking-wide text-white group-hover:text-jollify-gold transition-colors">初見越南 ‧ 海上桂林之旅啟航</h4>
+                        <p class="text-sm text-jollify-gray mt-1">台北 ➔ 河內 ➔ 下龍灣 (體驗女皇纜車、高空下龍之眼摩天輪)</p>
+                    </div>
+                    <div class="w-full md:w-48 text-left md:text-right text-xs text-jollify-gold-light mt-2 md:mt-0 font-medium">宿: 下龍灣五星奢華尊榮飯店</div>
+                </div>
+
+                <!-- Day 2 Row -->
+                <div onclick="document.getElementById('page-5').scrollIntoView({ behavior: 'smooth' })" 
+                     class="itinerary-row flex flex-col md:flex-row items-center border-b border-jollify-gold/15 pb-4 cursor-pointer p-4 border-l-4 border-l-transparent rounded-r-md">
+                    <div class="text-jollify-gold text-2xl font-serif font-bold w-full md:w-32 mb-2 md:mb-0">DAY 02</div>
+                    <div class="flex-1 w-full">
+                        <h4 class="text-lg font-bold tracking-wide text-white">海上天堂 ‧ 頂級喜悅號巡航</h4>
+                        <p class="text-sm text-jollify-gray mt-1">巡洲島碼頭 ➔ Paradise Delight 喜悅號奢華巡航 ➔ 探索驚訝洞 ➔ 絕美洞穴晚宴</p>
+                    </div>
+                    <div class="w-full md:w-48 text-left md:text-right text-xs text-jollify-gold-light mt-2 md:mt-0 font-medium">宿: 下龍灣五星奢華尊榮飯店</div>
+                </div>
+
+                <!-- Day 3 Row -->
+                <div onclick="document.getElementById('page-6').scrollIntoView({ behavior: 'smooth' })" 
+                     class="itinerary-row flex flex-col md:flex-row items-center border-b border-jollify-gold/15 pb-4 cursor-pointer p-4 border-l-4 border-l-transparent rounded-r-md">
+                    <div class="text-jollify-gold text-2xl font-serif font-bold w-full md:w-32 mb-2 md:mb-0">DAY 03</div>
+                    <div class="flex-1 w-full">
+                        <h4 class="text-lg font-bold tracking-wide text-white">古都風華 ‧ 漫步河內悠悠歲月</h4>
+                        <p class="text-sm text-jollify-gray mt-1">下龍灣 ➔ 返回河內市區 (西湖、還劍湖、36古街懷舊電瓶車、漫步法國區)</p>
+                    </div>
+                    <div class="w-full md:w-48 text-left md:text-right text-xs text-jollify-gold-light mt-2 md:mt-0 font-medium">宿: 河內國際五星級頂奢酒店</div>
+                </div>
+
+                <!-- Day 4 Row -->
+                <div onclick="document.getElementById('page-7').scrollIntoView({ behavior: 'smooth' })" 
+                     class="itinerary-row flex flex-col md:flex-row items-center border-b border-jollify-gold/15 pb-4 cursor-pointer p-4 border-l-4 border-l-transparent rounded-r-md">
+                    <div class="text-jollify-gold text-2xl font-serif font-bold w-full md:w-32 mb-2 md:mb-0">DAY 04</div>
+                    <div class="flex-1 w-full">
+                        <h4 class="text-lg font-bold tracking-wide text-white">陸上秘境 ‧ 寧平長安生態之美</h4>
+                        <p class="text-sm text-jollify-gray mt-1">河內 ➔ 前往陸上下龍灣「寧平」 ➔ 長安生態保護區手划小舟探秘 ➔ 返回河內</p>
+                    </div>
+                    <div class="w-full md:w-48 text-left md:text-right text-xs text-jollify-gold-light mt-2 md:mt-0 font-medium">宿: 河內國際五星級頂奢酒店</div>
+                </div>
+
+                <!-- Day 5 Row -->
+                <div onclick="document.getElementById('page-8').scrollIntoView({ behavior: 'smooth' })" 
+                     class="itinerary-row flex flex-col md:flex-row items-center border-b border-jollify-gold/15 pb-4 cursor-pointer p-4 border-l-4 border-l-transparent rounded-r-md">
+                    <div class="text-jollify-gold text-2xl font-serif font-bold w-full md:w-32 mb-2 md:mb-0">DAY 05</div>
+                    <div class="flex-1 w-full">
+                        <h4 class="text-lg font-bold tracking-wide text-white">皇城舊事 ‧ 精緻古城雙層列車</h4>
+                        <p class="text-sm text-jollify-gray mt-1">探訪世界文化遺產「昇龍皇城」 ➔ 體驗 The Hanoi Train 觀光列車 (獨家VIP席)</p>
+                    </div>
+                    <div class="w-full md:w-48 text-left md:text-right text-xs text-jollify-gold-light mt-2 md:mt-0 font-medium">宿: 河內國際五星級頂奢酒店</div>
+                </div>
+
+                <!-- Day 6 Row -->
+                <div onclick="document.getElementById('page-9').scrollIntoView({ behavior: 'smooth' })" 
+                     class="itinerary-row flex flex-col md:flex-row items-center pb-4 cursor-pointer p-4 border-l-4 border-l-transparent rounded-r-md">
+                    <div class="text-jollify-gold text-2xl font-serif font-bold w-full md:w-32 mb-2 md:mb-0">DAY 06</div>
+                    <div class="flex-1 w-full">
+                        <h4 class="text-lg font-bold tracking-wide text-white">極致賦歸 ‧ 璀璨回憶裝滿行囊</h4>
+                        <p class="text-sm text-jollify-gray mt-1">漫享飯店時光 ➔ 河內內排國際機場 ➔ 台北桃園機場</p>
+                    </div>
+                    <div class="w-full md:w-48 text-left md:text-right text-xs text-jollify-gold-light mt-2 md:mt-0 font-medium">溫暖的家</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 4: Day 1 (圖片在左，奶油色背景) -->
+    <section id="page-4" class="magazine-section p-0 bg-jollify-cream" data-title="Day 01">
+        <div class="flex flex-col lg:flex-row w-full h-full min-h-screen">
+            <!-- 奢華左半部大圖 -->
+            <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger slide-left">
+                <img src="https://images.unsplash.com/photo-1590396474552-c3132629b35b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Halong Bay Aerial" class="w-full h-full object-cover img-elegant">
+                <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/40 to-transparent"></div>
+                <!-- 圖片精緻標籤 -->
+                <span class="absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans bg-jollify-purple/80 px-4 py-2 backdrop-blur-md">
+                    DAY 01 ‧ 鳥瞰下龍
+                </span>
+            </div>
+            
+            <!-- 右半部奢華排版 -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24 bg-white animate-trigger slide-right delay-200">
+                <div class="max-w-xl w-full">
+                    <p class="text-jollify-gold tracking-[0.3em] font-serif font-semibold text-sm mb-2">DAY 01</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-8 leading-tight text-jollify-purple-dark font-serif">
+                        初見越南<br>
+                        <span class="text-2xl font-light italic text-jollify-gold-dark mt-2 block font-serif">河內 ➔ 飛奔世界遺產下龍灣</span>
+                    </h2>
+                    
+                    <p class="text-jollify-gray mb-8 leading-relaxed font-sans font-light text-base text-justify">
+                        帶著無比雀躍的心情飛抵河內內排機場。專車隨即為您開啟旅程——特別安排在河內極富盛名的米其林一星級經典越式餐廳 TAM VI 享用午餐。餐後專車前往擁有「海上桂林」美譽的世界自然遺產「下龍灣」。傍晚時分，體驗創下金氏紀錄的女皇雙層纜車，隨後登上巨型「下龍之眼」摩天輪，從空中俯瞰夕陽下萬千奇峰的震撼景致。
+                    </p>
+                    
+                    <!-- 鑫囍紫金邊框餐飲盒 -->
+                    <div class="space-y-4 border-t border-jollify-gold/30 pt-8 font-sans text-sm">
+                        <div class="flex items-center"><span class="w-16 text-jollify-purple font-bold">午餐</span><span class="text-jollify-dark">米其林一星級 TAM VI 經典家常越式風味餐 (餐標 $16)</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-purple font-bold">晚餐</span><span class="text-jollify-dark">極致漁村餐廳 海鮮精緻蒸氣鍋風味餐 (餐標 $19)</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">尊榮禮遇</span><span class="text-jollify-dark">午餐與晚餐皆含可樂或當地清爽啤酒一瓶/人</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-gray font-bold">備註</span><span class="text-jollify-gray italic">晚上可由隨行秘書協助安排越式洗頭或按摩舒壓</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 5: Day 2 (圖片在右，極奢深色背景) -->
+    <section id="page-5" class="magazine-section p-0 bg-jollify-dark text-white" data-title="Day 02">
+        <div class="flex flex-col lg:flex-row-reverse w-full h-full min-h-screen">
+            <!-- 奢華右半部大圖 -->
+            <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger slide-right">
+                <img src="https://images.unsplash.com/photo-1549474136-1e07b4dd029c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Halong Bay Cruise" class="w-full h-full object-cover img-elegant">
+                <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/60 to-transparent"></div>
+                <span class="absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans bg-jollify-gold/80 px-4 py-2 backdrop-blur-md">
+                    DAY 02 ‧ 天堂巡航
+                </span>
+            </div>
+            
+            <!-- 左半部奢華排版 -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24 bg-jollify-dark animate-trigger slide-left delay-200">
+                <div class="max-w-xl w-full">
+                    <p class="text-jollify-gold tracking-[0.3em] font-serif font-semibold text-sm mb-2">DAY 02</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-8 leading-tight text-white font-serif">
+                        海上天堂<br>
+                        <span class="text-2xl font-light italic text-jollify-gold-light mt-2 block font-serif">頂級 Paradise Delight 喜悅號巡航</span>
+                    </h2>
+                    
+                    <p class="text-gray-300 mb-8 leading-relaxed font-sans font-light text-base text-justify">
+                        於酒店享用慢活早餐後，專車前往巡洲島專屬碼頭，登上奢華的【Paradise Delight 喜悅號】頂級日遊船。船身設計雅致大氣，穿梭在星羅棋布的石灰岩奇峰奇石之中。登陸 Titop 英雄島，沿著石階登頂鳥瞰360度下龍灣壯麗全景；隨後深入探索宛如大自然宮殿般的「驚訝洞」，驚嘆於石筍鐘乳石的鬼斧神工。
+                    </p>
+                    
+                    <!-- 玻璃質感餐飲配置盒 -->
+                    <div class="space-y-4 border-t border-jollify-gold/30 pt-8 font-sans text-sm text-gray-300 glass-premium-dark p-6 rounded-sm">
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">早餐</span><span>酒店精緻自助早點</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">午餐</span><span>喜悅號豪華郵輪奢華百匯自助餐 (餐標 $55)</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">晚餐</span><span>奢華獨家：龍珠壁洞天然洞穴西式奢華晚宴 (餐標 $55)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 6: Day 3 (圖片在左，奶油色背景) -->
+    <section id="page-6" class="magazine-section p-0 bg-jollify-cream" data-title="Day 03">
+        <div class="flex flex-col lg:flex-row w-full h-full min-h-screen">
+            <!-- 奢華左半部大圖 -->
+            <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger slide-left">
+                <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Hanoi Old Quarter" class="w-full h-full object-cover img-elegant">
+                <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/40 to-transparent"></div>
+                <span class="absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans bg-jollify-purple/80 px-4 py-2 backdrop-blur-md">
+                    DAY 03 ‧ 河內漫步
+                </span>
+            </div>
+            
+            <!-- 右半部奢華排版 -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24 bg-white animate-trigger slide-right delay-200">
+                <div class="max-w-xl w-full">
+                    <p class="text-jollify-gold tracking-[0.3em] font-serif font-semibold text-sm mb-2">DAY 03</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-8 leading-tight text-jollify-purple-dark font-serif">
+                        文化巡禮<br>
+                        <span class="text-2xl font-light italic text-jollify-gold-dark mt-2 block font-serif">走入時光隧道，邂逅歷史古都河內</span>
+                    </h2>
+                    
+                    <p class="text-jollify-gray mb-8 leading-relaxed font-sans font-light text-base text-justify">
+                        告別美麗的下龍灣，沿著高速公路舒適返回千年歷史名城「河內」。我們為您精心規劃了最具越南韻味的文化探索之路：依序探訪波光粼粼的西湖與鎮國寺，以及充滿神話傳說的還劍湖。接著，搭乘優雅的「復古電瓶車」悠遊於熱鬧的三十六古街中，深入體驗當地的生活節奏，並為您獻上精緻的網紅特色「雞蛋咖啡」。傍晚漫步於典雅的法國區，細細品味聖若瑟大教堂與河內歌劇院等歐式浪漫老建築。
+                    </p>
+                    
+                    <div class="space-y-4 border-t border-jollify-gold/30 pt-8 font-sans text-sm">
+                        <div class="flex items-center"><span class="w-16 text-jollify-purple font-bold">早餐</span><span class="text-jollify-dark">酒店精緻自助早點</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-purple font-bold">午餐</span><span class="text-jollify-dark">越來順中越式皇家美饌餐廳 (餐標 $15)</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-purple font-bold">晚餐</span><span class="text-jollify-dark">米其林推薦 Ngon Garden 花園式庭園越式餐廳 (餐標 $20)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 7: Day 4 (圖片在右，極奢深色背景) -->
+    <section id="page-7" class="magazine-section p-0 bg-jollify-dark text-white" data-title="Day 04">
+        <div class="flex flex-col lg:flex-row-reverse w-full h-full min-h-screen">
+            <!-- 奢華右半部大圖 -->
+            <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger slide-right">
+                <img src="https://images.unsplash.com/photo-1596701140027-e435a22de611?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Ninh Binh Trang An" class="w-full h-full object-cover img-elegant">
+                <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/60 to-transparent"></div>
+                <span class="absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans bg-jollify-gold/80 px-4 py-2 backdrop-blur-md">
+                    DAY 04 ‧ 寧平長安
+                </span>
+            </div>
+            
+            <!-- 左半部奢華排版 -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24 bg-jollify-dark animate-trigger slide-left delay-200">
+                <div class="max-w-xl w-full">
+                    <p class="text-jollify-gold tracking-[0.3em] font-serif font-semibold text-sm mb-2">DAY 04</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-8 leading-tight text-white font-serif">
+                        陸上秘境<br>
+                        <span class="text-2xl font-light italic text-jollify-gold-light mt-2 block font-serif">寧平長安 ‧ 乘一葉輕舟穿行絕壁間</span>
+                    </h2>
+                    
+                    <p class="text-gray-300 mb-8 leading-relaxed font-sans font-light text-base text-justify">
+                        今日專車南下前往享有「陸上下龍灣」美稱的寧平省。深入世界雙重遺產【長安生態保護區】，我們為您包下傳統手划小木舟，由專業船伕操槳，悠遊穿梭於翠綠欲滴的石灰岩喀斯特峰林與靜謐蜿蜒的河道之間。小舟帶您滑過幽深的神祕水下溶洞，抬頭即是奇異的鐘乳石；两旁奇峰並列、翠竹依依，彷彿划入了一幅濃淡相宜的東方山水長卷，徹底沉浸在寧靜脫俗的世外桃源。
+                    </p>
+                    
+                    <div class="space-y-4 border-t border-jollify-gold/30 pt-8 font-sans text-sm text-gray-300 glass-premium-dark p-6 rounded-sm">
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">早餐</span><span>酒店精緻自助早點</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">午餐</span><span>寧平風味烤羊肉與鄉村經典特色料理 (餐標 $12)</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">晚餐</span><span>河內知名蓮花庭園奢華百匯自助餐 (餐標 $19)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 8: Day 5 (圖片在左，奶油色背景) -->
+    <section id="page-8" class="magazine-section p-0 bg-jollify-cream" data-title="Day 05">
+        <div class="flex flex-col lg:flex-row w-full h-full min-h-screen">
+            <!-- 奢華左半部大圖 -->
+            <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger slide-left">
+                <img src="https://images.unsplash.com/photo-1550935515-6a5b6df84bc4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Hanoi Citadel" class="w-full h-full object-cover img-elegant">
+                <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/40 to-transparent"></div>
+                <span class="absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans bg-jollify-purple/80 px-4 py-2 backdrop-blur-md">
+                    DAY 05 ‧ 昇龍皇城
+                </span>
+            </div>
+            
+            <!-- 右半部奢華排版 -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24 bg-white animate-trigger slide-right delay-200">
+                <div class="max-w-xl w-full">
+                    <p class="text-jollify-gold tracking-[0.3em] font-serif font-semibold text-sm mb-2">DAY 05</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-8 leading-tight text-jollify-purple-dark font-serif">
+                        皇城歲月<br>
+                        <span class="text-2xl font-light italic text-jollify-gold-dark mt-2 block font-serif">世界遺產昇龍皇城 ⇄ 尊榮復古觀光列車</span>
+                    </h2>
+                    
+                    <p class="text-jollify-gray mb-8 leading-relaxed font-sans font-light text-base text-justify">
+                        今日上午我們將帶您探訪名列聯合國教科文組織世界文化遺產的「昇龍皇城」，漫步在擁有千年歷史底蘊的古老宮殿遺址間，深刻感受古代越南帝王的尊榮與歷史風雲。下午特別為您預約河內全新推出的高質感觀光小火車（The Hanoi Train），我們已為您提前鎖定了最搶手的 VIP 尊享座位，讓您一邊品味香濃的越南頂級滴濾咖啡，一邊以極佳的視野，優雅、悠閒地穿梭在城市古老街區中。
+                    </p>
+                    
+                    <div class="space-y-4 border-t border-jollify-gold/30 pt-8 font-sans text-sm">
+                        <div class="flex items-center"><span class="w-16 text-jollify-purple font-bold">早餐</span><span class="text-jollify-dark">酒店精緻自助早點</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-purple font-bold">午餐</span><span class="text-jollify-dark">河內知名 1946 法式殖民老宅越式風味餐 (餐標 $15)</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-purple font-bold">晚餐</span><span class="text-jollify-dark">米其林推薦 BEP 少數民族特色烤雞與風味美饌 (餐標 $18)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 9: Day 6 (圖片在右，極奢深色背景) -->
+    <section id="page-9" class="magazine-section p-0 bg-jollify-dark text-white" data-title="Day 06">
+        <div class="flex flex-col lg:flex-row-reverse w-full h-full min-h-screen">
+            <!-- 奢華右半部大圖 -->
+            <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger slide-right">
+                <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Airplane journey" class="w-full h-full object-cover img-elegant">
+                <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/60 to-transparent"></div>
+                <span class="absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans bg-jollify-gold/80 px-4 py-2 backdrop-blur-md">
+                    DAY 06 ‧ 幸福賦歸
+                </span>
+            </div>
+            
+            <!-- 左半部奢華排版 -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24 bg-jollify-dark animate-trigger slide-left delay-200">
+                <div class="max-w-xl w-full">
+                    <p class="text-jollify-gold tracking-[0.3em] font-serif font-semibold text-sm mb-2">DAY 06</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-8 leading-tight text-white font-serif">
+                        極致歸途<br>
+                        <span class="text-2xl font-light italic text-jollify-gold-light mt-2 block font-serif">滿載璀璨回憶，優雅賦歸台灣</span>
+                    </h2>
+                    
+                    <p class="text-gray-300 mb-8 leading-relaxed font-sans font-light text-base text-justify">
+                        在五星酒店內睡到自然醒，悠閒享受最後一頓豐盛美味的奢華自助早午餐。隨後您可以利用最後的休閒時光漫步市區，或是整理此行裝滿滿美好回憶的行囊。午後專車將前來接送您前往河內內排國際機場，在隨行人員協助下辦理完登機手續，搭乘精緻豪華客機優雅地返回台北桃園機場，為這趟極致奢享的北越六日秘境之旅畫下最完美的句點。
+                    </p>
+                    
+                    <div class="space-y-4 border-t border-jollify-gold/30 pt-8 font-sans text-sm text-gray-300 glass-premium-dark p-6 rounded-sm">
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">早餐</span><span>酒店精緻自助早點</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">午餐</span><span>豪華客機精緻空中美饌 / 機上自理</span></div>
+                        <div class="flex items-center"><span class="w-16 text-jollify-gold font-bold">晚餐</span><span>返回溫暖恬靜的家</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 10: 飯店介紹 (下龍灣五星頂級，奶油色背景) -->
+    <section id="page-10" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="下龍灣奢宿">
+        <div class="max-w-6xl mx-auto w-full relative z-10">
+            <div class="text-center mb-16 animate-trigger">
+                <p class="text-jollify-purple tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">EXCLUSIVE HOTELS</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">下榻選址 ‧ 下龍灣五星名宿</h2>
+                <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- 左側精緻破格相框 -->
+                <div class="relative h-[50vh] lg:h-[65vh] overflow-hidden rounded-sm shadow-2xl animate-trigger slide-left delay-200">
+                    <img src="https://images.unsplash.com/photo-1566073171589-7fa364c12513?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Luxury Hotel Room" class="w-full h-full object-cover img-elegant">
+                    <div class="absolute inset-0 border-[12px] border-white/20 pointer-events-none"></div>
+                </div>
+                
+                <!-- 右側飯店介紹 -->
+                <div class="space-y-12 animate-trigger slide-right delay-400">
+                    <div class="border-l-4 border-jollify-purple pl-6">
+                        <span class="text-jollify-gold font-serif text-sm tracking-widest block mb-1">OPTIONAL 01</span>
+                        <h3 class="text-2xl font-bold mb-2 text-jollify-purple-dark">The Watson Premium Halong Hotel</h3>
+                        <p class="text-jollify-purple font-sans font-bold text-lg mb-3">USD 55 <span class="text-xs text-jollify-gray font-normal">/ 房 / 晚 (起)</span></p>
+                        <p class="font-sans font-light text-jollify-gray leading-relaxed text-sm text-justify">
+                            坐落於下龍灣最繁華核心的黃金地段，以現代時尚兼具越式典雅的設計格調為主旋律。飯店提供超寬敞且視野遼闊的客房與頂級衛浴設備，是您在歷經一整天精彩的海上航行探索後，最完美的靜謐休憩溫柔鄉。
+                        </p>
+                    </div>
+
+                    <div class="border-l-4 border-jollify-gold pl-6">
+                        <span class="text-jollify-purple font-serif text-sm tracking-widest block mb-1">OPTIONAL 02</span>
+                        <h3 class="text-2xl font-bold mb-2 text-jollify-purple-dark">Radisson Blu Hotel, Halong Bay</h3>
+                        <p class="text-jollify-gold font-sans font-bold text-lg mb-3">USD 73 <span class="text-xs text-jollify-gray font-normal">/ 房 / 晚 (起)</span></p>
+                        <p class="font-sans font-light text-jollify-gray leading-relaxed text-sm text-justify">
+                            享譽全球的頂級國際連鎖奢華品牌，提供卓越精緻的貼心管家服務與令人屏息的壯美海灣景觀。極富設計感的大氣床品與頂尖設施，為對住宿品質有著極高要求的尊貴旅客，帶來永生難忘的奢華下榻體驗。
+                        </p>
+                    </div>
+
+                    <div class="p-6 bg-white/80 border border-jollify-purple/10 rounded-sm font-sans text-xs text-jollify-gray space-y-1 leading-relaxed">
+                        <p class="font-bold text-jollify-purple-dark mb-1">【下榻說明事項】</p>
+                        <p>* 上述房價均為參考報價，不含 FOC (領隊免房費用)。</p>
+                        <p>* 房價因旺季供需變動調整，不適用於 10 月份出發之特定大假期檔期，詳情請諮詢業務秘書。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 11: 飯店介紹 (河內西湖頂奢，極奢深色背景) -->
+    <section id="page-11" class="magazine-section bg-jollify-dark text-white" data-title="河內奢宿">
+        <div class="max-w-6xl mx-auto w-full relative z-10">
+            <div class="text-center mb-16 animate-trigger">
+                <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">CROWN HOTELS</p>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-transparent bg-clip-text bg-gradient-to-r from-white to-jollify-gold-light">下榻選址 ‧ 河內西湖頂奢</h2>
+                <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- 左側飯店介紹 (在lg螢幕排在左，md在下) -->
+                <div class="space-y-12 lg:order-1 order-2 animate-trigger slide-left delay-400">
+                    <div class="border-l-4 border-jollify-gold pl-6">
+                        <span class="text-jollify-gold font-serif text-sm tracking-widest block mb-1">LUXURY OPTION 01</span>
+                        <h3 class="text-2xl font-bold mb-2 text-white">L7 West Lake Hanoi By Lotte</h3>
+                        <p class="text-jollify-gold font-sans font-bold text-lg mb-3">USD 115 <span class="text-xs text-gray-400 font-normal">/ 房 / 晚 (起)</span></p>
+                        <p class="font-sans font-light text-gray-300 leading-relaxed text-sm text-justify">
+                            韓國樂天集團旗下最新進駐河內的精品五星旗艦品牌。酒店坐落在風景如畫、令人心曠神怡的西湖湖畔。將極簡的摩登都會美學與精緻奢華的越南傳統手工元素巧妙融合，為河內高端奢華旅宿樹立了全新耀眼的標竿。
+                        </p>
+                    </div>
+
+                    <div class="border-l-4 border-jollify-purple pl-6">
+                        <span class="text-jollify-purple-light font-serif text-sm tracking-widest block mb-1">LUXURY OPTION 02</span>
+                        <h3 class="text-2xl font-bold mb-2 text-white">Dusit Le Palais Tu Hoa Hanoi</h3>
+                        <p class="text-jollify-purple-light font-sans font-bold text-lg mb-3">USD 95 <span class="text-xs text-gray-400 font-normal">/ 房 / 晚 (起)</span></p>
+                        <p class="font-sans font-light text-gray-300 leading-relaxed text-sm text-justify">
+                            飯店散發著極致濃郁且浪漫古典的「法式殖民風情」，由泰國享譽盛名的五星級奢華飯店集團精心管理。優雅的宮廷式後花園與精細入微的軟硬體設計細節，讓您在喧囂熱鬧的城市核心中，為心靈找到一片無與倫比的靜謐綠洲。
+                        </p>
+                    </div>
+
+                    <div class="p-6 bg-white/5 border border-jollify-gold/15 rounded-sm font-sans text-xs text-gray-400 space-y-1 leading-relaxed">
+                        <p class="font-bold text-white mb-1">【下榻說明事項】</p>
+                        <p>* 基礎成團標準：單次預訂在 8 間房以下需另行專案調整報價。</p>
+                        <p>* 本報價亦不含 FOC (免房費額度)，且特定節假日與黃金大檔期價格將有所波動。</p>
+                    </div>
+                </div>
+
+                <!-- 右側精緻破格相框 -->
+                <div class="relative h-[50vh] lg:h-[65vh] overflow-hidden rounded-sm shadow-2xl lg:order-2 order-1 animate-trigger slide-right delay-200">
+                    <img src="https://images.unsplash.com/photo-1582719478250-c89af14fbfee?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Luxury Hotel Suite" class="w-full h-full object-cover img-elegant">
+                    <div class="absolute inset-0 border-[12px] border-black/20 pointer-events-none"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 12: 總代理報價與諮詢 (極致典藏，深色背景與金色框線) -->
+    <section id="page-12" class="magazine-section bg-jollify-dark text-white relative" data-title="報價與諮詢">
+        <div class="absolute inset-0 z-0">
+            <!-- 柔和漸層暗底 -->
+            <div class="absolute inset-0 bg-radial-gradient from-jollify-purple-dark/30 to-jollify-dark z-10"></div>
+        </div>
+        
+        <div class="max-w-4xl mx-auto w-full text-center relative z-20 px-6 py-12 border border-jollify-gold/20 rounded-sm glass-premium-dark animate-trigger scale-up delay-200">
+            <p class="text-jollify-gold tracking-[0.4em] font-serif text-sm mb-4 uppercase">JOLLIFY TRAVEL EXCLUSIVE</p>
+            <h2 class="text-4xl md:text-6xl font-serif font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white via-jollify-gold-light to-white mb-8">
+                開啟您的尊榮篇章
+            </h2>
+            
+            <div class="w-16 h-[1px] bg-jollify-gold mx-auto mb-10"></div>
+            
+            <!-- 精緻報價詳情卡 -->
+            <div class="max-w-2xl mx-auto space-y-6 font-sans text-sm md:text-base border-t border-b border-jollify-gold/20 py-8 my-8 text-gray-200">
+                <p class="tracking-widest">地面代理專屬尊榮企劃報價 (PAX)</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-center mt-4">
+                    <div class="p-4 bg-white/5 border border-jollify-gold/10 rounded-sm">
+                        <span class="text-xs text-gray-400 block mb-1">精緻私享團 (20 - 29 人)</span>
+                        <span class="text-xl md:text-2xl font-bold text-jollify-gold">USD 448</span> <span class="text-xs">/ 人起</span>
+                    </div>
+                    <div class="p-4 bg-white/5 border border-jollify-gold/10 rounded-sm">
+                        <span class="text-xs text-gray-400 block mb-1">尊榮大腕團 (30 人以上)</span>
+                        <span class="text-xl md:text-2xl font-bold text-jollify-gold">USD 438</span> <span class="text-xs">/ 人起</span>
+                    </div>
+                </div>
+                <p class="text-xs text-jollify-gold-light tracking-wider mt-4">
+                    * 鑫囍探索特別禮遇：每團滿 16 人即免費贈送 1 名全陪領隊 FOC 房與餐食禮遇！
+                </p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mt-12">
+                <!-- 預訂按鈕 -->
+                <a href="mailto:info@jollifytravel.com" class="w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg hover:shadow-jollify-gold/20">
+                    即刻致電諮詢 ⇄ 專屬秘書
+                </a>
+                
+                <!-- 回到首頁 -->
+                <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full sm:w-auto px-8 py-4 bg-transparent text-white font-sans text-sm tracking-[0.2em] rounded-sm hover:bg-white/10 transition-all duration-300 border border-white/20">
+                    回到首頁
+                </button>
+            </div>
+            
+            <p class="text-[10px] text-gray-500 font-sans tracking-widest mt-16">
+                © 2026 JOLLIFY TRAVEL 鑫囍探索. ALL RIGHTS RESERVED. DESIGNED FOR THE ELITE.
+            </p>
+        </div>
+    </section>
+
+    <!-- JS 互動控制 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // ------------------------------------
+            // 1. 預載畫面 (Preloader) 控制
+            // ------------------------------------
+            const preloader = document.getElementById('preloader');
+            const progressInner = preloader.querySelector('.progress-inner');
+            
+            // 模擬平滑載入條
+            setTimeout(() => { if (progressInner) progressInner.style.width = '40%'; }, 100);
+            setTimeout(() => { if (progressInner) progressInner.style.width = '75%'; }, 350);
+            setTimeout(() => { if (progressInner) progressInner.style.width = '100%'; }, 600);
+            
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    preloader.classList.add('opacity-0', 'pointer-events-none');
+                    // 觸發第一頁動畫
+                    triggerScrollAnimations();
+                }, 850);
+            });
+            // 備份保險：若 load 事件過久沒觸發，1.5 秒後自動關閉
+            setTimeout(() => {
+                preloader.classList.add('opacity-0', 'pointer-events-none');
+                triggerScrollAnimations();
+            }, 1500);
+
+            // ------------------------------------
+            // 2. 右側分頁導覽點動態生成
+            // ------------------------------------
+            const sections = document.querySelectorAll('section');
+            const navDotsContainer = document.getElementById('nav-dots');
+            
+            sections.forEach((sec, index) => {
+                const title = sec.getAttribute('data-title') || `Page ${index + 1}`;
+                
+                const dotWrapper = document.createElement('div');
+                dotWrapper.classList.add('dot-wrapper');
+                dotWrapper.setAttribute('data-index', index);
+                
+                // 點標題
+                const label = document.createElement('span');
+                label.classList.add('dot-label', 'font-sans');
+                label.textContent = title;
+                
+                // 點實體
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                
+                dotWrapper.appendChild(label);
+                dotWrapper.appendChild(dot);
+                
+                dotWrapper.addEventListener('click', () => {
+                    sec.scrollIntoView({ behavior: 'smooth' });
+                });
+                
+                navDotsContainer.appendChild(dotWrapper);
+            });
+
+            const dotWrappers = document.querySelectorAll('.dot-wrapper');
+
+            // ------------------------------------
+            // 3. 視窗滾動監聽 (進度條、點狀態、背景色調適配)
+            // ------------------------------------
+            const progressBar = document.getElementById('progress-bar');
+            
+            function onScrollHandler() {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollPercent = (scrollTop / scrollHeight) * 100;
+                
+                // 更新進度條
+                if (progressBar) {
+                    progressBar.style.width = scrollPercent + '%';
+                }
+                
+                // 觸發動畫
+                triggerScrollAnimations();
+            }
+
+            window.addEventListener('scroll', onScrollHandler, { passive: true });
+
+            // ------------------------------------
+            // 4. Intersection Observer 高階轉場動畫與導覽點聯動
+            // ------------------------------------
+            const observerOptions = {
+                root: null,
+                rootMargin: '-5% 0px -15% 0px', // 微調觸發時機，讓進場動畫更精準
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const targetSection = entry.target;
+                        
+                        // 啟動該區塊內所有 .animate-trigger 轉場動畫
+                        const animatedElements = targetSection.querySelectorAll('.animate-trigger');
+                        animatedElements.forEach(el => {
+                            el.classList.add('animate-active');
+                        });
+
+                        // 取得目前區塊索引
+                        const index = Array.from(sections).indexOf(targetSection);
+                        
+                        // 更新導覽點 active 樣式
+                        dotWrappers.forEach(dw => dw.classList.remove('active'));
+                        if (dotWrappers[index]) {
+                            dotWrappers[index].classList.add('active');
+                        }
+
+                        // 根據當前區塊的背景色調適配導覽點底色樣式 (深色區塊用白金色點，淺色用紫金色點)
+                        if (targetSection.classList.contains('bg-jollify-dark') || targetSection.id === 'page-1') {
+                            navDotsContainer.classList.add('dark-bg-dots');
+                        } else {
+                            navDotsContainer.classList.remove('dark-bg-dots');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                // 初始化所有動畫元素
+                const animatedElements = section.querySelectorAll('h2, h1, p, .grid, .border, .itinerary-row, img, .relative, .space-y-6, .space-y-12');
+                animatedElements.forEach((el, index) => {
+                    if (!el.classList.contains('animate-trigger') && !el.classList.contains('img-elegant')) {
+                        el.classList.add('animate-trigger');
+                        
+                        // 依據節點順序微調延遲時間，營造動態漸進視覺
+                        if (index > 0) {
+                            const delayClass = `delay-${Math.min(index * 100, 700)}`;
+                            el.classList.add(delayClass);
+                        }
+                    }
+                });
+                
+                observer.observe(section);
+            });
+
+            // 輔助函式：主動掃描並觸發可見區塊動畫
+            function triggerScrollAnimations() {
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+                    // 當區塊頂部進入視口，或底部仍在視口中
+                    if (!(rect.bottom < 0 || rect.top - viewHeight >= 0)) {
+                        const animatedElements = section.querySelectorAll('.animate-trigger');
+                        animatedElements.forEach(el => {
+                            el.classList.add('animate-active');
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
