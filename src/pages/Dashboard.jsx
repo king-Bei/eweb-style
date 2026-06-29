@@ -44,6 +44,12 @@ export default function Dashboard({ onLogout }) {
       setShowCreateModal(false);
       navigate(getEditorPath(newItin));
     } catch (err) {
+      if (err?.message === 'User not authenticated') {
+        setShowCreateModal(false);
+        alert('登入已逾期，請重新登入');
+        onLogout();
+        return;
+      }
       alert('建立失敗');
       console.error(err);
       setLoading(false);

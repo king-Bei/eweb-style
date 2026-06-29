@@ -21,7 +21,7 @@ function formatNoticeDesc(desc) {
     }
 
     const bulletMatch = trimmed.match(/^[-*•]\s*(.*)/);
-    const numberMatch = trimmed.match(/^(\d+[\.\)]|\(\d+\))\s*(.*)/);
+    const numberMatch = trimmed.match(/^(\d+[.)]|\(\d+\))\s*(.*)/);
 
     if (bulletMatch) {
       if (!inList || listType !== 'ul') {
@@ -58,6 +58,15 @@ function formatNoticeDesc(desc) {
 
 export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin = '', moduleOrder = []) => {
   const { hero_data, highlights, spots, notices, recommended, map_data } = itinerary;
+  const destinationTitle = String(hero_data?.title1 || itinerary?.title || '').trim();
+  const destinationValue = JSON.stringify(destinationTitle)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  const destinationClick = destinationTitle
+    ? `onclick="try{localStorage.setItem('jt_dest', ${destinationValue})}catch(e){}"`
+    : '';
 
 
   const order = (moduleOrder && moduleOrder.length > 0)
@@ -99,23 +108,11 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             const title2Str = (hero_data?.title2 || '').replace(/\n/g, '<br>');
             const descStr = (hero_data?.description || '').replace(/\n/g, '<br>');
 
-            const consultUrl = cta?.cta_line_url || cta?.cta_register_url;
-            const consultTarget = consultUrl ? 'target="_blank"' : '';
-            const consultHref = consultUrl || '#cta';
+            const consultHref = cta?.cta_register_url || 'https://jollifytravel.com/bespoke/';
+            const consultTarget = 'target="_blank"';
+            const consultClick = destinationClick;
 
             html += `
-  <!-- ░░ 麵包屑導覽 ░░ -->
-  <div class="k-topbar">
-    <a href="index.html" class="k-breadcrumb">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      主題旅遊
-    </a>
-    <span class="k-breadcrumb-sep">›</span>
-    <a href="island-vacation.html" class="k-breadcrumb">海島自由行</a>
-    <span class="k-breadcrumb-sep">›</span>
-    <span class="k-breadcrumb-cur">${hero_data?.title1 || ''}</span>
-  </div>
-
   <!-- ░░ HERO ░░ -->
   <section class="k-hero" id="top">
     <div class="k-hero__bg" style="background-image:url('${hero_data?.image || ''}');"></div>
@@ -130,7 +127,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
       ${tagsHtml}
       <div class="k-hero__btns">
         <a href="#itinerary" class="k-btn k-btn--teal">查看完整行程</a>
-        <a href="${consultHref}" ${consultTarget} class="k-btn k-btn--ghost">立即諮詢顧問</a>
+        <a href="${consultHref}" ${consultTarget} ${consultClick} class="k-btn k-btn--ghost">立即諮詢顧問</a>
       </div>
     </div>
   </section>`;
@@ -525,7 +522,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
       html += `<a href="${cta.cta_line_url}" target="_blank" class="j-cta-btn j-cta-line"><img src="/material-alias/Shared_data/LINE.png" alt="LINE" style="width:20px;height:20px;object-fit:contain;" />LINE 客服</a>`;
     }
     if (cta.cta_register_url) {
-      html += `<a href="${cta.cta_register_url}" target="_blank" class="j-cta-btn j-cta-register">我要報名</a>`;
+      html += `<a href="${cta.cta_register_url}" target="_blank" ${destinationClick} class="j-cta-btn j-cta-register">我要報名</a>`;
     }
     html += '</div>';
   }
@@ -551,6 +548,37 @@ export const generateCss = (theme = 'classic', isExport = false) => {
 export const generateJs = () => {
   return `
     document.addEventListener('DOMContentLoaded', function() {
+        function prefillBespokeDestination() {
+            var destination;
+            try {
+                destination = localStorage.getItem('jt_dest');
+            } catch (e) {
+                return false;
+            }
+            if (!destination) return false;
+
+            var field = document.getElementById('content_6')
+                || document.querySelector('[placeholder="例如：峇里島"]');
+            if (!field) return false;
+
+            if (!String(field.value || '').trim()) {
+                field.value = destination;
+                field.dispatchEvent(new Event('input', { bubbles: true }));
+                field.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            try {
+                localStorage.removeItem('jt_dest');
+            } catch (e) {
+                // The field is already populated; storage cleanup is optional.
+            }
+            return true;
+        }
+
+        if (!prefillBespokeDestination()) {
+            setTimeout(prefillBespokeDestination, 400);
+            setTimeout(prefillBespokeDestination, 1200);
+        }
+
         var container = document.getElementById('jollify-tour-module');
         if (!container) return;
 

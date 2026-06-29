@@ -19,7 +19,7 @@ function formatNoticeDesc(desc) {
     }
 
     const bulletMatch = trimmed.match(/^[-*•]\s*(.*)/);
-    const numberMatch = trimmed.match(/^(\d+[\.\)]|\(\d+\))\s*(.*)/);
+    const numberMatch = trimmed.match(/^(\d+[.)]|\(\d+\))\s*(.*)/);
 
     if (bulletMatch) {
       if (!inList || listType !== 'ul') {
@@ -1068,6 +1068,15 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   // ── Helpers ───────────────────────────────────────────────────
   const esc = (v) => (v == null ? '' : String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
   const safe = (v, fallback = '') => v != null && v !== '' ? v : fallback;
+  const destinationTitle = String(itinerary?.hero_data?.title1 || itinerary?.title || '').trim();
+  const destinationValue = JSON.stringify(destinationTitle)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  const destinationClick = destinationTitle
+    ? `onclick="try{localStorage.setItem('jt_dest', ${destinationValue})}catch(e){}"`
+    : '';
   const tags = [itinerary?.quick_info?.tag1, itinerary?.quick_info?.tag2, itinerary?.quick_info?.tag3]
     .filter(Boolean).join(' ‧ ') || '尊榮 ‧ 奢華 ‧ 絕美秘境';
 
@@ -1506,10 +1515,10 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
 
   // ── CTA / Last Page ────────────────────────────────────────────
   const lastPageNum = 4 + (days?.items?.length || 0) + (hotels?.items?.length || 0) + (hasNotices ? 1 : 0);
-  const ctaTitle = safe(cta?.cta_title, '開啟您的尊榮篇章');
+  const ctaTitle = safe(cta?.title || cta?.cta_title, '開啟您的尊榮篇章');
   const ctaDesc = safe(cta?.cta_desc, '地面代理專屬尊榮企劃報價，由專屬顧問親自服務。');
   const lineBtn = cta?.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-[#06C755] text-white font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-[#05b04b] transition-all duration-300 shadow-lg">客服</a>` : '';
-  const regBtn = cta?.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg">立即報名</a>` : '';
+  const regBtn = cta?.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" ${destinationClick} class="w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg">立即報名</a>` : '';
   const ctaSection = `
     <section id="page-${lastPageNum}" class="magazine-section bg-jollify-dark text-white relative" data-title="報價與諮詢">
       <div class="max-w-4xl mx-auto w-full text-center relative z-20 px-6 py-12 border border-jollify-gold/20 rounded-sm glass-premium-dark animate-trigger scale-up delay-200">
@@ -1530,7 +1539,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const floatBtn = (cta?.visible !== false && (cta?.cta_register_url || cta?.cta_line_url)) ? `
     <div class="fixed bottom-6 right-6 z-[9000] flex flex-col gap-3 items-end">
       ${cta.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="flex items-center bg-[#06C755] hover:bg-[#05b04b] text-white rounded-full px-5 py-3 shadow-lg transition-transform hover:scale-105"><img src="/material-alias/Shared_data/LINE.png" alt="LINE" class="w-5 h-5 object-contain mr-2" /><span class="font-bold">客服</span></a>` : ''}
-      ${cta.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" class="flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl hover:scale-105 font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>` : ''}
+      ${cta.cta_register_url ? `<a href="${esc(cta.cta_register_url)}" target="_blank" ${destinationClick} class="flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl hover:scale-105 font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>` : ''}
     </div>` : '';
 
   return `

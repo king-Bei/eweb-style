@@ -111,7 +111,10 @@ export const itineraryApi = {
   },
   async create(title, theme = 'classic') {
     const user = await authApi.getUser();
-    if (!user) throw new Error('User not authenticated');
+    if (!user) {
+      window.dispatchEvent(new Event('auth-expired'));
+      throw new Error('User not authenticated');
+    }
 
     const { data, error } = await supabase
       .from('itineraries')
@@ -143,7 +146,10 @@ export const itineraryApi = {
   },
   async duplicate(id) {
     const user = await authApi.getUser();
-    if (!user) throw new Error('User not authenticated');
+    if (!user) {
+      window.dispatchEvent(new Event('auth-expired'));
+      throw new Error('User not authenticated');
+    }
 
     // Get original itinerary
     const original = await this.getById(id);

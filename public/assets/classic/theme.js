@@ -1,4 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
+    function prefillBespokeDestination() {
+        var destination;
+        try {
+            destination = localStorage.getItem('jt_dest');
+        } catch {
+            return false;
+        }
+        if (!destination) return false;
+
+        var field = document.getElementById('content_6')
+            || document.querySelector('[placeholder="例如：峇里島"]');
+        if (!field) return false;
+
+        if (!String(field.value || '').trim()) {
+            field.value = destination;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        try {
+            localStorage.removeItem('jt_dest');
+        } catch {
+            // The field is already populated; storage cleanup is optional.
+        }
+        return true;
+    }
+
+    if (!prefillBespokeDestination()) {
+        setTimeout(prefillBespokeDestination, 400);
+        setTimeout(prefillBespokeDestination, 1200);
+    }
+
     var container = document.getElementById('jollify-tour-module');
     if (!container) return;
 

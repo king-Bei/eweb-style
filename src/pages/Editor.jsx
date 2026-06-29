@@ -226,6 +226,8 @@ export default function Editor({ forcedTheme = null }) {
 
       setCta({
         visible: data.config?.cta_visible !== false,
+        title: data.config?.cta_title || '',
+        subtitle: data.config?.cta_subtitle || '',
         cta_register_url: data.config?.cta_register_url || '',
         cta_line_url: data.config?.cta_line_url || ''
       });
@@ -275,6 +277,8 @@ export default function Editor({ forcedTheme = null }) {
         hotels_visible: hotels.visible,
         hotelLayout: hotels.layout,
         cta_visible: cta.visible,
+        cta_title: cta.title || '',
+        cta_subtitle: cta.subtitle || '',
         cta_register_url: cta.cta_register_url,
         cta_line_url: cta.cta_line_url,
         module_order: moduleOrder
