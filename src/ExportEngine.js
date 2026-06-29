@@ -38,19 +38,19 @@ function formatNoticeDesc(desc) {
     if (bulletMatch) {
       if (!inList || listType !== 'ul') {
         if (inList) result.push(`</${listType}>`);
-        result.push('<ul style="margin: 4px 0 4px 20px; padding: 0; list-style-type: disc;">');
+        result.push('<ul style="margin:4px 0;padding-left:22px;list-style-type:disc !important;">');
         inList = true;
         listType = 'ul';
       }
-      result.push(`<li style="margin-bottom: 4px;">${bulletMatch[1]}</li>`);
+      result.push(`<li style="display:list-item;list-style-type:disc !important;margin-bottom:4px;">${bulletMatch[1]}</li>`);
     } else if (numberMatch) {
       if (!inList || listType !== 'ol') {
         if (inList) result.push(`</${listType}>`);
-        result.push('<ol style="margin: 4px 0 4px 20px; padding: 0; list-style-type: decimal;">');
+        result.push('<ol style="margin:4px 0;padding-left:22px;list-style-type:decimal !important;">');
         inList = true;
         listType = 'ol';
       }
-      result.push(`<li style="margin-bottom: 4px;">${numberMatch[2]}</li>`);
+      result.push(`<li style="display:list-item;list-style-type:decimal !important;margin-bottom:4px;">${numberMatch[2]}</li>`);
     } else {
       if (inList) {
         result.push(`</${listType}>`);
@@ -315,9 +315,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           (hotels?.items || []).filter(c => c.visible !== false).forEach((c, i) => {
             if (layout === 'overlap') {
               const isRev = i % 2 !== 0 ? 'reverse' : '';
-              hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name">${c.name || ''}</h3>${c.name_en ? `<div style="margin-top:-6px;margin-bottom:14px;color:#777;font-size:13px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
+              hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name" style="font-weight:700 !important;">${c.name || ''}</h3>${c.name_en ? `<div style="margin-top:-6px;margin-bottom:14px;color:#777;font-size:13px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
             } else {
-              hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div style="position:relative;"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4>${c.name || ''}</h4>${c.name_en ? `<div style="margin-top:-5px;margin-bottom:10px;color:#777;font-size:12px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p>${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
+              hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div style="position:relative;"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4 style="font-weight:700 !important;">${c.name || ''}</h4>${c.name_en ? `<div style="margin-top:-5px;margin-bottom:10px;color:#777;font-size:12px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p>${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
             }
           });
           if (hotelHtml) {

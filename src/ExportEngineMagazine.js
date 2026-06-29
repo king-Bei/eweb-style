@@ -28,19 +28,19 @@ function formatNoticeDesc(desc) {
     if (bulletMatch) {
       if (!inList || listType !== 'ul') {
         if (inList) result.push(`</${listType}>`);
-        result.push('<ul style="margin: 4px 0 4px 20px; padding: 0; list-style-type: disc;">');
+        result.push('<ul style="margin:4px 0;padding-left:22px;list-style-type:disc !important;">');
         inList = true;
         listType = 'ul';
       }
-      result.push(`<li style="margin-bottom: 4px;">${bulletMatch[1]}</li>`);
+      result.push(`<li style="display:list-item;list-style-type:disc !important;margin-bottom:4px;">${bulletMatch[1]}</li>`);
     } else if (numberMatch) {
       if (!inList || listType !== 'ol') {
         if (inList) result.push(`</${listType}>`);
-        result.push('<ol style="margin: 4px 0 4px 20px; padding: 0; list-style-type: decimal;">');
+        result.push('<ol style="margin:4px 0;padding-left:22px;list-style-type:decimal !important;">');
         inList = true;
         listType = 'ol';
       }
-      result.push(`<li style="margin-bottom: 4px;">${numberMatch[2]}</li>`);
+      result.push(`<li style="display:list-item;list-style-type:decimal !important;margin-bottom:4px;">${numberMatch[2]}</li>`);
     } else {
       if (inList) {
         result.push(`</${listType}>`);
@@ -1476,7 +1476,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
         </div>
         <div class="w-full md:w-1/2 animate-trigger ${txtAnim} delay-300">
           <p class="${accentColor} tracking-[0.3em] uppercase text-xs mb-4 font-sans font-semibold">STAY IN STYLE</p>
-          <h2 class="text-4xl md:text-5xl font-bold font-serif ${titleColor} tracking-wider ${hotel.name_en ? 'mb-2' : 'mb-6'} leading-tight">${esc(hotel.name || '嚴選旅宿')}</h2>
+          <h2 class="text-4xl md:text-5xl font-bold font-serif ${titleColor} tracking-wider ${hotel.name_en ? 'mb-2' : 'mb-6'} leading-tight" style="font-weight:700 !important;">${esc(hotel.name || '嚴選旅宿')}</h2>
           ${hotel.name_en ? `<p class="text-sm md:text-base font-sans tracking-[0.12em] ${bodyColor} mb-6">${esc(hotel.name_en)}</p>` : ''}
           <div class="w-16 h-[2px] ${isDark ? 'bg-jollify-gold' : 'bg-jollify-purple'} mb-8"></div>
           <div class="font-sans text-sm md:text-base leading-loose tracking-wide ${bodyColor} font-light"><p>${desc}</p></div>
