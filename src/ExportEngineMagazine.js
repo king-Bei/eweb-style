@@ -1464,6 +1464,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       const img = hotel.image || hotel.img || 'https://images.unsplash.com/photo-1542314831-c6a420808643?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
       const desc = (hotel.description || hotel.desc || '').replace(/\n/g, '<br>');
       const linkHtml = hotel.link ? `<a href="${esc(hotel.link)}" target="_blank" class="inline-flex items-center gap-3 text-xs tracking-[0.2em] ${accentColor} transition-colors font-semibold uppercase mt-8">探索飯店 →</a>` : '';
+      const tagsHtml = hotel.tags
+        ? `<div class="flex flex-wrap gap-2 mt-6">${hotel.tags.split(/[,，\n]/).filter(t => t.trim()).map(t => `<span class="px-2.5 py-0.5 text-xs font-sans tracking-wider rounded border ${isDark ? 'bg-jollify-gold/10 text-jollify-gold border-jollify-gold/20' : 'bg-jollify-purple/5 text-jollify-purple border-jollify-purple/10'}">${esc(t.trim())}</span>`).join('')}</div>`
+        : '';
       return `
     <section id="page-${pageNum}" class="magazine-section ${bg}" data-title="${esc((hotel.name || '旅宿').substring(0, 8))}">
       <div class="max-w-7xl mx-auto w-full relative z-10 flex ${layout} items-center gap-12 lg:gap-24">
@@ -1479,7 +1482,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <h2 class="text-4xl md:text-5xl font-bold font-serif ${titleColor} tracking-wider ${hotel.name_en ? 'mb-2' : 'mb-6'} leading-tight" style="font-weight:700 !important;">${esc(hotel.name || '嚴選旅宿')}</h2>
           ${hotel.name_en ? `<p class="text-sm md:text-base font-sans tracking-[0.12em] ${bodyColor} mb-6">${esc(hotel.name_en)}</p>` : ''}
           <div class="w-16 h-[2px] ${isDark ? 'bg-jollify-gold' : 'bg-jollify-purple'} mb-8"></div>
-          <div class="font-sans text-sm md:text-base leading-loose tracking-wide ${bodyColor} font-light"><p>${desc}</p></div>
+          <div class="font-sans text-sm md:text-base leading-loose tracking-wide ${bodyColor} font-light"><p>${desc}</p>${tagsHtml}</div>
           ${linkHtml}
         </div>
       </div>

@@ -93,6 +93,28 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
   --c-sec: #d4a93b; /* 次色 */
   --c-bg: #ffffff;  /* 背景色 */
 }
+.j-h-tags {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.j-h-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--c-pri);
+  color: var(--c-pri);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+.j-h-tag:hover {
+  background: var(--c-pri);
+  color: #fff;
+}
 </style>
 <div class="jollify-luxury-theme" id="jollify-tour-module">`;
 
@@ -313,11 +335,14 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           let hotelHtml = '';
           const layout = hotels?.layout || 'overlap';
           (hotels?.items || []).filter(c => c.visible !== false).forEach((c, i) => {
+            const tagsHtml = c.tags
+              ? `<div class="j-h-tags">${c.tags.split(/[,，\n]/).filter(t => t.trim()).map(t => `<span class="j-h-tag">${escapeCredit(t.trim())}</span>`).join('')}</div>`
+              : '';
             if (layout === 'overlap') {
               const isRev = i % 2 !== 0 ? 'reverse' : '';
-              hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name" style="font-weight:700 !important;">${c.name || ''}</h3>${c.name_en ? `<div style="margin-top:-6px;margin-bottom:14px;color:#777;font-size:13px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
+              hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name" style="font-weight:700 !important;">${c.name || ''}</h3>${c.name_en ? `<div style="margin-top:-6px;margin-bottom:14px;color:#777;font-size:13px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p>${tagsHtml}</div></div>`;
             } else {
-              hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div style="position:relative;"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4 style="font-weight:700 !important;">${c.name || ''}</h4>${c.name_en ? `<div style="margin-top:-5px;margin-bottom:10px;color:#777;font-size:12px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p>${(c.desc || '').replace(/\n/g, '<br>')}</p></div></div>`;
+              hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div style="position:relative;"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4 style="font-weight:700 !important;">${c.name || ''}</h4>${c.name_en ? `<div style="margin-top:-5px;margin-bottom:10px;color:#777;font-size:12px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p>${(c.desc || '').replace(/\n/g, '<br>')}</p>${tagsHtml}</div></div>`;
             }
           });
           if (hotelHtml) {

@@ -14,7 +14,7 @@ export default function FormHotels({ data = {}, onChange }) {
   const [isSearching, setIsSearching] = React.useState(false);
 
   const addItem = () => {
-    onChange({ ...data, items: [...items, { visible: true, country_code: '', country: '', country_en: '', city_zh: '', img: '', image_source: '', stars: '★★★★★', name: '', name_en: '', desc: '' }] });
+    onChange({ ...data, items: [...items, { visible: true, country_code: '', country: '', country_en: '', city_zh: '', img: '', image_source: '', stars: '★★★★★', name: '', name_en: '', desc: '', tags: '' }] });
   };
 
   const updateItem = (index, field, value) => {
@@ -61,7 +61,8 @@ export default function FormHotels({ data = {}, onChange }) {
         stars: template.stars || '★★★★★',
         desc: template.description || '',
         img: template.image_url || '',
-        image_source: template.image_source || ''
+        image_source: template.image_source || '',
+        tags: template.tags || ''
       }]
     });
   };
@@ -191,6 +192,10 @@ export default function FormHotels({ data = {}, onChange }) {
                     <div className="col-span-2">
                       <label className="form-label text-xs">介紹文字</label>
                       <textarea className="form-control" rows={3} value={item.desc} onChange={e => updateItem(i, 'desc', e.target.value)}></textarea>
+                    </div>
+                    <div className="col-span-2">
+                      <label className="form-label text-xs">飯店標籤 (多個標籤請以逗號或換行分隔)</label>
+                      <input type="text" className="form-control" value={item.tags || ''} onChange={e => updateItem(i, 'tags', e.target.value)} placeholder="例如：頂級溫泉, 無邊際泳池, 米其林星級" />
                     </div>
                     <div className="col-span-2 flex justify-end">
                       <button type="button" className="btn-outline-gold flex items-center gap-2" onClick={() => saveToDatabase(item)}>
