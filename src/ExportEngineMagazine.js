@@ -709,13 +709,13 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   let recommendedHtml = '';
   if (recommended?.visible !== false && recommended?.items?.length) {
     const rCards = recommended.items.map((c, i) => `
-      <a href="${esc(c.link || '#')}" target="_blank" class="block group relative overflow-hidden h-64 md:h-80 w-full rounded-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
-        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image:url('${esc(c.img || '')}')"></div>
+      <a href="${esc(c.link || '#')}" target="_blank" rel="noopener noreferrer" class="recommended-card block group relative overflow-hidden h-64 md:h-80 w-full rounded-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
+        <div class="recommended-card-image absolute inset-0 bg-cover bg-center transition-transform duration-700" style="background-image:url('${esc(c.img || '')}')"></div>
         ${imageCredit(c.image_source)}
         <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/90 via-jollify-dark/40 to-transparent"></div>
         <div class="absolute bottom-6 left-6 right-6">
           <h5 class="text-white font-serif font-bold text-xl md:text-2xl mb-2 line-clamp-2">${esc(c.t || c.title || '')}</h5>
-          <span class="inline-block text-jollify-gold font-sans text-xs tracking-[0.2em] uppercase group-hover:text-white transition-colors duration-300">查看行程 &rarr;</span>
+          <span class="recommended-card-cta inline-block text-jollify-gold font-sans text-xs tracking-[0.2em] uppercase transition-colors duration-300">查看行程 &rarr;</span>
         </div>
       </a>
     `).join('');

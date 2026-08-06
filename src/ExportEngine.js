@@ -13,6 +13,21 @@ const imageCredit = source => source
   ? `<small class="j-image-credit" style="position:absolute;right:8px;bottom:8px;z-index:25;max-width:calc(100% - 16px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.58);color:#fff;padding:3px 7px;border-radius:2px;font-size:10px;line-height:1.4;pointer-events:none;">圖片來源：${escapeCredit(source)}</small>`
   : '';
 
+const normalizeImageList = (value, fallback = '') => {
+  const list = Array.isArray(value)
+    ? value
+    : String(value || '').split(/[\n,，、]+/);
+  const seen = new Set();
+  return [...list, fallback]
+    .map(item => String(item || '').trim())
+    .filter(Boolean)
+    .filter(item => {
+      if (seen.has(item)) return false;
+      seen.add(item);
+      return true;
+    });
+};
+
 function formatNoticeDesc(desc) {
   if (!desc) return '';
   const lines = desc.split('\n');
@@ -341,6 +356,33 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             if (layout === 'overlap') {
               const isRev = i % 2 !== 0 ? 'reverse' : '';
               hotelHtml += `<div class="j-luxury-hotel-card ${isRev} wow fadeInUp"><div class="j-h-image"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-h-info"><div class="j-h-stars">${c.stars || ''}</div><h3 class="j-h-name" style="font-weight:700 !important;">${c.name || ''}</h3>${c.name_en ? `<div style="margin-top:-6px;margin-bottom:14px;color:#777;font-size:13px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p class="j-h-desc">${(c.desc || '').replace(/\n/g, '<br>')}</p>${tagsHtml}</div></div>`;
+            } else if (layout === 'hero') {
+              const images = normalizeImageList(c.images, c.img);
+              const mainImage = images[0] || c.img || '';
+              const thumbs = images.map((img, idx) => `
+                <button class="j-hotel-hero-thumb ${idx === 0 ? 'is-active' : ''}" type="button" data-hotel-image="${img}" style="animation-delay:${idx * 0.12}s;" aria-label="切換${escapeCredit(c.name || '飯店')}圖片 ${idx + 1}">
+                  <img src="${img}" alt="${escapeCredit(c.name || 'Hotel')} ${idx + 2}">
+                </button>`).join('');
+              const descriptionHtml = c.desc ? `
+              <div class="j-hotel-hero-copy wow fadeInUp" data-wow-delay="${(i * 0.1) + 0.08}s">
+                <p>${(c.desc || '').replace(/\n/g, '<br>')}</p>
+              </div>` : '';
+              hotelHtml += `
+              <article class="j-hotel-hero-card wow fadeInUp" data-wow-delay="${i * 0.1}s">
+                <div class="j-hotel-hero-bg">
+                  <img src="${mainImage}" alt="${escapeCredit(c.name || 'Hotel')}" class="j-hotel-hero-main">
+                  ${imageCredit(c.image_source)}
+                </div>
+                <div class="j-hotel-hero-shade"></div>
+                <div class="j-hotel-hero-info">
+                  <div class="j-h-stars">${c.stars || ''}</div>
+                  <h3 class="j-hotel-hero-name">${c.name || ''}</h3>
+                  ${c.name_en ? `<div class="j-hotel-hero-en">${escapeCredit(c.name_en)}</div>` : ''}
+                  ${tagsHtml}
+                </div>
+                ${thumbs.length > 1 ? `<div class="j-hotel-hero-thumbs">${thumbs}</div>` : ''}
+              </article>
+              ${descriptionHtml}`;
             } else {
               hotelHtml += `<div class="j-grid-hotel-card wow fadeInUp" data-wow-delay="${i * 0.1}s"><div style="position:relative;"><img src="${c.img || ''}" alt="Hotel">${imageCredit(c.image_source)}</div><div class="j-grid-h-info"><div class="j-h-stars">${c.stars || ''}</div><h4 style="font-weight:700 !important;">${c.name || ''}</h4>${c.name_en ? `<div style="margin-top:-5px;margin-bottom:10px;color:#777;font-size:12px;line-height:1.5;letter-spacing:.04em;">${escapeCredit(c.name_en)}</div>` : ''}<p>${(c.desc || '').replace(/\n/g, '<br>')}</p>${tagsHtml}</div></div>`;
             }
@@ -348,7 +390,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           if (hotelHtml) {
             const hotelsTitle = hotels?.title || '嚴選旅宿 ‧ 奢華棲所';
             const hotelsSubtitle = hotels?.subtitle || 'Exclusive Stays';
-            const wrapClass = layout === 'grid' ? 'j-hotel-grid-wrapper' : 'j-wrapper';
+            const wrapClass = layout === 'grid' ? 'j-hotel-grid-wrapper' : (layout === 'hero' ? 'j-hotel-hero-wrapper' : 'j-wrapper');
             html += `<div class="j-section" id="hotels"><div class="j-heading wow fadeInUp"><span class="j-badge">${hotelsSubtitle}</span><h2>${hotelsTitle}</h2></div><div class="${wrapClass}">${hotelHtml}</div></div>`;
           }
         }
@@ -522,7 +564,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
           const mapTitle = map_data?.title || '行程地圖';
           const mapDesc = map_data?.desc || '';
           html += `
-<div class="j-section j-map-section" id="map" style="background: none; border: none; padding: 40px 0;">
+<div class="j-section j-map-section" id="map" style="padding: 40px 0;">
   <div class="j-wrapper" style="max-width: 100%; padding: 0;">
     <div class="j-heading wow fadeInUp" style="margin-bottom: 20px; text-align: center;">
       <span class="j-badge">Route Map</span>
@@ -624,7 +666,58 @@ export const generateJs = () => {
         var container = document.getElementById('jollify-tour-module');
         if (!container) return;
 
+        function initClassicReveal() {
+            var items = Array.from(container.querySelectorAll('.wow'));
+            if (!items.length) return;
+            var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            items.forEach(function(item) {
+                var delay = item.getAttribute('data-wow-delay');
+                if (delay) item.style.transitionDelay = delay;
+                item.style.visibility = reduceMotion ? 'visible' : 'hidden';
+            });
+            if (reduceMotion || !('IntersectionObserver' in window)) {
+                items.forEach(function(item) {
+                    item.style.visibility = 'visible';
+                    item.classList.add('animated');
+                });
+                return;
+            }
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (!entry.isIntersecting) return;
+                    entry.target.style.visibility = 'visible';
+                    entry.target.classList.add('animated');
+                    observer.unobserve(entry.target);
+                });
+            }, { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.14 });
+            items.forEach(function(item) {
+                observer.observe(item);
+            });
+        }
+
+        initClassicReveal();
+
         container.addEventListener('click', function(e) {
+            var hotelThumb = e.target.closest('.j-hotel-hero-thumb');
+            if (hotelThumb && container.contains(hotelThumb)) {
+                e.preventDefault();
+                var nextImage = hotelThumb.getAttribute('data-hotel-image');
+                var hotelCard = hotelThumb.closest('.j-hotel-hero-card');
+                var mainImage = hotelCard ? hotelCard.querySelector('.j-hotel-hero-main') : null;
+                if (!nextImage || !mainImage || mainImage.getAttribute('src') === nextImage) return;
+                hotelCard.querySelectorAll('.j-hotel-hero-thumb').forEach(function(thumb) {
+                    thumb.classList.remove('is-active');
+                });
+                hotelThumb.classList.add('is-active');
+                mainImage.classList.remove('is-switching');
+                void mainImage.offsetWidth;
+                mainImage.classList.add('is-switching');
+                window.setTimeout(function() {
+                    mainImage.setAttribute('src', nextImage);
+                }, 120);
+                return;
+            }
+
             var dayTab = e.target.closest('.j-day-tab');
             if (dayTab && container.contains(dayTab)) {
                 e.preventDefault();

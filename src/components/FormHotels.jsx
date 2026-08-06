@@ -14,7 +14,7 @@ export default function FormHotels({ data = {}, onChange, theme = 'classic' }) {
   const [isSearching, setIsSearching] = React.useState(false);
 
   const addItem = () => {
-    onChange({ ...data, items: [...items, { visible: true, country_code: '', country: '', country_en: '', city_zh: '', img: '', image_source: '', stars: '★★★★★', name: '', name_en: '', desc: '', tags: '' }] });
+    onChange({ ...data, items: [...items, { visible: true, country_code: '', country: '', country_en: '', city_zh: '', img: '', images: '', image_source: '', stars: '★★★★★', name: '', name_en: '', desc: '', tags: '' }] });
   };
 
   const updateItem = (index, field, value) => {
@@ -61,6 +61,7 @@ export default function FormHotels({ data = {}, onChange, theme = 'classic' }) {
         stars: template.stars || '★★★★★',
         desc: template.description || '',
         img: template.image_url || '',
+        images: template.images || '',
         image_source: template.image_source || '',
         tags: template.tags || ''
       }]
@@ -150,6 +151,7 @@ export default function FormHotels({ data = {}, onChange, theme = 'classic' }) {
                 <select className="form-control" value={layout} onChange={e => onChange({ ...data, layout: e.target.value })}>
                   <option value="overlap">破格交疊 (Overlap)</option>
                   <option value="grid">格狀展示 (Grid)</option>
+                  <option value="hero">滿版大圖 / 多圖 (Hero Gallery)</option>
                 </select>
               </div>}
 
@@ -189,6 +191,16 @@ export default function FormHotels({ data = {}, onChange, theme = 'classic' }) {
                       <input type="text" className="form-control" value={item.img} onChange={e => updateItem(i, 'img', e.target.value)} />
                       <ImageAttributionInput value={item.image_source || ''} onChange={value => updateItem(i, 'image_source', value)} />
                     </div>
+                    {theme === 'classic' && <div className="col-span-2">
+                      <label className="form-label text-xs">多圖網址 (滿版大圖版型使用，可用換行或逗號分隔)</label>
+                      <textarea
+                        className="form-control"
+                        rows={3}
+                        value={Array.isArray(item.images) ? item.images.join('\n') : (item.images || '')}
+                        onChange={e => updateItem(i, 'images', e.target.value)}
+                        placeholder="https://example.com/photo-1.jpg&#10;https://example.com/photo-2.jpg"
+                      />
+                    </div>}
                     <div className="col-span-2">
                       <label className="form-label text-xs">介紹文字</label>
                       <textarea className="form-control" rows={3} value={item.desc} onChange={e => updateItem(i, 'desc', e.target.value)}></textarea>

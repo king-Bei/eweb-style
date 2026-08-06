@@ -756,6 +756,36 @@
     #jollify-magazine-tour .itinerary-row:hover .j-overview-summary {
         color: #F2ECFA;
     }
+
+    #jollify-magazine-tour .recommended-card:hover .recommended-card-image {
+        transform: scale(1.06);
+    }
+
+    #jollify-magazine-tour .recommended-card:hover .recommended-card-cta {
+        color: #fff;
+    }
+}
+
+/* 推薦卡保留沉浸式圖片，同時讓鍵盤焦點不被 overflow 裁切。 */
+#jollify-magazine-tour .recommended-card {
+    outline: 1px solid transparent;
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 1px rgba(212, 169, 59, 0.12);
+}
+
+#jollify-magazine-tour .recommended-card:focus-visible {
+    outline: 2px solid #F6E7AE;
+    outline-offset: 4px;
+    box-shadow:
+        inset 0 0 0 2px #D4A93B,
+        0 0 0 7px rgba(212, 169, 59, 0.18);
+}
+
+#jollify-magazine-tour .recommended-card:focus-visible .recommended-card-cta {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: #D4A93B;
+    text-underline-offset: 0.35em;
 }
 
 #jollify-magazine-tour .flight-card-lines {
@@ -1278,6 +1308,7 @@
     }
 
     #jollify-magazine-tour .overflow-hidden:hover .img-elegant,
+    #jollify-magazine-tour .recommended-card:hover .recommended-card-image,
     #jollify-magazine-tour .dot-wrapper:hover .dot,
     #jollify-magazine-tour .dot-wrapper.active .dot {
         transform: none;
