@@ -14,7 +14,7 @@ import {
   Phone,
   Monitor,
   BookOpen,
-  PanelsTopLeft
+  Download
 } from 'lucide-react';
 import * as ClassicEngine from '../ExportEngine';
 import * as MagazineEngine from '../ExportEngineMagazine';
@@ -31,6 +31,7 @@ import FormCTA from '../components/FormCTA';
 import { DEFAULT_CTA_REGISTER_URL } from '../constants';
 import useUnsavedChangesWarning from '../hooks/useUnsavedChangesWarning';
 import { prepareHtmlImagesForKowei, toPreviewImageUrl } from '../utils/imageUrls';
+import { createZipBlob } from '../utils/zipArchive';
 
 const DEFAULT_MODULE_ORDER = ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
 
@@ -68,6 +69,20 @@ const serializeEditorState = ({ itinerary, flights, days, hotels, cta, moduleOrd
   publishDateNote,
   theme
 });
+
+const escapeHtml = value => String(value || '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
+
+const safeFilePart = value => String(value || '')
+  .trim()
+  .replace(/[\\/:*?"<>|]+/g, '-')
+  .replace(/\s+/g, '-')
+  .replace(/-+/g, '-')
+  .replace(/^-|-$/g, '')
+  .slice(0, 60) || 'itinerary';
 
 export default function Editor({ forcedTheme = null }) {
   const { id } = useParams();
@@ -257,24 +272,30 @@ export default function Editor({ forcedTheme = null }) {
         map_data: data.map_data || {}
       });
 
-      setModuleOrder(normalizeModuleOrder(data.config?.module_order));
+      const editorTheme = forcedTheme || data.config?.theme || 'classic';
+      const themeConfig = {
+        ...(data.config || {}),
+        ...(data.config?.[`${editorTheme}_config`] || {})
+      };
+
+      setModuleOrder(normalizeModuleOrder(themeConfig.module_order));
 
       setStatus(data.status || '草稿');
       setPublishDateNote(data.publish_date_note || '');
 
-      const savedFlightState = data.config?.flightEditorState;
+      const savedFlightState = themeConfig.flightEditorState;
       const f_items = orderedRelationData(data.itinerary_flights, 'flight_data');
       setFlights(savedFlightState && typeof savedFlightState === 'object'
         ? {
             ...savedFlightState,
-            visible: data.config?.flights_visible !== false,
+            visible: themeConfig.flights_visible !== false,
             magazine_layout: savedFlightState.magazine_layout || 'auto',
             items: Array.isArray(savedFlightState.items)
               ? savedFlightState.items
               : (savedFlightState.groups || []).flatMap(group => group.items || [])
           }
         : {
-            visible: data.config?.flights_visible !== false,
+            visible: themeConfig.flights_visible !== false,
             title: '',
             subtitle: '',
             magazine_layout: 'auto',
@@ -283,24 +304,25 @@ export default function Editor({ forcedTheme = null }) {
 
       const d_items = data.itinerary_days ? [...data.itinerary_days].sort((a, b) => a.day_index - b.day_index).map(d => d.content) : [];
       setDays({
-        visible: data.config?.days_visible !== false,
-        layout: data.config?.daysLayout || 'leftimg',
+        visible: themeConfig.days_visible !== false,
+        layout: themeConfig.daysLayout || 'leftimg',
         items: d_items
       });
 
       const h_items = orderedRelationData(data.itinerary_hotels, 'hotel_group_data');
-      setHotels({ visible: data.config?.hotels_visible !== false, layout: data.config?.hotelLayout || 'overlap', items: h_items });
+      setHotels({ visible: themeConfig.hotels_visible !== false, layout: themeConfig.hotelLayout || 'overlap', items: h_items });
 
       setCta({
-        visible: data.config?.cta_visible !== false,
-        title: data.config?.cta_title || '',
-        subtitle: data.config?.cta_subtitle || '',
-        cta_register_url: data.config?.cta_register_url || DEFAULT_CTA_REGISTER_URL,
-        cta_line_url: data.config?.cta_line_url || ''
+        visible: themeConfig.cta_visible !== false,
+        title: themeConfig.cta_title || '',
+        subtitle: themeConfig.cta_subtitle || '',
+        cta_desc: themeConfig.cta_desc || '',
+        cta_register_url: themeConfig.cta_register_url || DEFAULT_CTA_REGISTER_URL,
+        cta_line_url: themeConfig.cta_line_url || ''
       });
 
       setBaseConfig(data.config || {});
-      setTheme(forcedTheme || data.config?.theme || 'classic');
+      setTheme(editorTheme);
 
       // Check for unsaved local backup
       const backupStr = localStorage.getItem(backupKey);
@@ -337,9 +359,8 @@ export default function Editor({ forcedTheme = null }) {
     
     try {
       const user = await authApi.getUser();
-      const config = {
-        ...baseConfig,
-        theme: forcedTheme || theme,
+      const activeTheme = forcedTheme || theme;
+      const themeConfig = {
         flights_visible: flights.visible,
         flightEditorState: flights,
         days_visible: days.visible,
@@ -349,9 +370,18 @@ export default function Editor({ forcedTheme = null }) {
         cta_visible: cta.visible,
         cta_title: cta.title || '',
         cta_subtitle: cta.subtitle || '',
+        cta_desc: cta.cta_desc || '',
         cta_register_url: cta.cta_register_url || DEFAULT_CTA_REGISTER_URL,
         cta_line_url: cta.cta_line_url,
         module_order: moduleOrder
+      };
+      const config = {
+        ...baseConfig,
+        theme: activeTheme,
+        [`${activeTheme}_config`]: {
+          ...(baseConfig?.[`${activeTheme}_config`] || {}),
+          ...themeConfig
+        }
       };
 
       setSaveProgress(20);
@@ -440,7 +470,7 @@ export default function Editor({ forcedTheme = null }) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>網頁預覽</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Noto+Serif+TC:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
 <style>
@@ -528,7 +558,7 @@ ${html}
       headPreloads += `<link rel="preload" as="image" href="${toPreviewImageUrl(itinerary.hero_data.image)}">\n`;
     }
     // 如果有其他常用 CDN，也可在此預載
-    headPreloads += `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Noto+Serif+TC:wght@300;400;600;700&display=swap" rel="stylesheet">\n`;
+    headPreloads += `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@300;400;600;700&display=swap" rel="stylesheet">\n`;
 
     setExportCodes({
       html: prepareHtmlImagesForKowei(generatedHtml),
@@ -581,6 +611,43 @@ ${html}
     URL.revokeObjectURL(url);
   };
 
+  const handleDownloadKoweiZip = () => {
+    if (!exportCodes.html || !exportCodes.css || !exportCodes.js) {
+      alert('請先按「匯出代碼」產生手工頁內容');
+      return;
+    }
+
+    const pageTitle = itinerary.title || itinerary.hero_data?.title1 || 'Jollify Travel Itinerary';
+    const fullHtml = `<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(pageTitle)}</title>
+${exportCodes.head ? `${exportCodes.head}\n` : ''}<link rel="stylesheet" href="./assets/magazine.css">
+</head>
+<body>
+${exportCodes.html}
+<script src="./assets/magazine.js" defer></script>
+</body>
+</html>`;
+
+    const zip = createZipBlob([
+      { name: 'index.html', content: fullHtml },
+      { name: 'assets/magazine.css', content: exportCodes.css },
+      { name: 'assets/magazine.js', content: exportCodes.js }
+    ]);
+
+    const url = URL.createObjectURL(zip);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${safeFilePart(pageTitle)}-kowei-magazine-page.zip`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const handleRestoreLocalBackup = () => {
     if (!pendingBackup) return;
     if (pendingBackup.itinerary) setItinerary(pendingBackup.itinerary);
@@ -613,12 +680,17 @@ ${html}
     if (!window.confirm('確定要還原到這個版本嗎？您目前的未儲存變更將會遺失。')) return;
     try {
       const snapshot = await itineraryApi.getVersionData(versionId);
+      const restoredTheme = snapshot.theme || snapshot.config?.theme || 'classic';
+      const restoredThemeConfig = {
+        ...(snapshot.config || {}),
+        ...(snapshot.config?.[`${restoredTheme}_config`] || {})
+      };
       if (snapshot.itinerary) setItinerary(snapshot.itinerary);
       if (snapshot.flights) setFlights(snapshot.flights);
       if (snapshot.days) {
         setDays({
           ...snapshot.days,
-          layout: snapshot.config?.daysLayout || snapshot.days.layout || 'leftimg'
+          layout: restoredThemeConfig.daysLayout || snapshot.days.layout || 'leftimg'
         });
       }
       if (snapshot.hotels) setHotels(snapshot.hotels);
@@ -626,8 +698,8 @@ ${html}
       if (snapshot.status) setStatus(snapshot.status);
       if (snapshot.publish_date_note !== undefined) setPublishDateNote(snapshot.publish_date_note || '');
       if (snapshot.theme || snapshot.config?.theme) setTheme(snapshot.theme || snapshot.config.theme);
-      if (snapshot.config?.module_order) {
-        setModuleOrder(normalizeModuleOrder(snapshot.config.module_order));
+      if (restoredThemeConfig?.module_order) {
+        setModuleOrder(normalizeModuleOrder(restoredThemeConfig.module_order));
       } else {
         setModuleOrder(DEFAULT_MODULE_ORDER);
       }
@@ -769,11 +841,6 @@ ${html}
         </div>
 
         <div className="editor-action-row">
-          {forcedTheme === 'magazine' && (
-            <button className="editor-action-button" onClick={() => navigate(`/editor-magazine-pages/${id}`)}>
-              <PanelsTopLeft size={17} /> 分頁微調
-            </button>
-          )}
           <button className="editor-action-button editor-action-primary" onClick={handleSave} disabled={saving || isLocked}>
             <Save size={17} /> {saving ? '儲存中' : '儲存變更'}
           </button>
@@ -813,11 +880,6 @@ ${html}
               {forcedTheme === 'magazine' || theme === 'magazine' ? '雜誌風格 · 資料表單' : '經典風格'}
             </div>
             <div className="flex items-center gap-2">
-              {forcedTheme === 'magazine' && (
-                <button className="editor-link-button" onClick={() => navigate(`/editor-magazine-pages/${id}`)}>
-                  <PanelsTopLeft size={14} /> 分頁微調
-                </button>
-              )}
               <button className="editor-link-button" onClick={handleExport}>
                 <Code size={14} /> 匯出代碼
               </button>
@@ -851,6 +913,20 @@ ${html}
               {theme === 'classic' && (
                 <div className="mb-3 p-2 bg-purple-50 border border-purple-200 rounded text-xs text-purple-900 font-sans">
                   💡 <strong>經典版提示</strong>：產出的 HTML 已自動帶入外部 CSS 樣式與 JS 腳本素材連結，您只需複製 <strong>1. HTML 原始碼</strong> 貼入您的 CMS 即可。
+                </div>
+              )}
+
+              {theme === 'magazine' && (
+                <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-bold text-amber-950">科威手工頁一鍵包</div>
+                      <div className="text-xs text-amber-900 mt-1">下載後可直接上傳手工頁，內含 index.html、雜誌 CSS 與雜誌 JS。</div>
+                    </div>
+                    <button className="btn-gold px-4 py-2 text-xs flex items-center gap-2" onClick={handleDownloadKoweiZip}>
+                      <Download size={14} /> 下載手工頁 ZIP
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -987,12 +1063,12 @@ ${html}
               </>
             ) : (
               <>
-                <div id="form-hero"><FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} /></div>
-                <div id="form-highlights"><FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} /></div>
-                <div id="form-spots"><FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} /></div>
+                <div id="form-hero"><FormHero heroData={itinerary.hero_data} onChange={(d) => setItinerary({ ...itinerary, hero_data: d })} theme={theme} /></div>
+                <div id="form-highlights"><FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} theme={theme} /></div>
+                <div id="form-spots"><FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} theme={theme} /></div>
                 <div id="form-flights"><FormFlights data={flights} onChange={setFlights} theme={theme} /></div>
-                <div id="form-hotels"><FormHotels data={hotels} onChange={setHotels} /></div>
-                <div id="form-days"><FormDays data={days} onChange={setDays} /></div>
+                <div id="form-hotels"><FormHotels data={hotels} onChange={setHotels} theme={theme} /></div>
+                <div id="form-days"><FormDays data={days} onChange={setDays} theme={theme} /></div>
                 <div id="form-notices"><FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} /></div>
                 <div id="form-cta"><FormCTA data={cta} onChange={setCta} /></div>
                 <div id="form-recommended"><FormRecommended data={itinerary.recommended} onChange={(d) => setItinerary({ ...itinerary, recommended: d })} /></div>

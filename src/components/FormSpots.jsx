@@ -4,7 +4,7 @@ import CountryCodeFields from './CountryCodeFields';
 import { spotTemplateApi } from '../api';
 import { Database, Plus, Save, Search } from 'lucide-react';
 
-export default function FormSpots({ data = {}, onChange }) {
+export default function FormSpots({ data = {}, onChange, theme = 'classic' }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
   const items = data.items || [];
   const layout = data.layout || 'fullimg';
@@ -142,14 +142,14 @@ export default function FormSpots({ data = {}, onChange }) {
                 )}
               </div>
 
-              <div className="mb-4">
+              {theme === 'classic' && <div className="mb-4">
                 <label className="form-label">版型選擇 (Layout)</label>
                 <select className="form-control" value={layout} onChange={e => onChange({ ...data, layout: e.target.value })}>
                   <option value="fullimg">滿版大圖 (Full Image)</option>
                   <option value="ltr">左右交錯 (Left-to-Right)</option>
                   <option value="grid">格狀三欄 (Grid)</option>
                 </select>
-              </div>
+              </div>}
 
               {items.map((item, i) => (
                 <div key={i} className={item.visible === false ? 'opacity-50' : ''} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>

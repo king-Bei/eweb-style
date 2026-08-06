@@ -4,7 +4,7 @@ import CountryCodeFields from './CountryCodeFields';
 import { hotelTemplateApi } from '../api';
 import { Database, Plus, Save, Search } from 'lucide-react';
 
-export default function FormHotels({ data = {}, onChange }) {
+export default function FormHotels({ data = {}, onChange, theme = 'classic' }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
   const items = data.items || [];
   const layout = data.layout || 'overlap';
@@ -145,13 +145,13 @@ export default function FormHotels({ data = {}, onChange }) {
                 )}
               </div>
 
-              <div className="mb-4">
+              {theme === 'classic' && <div className="mb-4">
                 <label className="form-label">版型選擇 (Layout)</label>
                 <select className="form-control" value={layout} onChange={e => onChange({ ...data, layout: e.target.value })}>
                   <option value="overlap">破格交疊 (Overlap)</option>
                   <option value="grid">格狀展示 (Grid)</option>
                 </select>
-              </div>
+              </div>}
 
               {items.map((item, i) => (
                 <div key={i} className={item.visible === false ? 'opacity-50' : ''} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
@@ -193,6 +193,10 @@ export default function FormHotels({ data = {}, onChange }) {
                       <label className="form-label text-xs">介紹文字</label>
                       <textarea className="form-control" rows={3} value={item.desc} onChange={e => updateItem(i, 'desc', e.target.value)}></textarea>
                     </div>
+                    {theme === 'magazine' && <div className="col-span-2">
+                      <label className="form-label text-xs">飯店介紹連結</label>
+                      <input type="url" className="form-control" value={item.link || ''} onChange={e => updateItem(i, 'link', e.target.value)} placeholder="https://" />
+                    </div>}
                     <div className="col-span-2">
                       <label className="form-label text-xs">飯店標籤 (多個標籤請以逗號或換行分隔)</label>
                       <input type="text" className="form-control" value={item.tags || ''} onChange={e => updateItem(i, 'tags', e.target.value)} placeholder="例如：頂級溫泉, 無邊際泳池, 米其林星級" />

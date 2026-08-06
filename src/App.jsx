@@ -5,7 +5,6 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Editor from './pages/Editor';
 import Settings from './pages/Settings';
-import MagazinePageBuilder from './pages/Editor_Magazine';
 
 function App() {
   const [session, setSession] = useState(null);
@@ -33,7 +32,6 @@ function App() {
     { path: '/settings', element: session ? <Settings /> : <Navigate to="/login" /> },
     { path: '/editor/:id?', element: session ? <Editor /> : <Navigate to="/login" /> },
     { path: '/editor-magazine/:id', element: session ? <Editor forcedTheme="magazine" /> : <Navigate to="/login" /> },
-    { path: '/editor-magazine-pages/:id', element: session ? <MagazinePageBuilder /> : <Navigate to="/login" /> },
     { path: '/brochure-pages', element: <Navigate to="/" replace /> }
   ]), [session]);
 

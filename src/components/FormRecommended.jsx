@@ -34,6 +34,16 @@ export default function FormRecommended({ data = {}, onChange }) {
 
           {data.visible !== false && (
             <>
+              <div className="mb-4 grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <div>
+                  <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊主標題</label>
+                  <input type="text" className="form-control" value={data.title || ''} onChange={e => onChange({ ...data, title: e.target.value })} placeholder="探索更多奢華旅程" />
+                </div>
+                <div>
+                  <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">區塊英文副標</label>
+                  <input type="text" className="form-control" value={data.subtitle || ''} onChange={e => onChange({ ...data, subtitle: e.target.value })} placeholder="More Explore" />
+                </div>
+              </div>
               {items.map((item, i) => (
                 <div key={i} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
                   <button onClick={() => removeItem(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer' }}>✖</button>

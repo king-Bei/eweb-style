@@ -1,7 +1,7 @@
 import React from 'react';
 import ImageAttributionInput from './ImageAttributionInput';
 
-export default function FormHighlights({ data = {}, onChange }) {
+export default function FormHighlights({ data = {}, onChange, theme = 'classic' }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
   const items = data.items || [];
 
@@ -46,7 +46,7 @@ export default function FormHighlights({ data = {}, onChange }) {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
+              {theme === 'classic' && <div style={{ marginBottom: '20px' }}>
                 <label className="form-label text-sm font-bold text-gray-700 block mb-1">特色版面選擇</label>
                 <select
                   className="form-control font-medium"
@@ -57,7 +57,7 @@ export default function FormHighlights({ data = {}, onChange }) {
                   <option value="card">帶圖卡片網格 (Card)</option>
                   <option value="overlap">帶圖破格交疊 (Overlap)</option>
                 </select>
-              </div>
+              </div>}
 
               {items.map((item, i) => (
                 <div key={i} className={item.visible === false ? 'opacity-50' : ''} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
@@ -77,7 +77,7 @@ export default function FormHighlights({ data = {}, onChange }) {
                     <input type="text" className="form-control" value={item.title} onChange={e => updateItem(i, 'title', e.target.value)} placeholder="例如: 專屬水上別墅" />
                   </div>
 
-                  {(data.layout === 'card' || data.layout === 'overlap') && (
+                  {theme === 'classic' && (data.layout === 'card' || data.layout === 'overlap') && (
                     <div style={{ marginBottom: '10px' }}>
                       <label className="form-label text-xs font-semibold text-gray-500 block mb-1">特色圖片網址</label>
                       <input type="text" className="form-control" value={item.img || ''} onChange={e => updateItem(i, 'img', e.target.value)} placeholder="https://example.com/image.jpg" />

@@ -1,4 +1,5 @@
 
+import magazineThemeCss from '../public/assets/magazine/theme.css?raw';
 import { DEFAULT_CTA_REGISTER_URL } from './constants';
 import { NOTICE_INFO_ICON } from './exportIcons';
 import { prepareHtmlImagesForPreview } from './utils/imageUrls';
@@ -59,853 +60,7 @@ function formatNoticeDesc(desc) {
 }
 
 export const generateCss = () => {
-  return `
-        #jollify-magazine-tour,
-        #jollify-magazine-tour * {
-            box-sizing: border-box;
-        }
-
-        #jollify-magazine-tour {
-            font-family: 'Noto Serif TC', serif;
-            background-color: #FBF9FC;
-            color: #150F1D;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
-        #jollify-magazine-tour a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        #jollify-magazine-tour img,
-        #jollify-magazine-tour svg {
-            display: block;
-            max-width: 100%;
-        }
-
-        #jollify-magazine-tour button {
-            font: inherit;
-        }
-
-        #jollify-magazine-tour .antialiased { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        #jollify-magazine-tour .relative { position: relative; }
-        #jollify-magazine-tour .absolute { position: absolute; }
-        #jollify-magazine-tour .fixed { position: fixed; }
-        #jollify-magazine-tour .inset-0 { inset: 0; }
-        #jollify-magazine-tour .inset-2 { inset: .5rem; }
-        #jollify-magazine-tour .inset-8 { inset: 2rem; }
-        #jollify-magazine-tour .top-0 { top: 0; }
-        #jollify-magazine-tour .right-0 { right: 0; }
-        #jollify-magazine-tour .right-6 { right: 1.5rem; }
-        #jollify-magazine-tour .bottom-6 { bottom: 1.5rem; }
-        #jollify-magazine-tour .bottom-16 { bottom: 4rem; }
-        #jollify-magazine-tour .left-1\\/2 { left: 50%; }
-        #jollify-magazine-tour .z-0 { z-index: 0; }
-        #jollify-magazine-tour .z-10 { z-index: 10; }
-        #jollify-magazine-tour .z-20 { z-index: 20; }
-        #jollify-magazine-tour .z-\\[9000\\] { z-index: 9000; }
-        #jollify-magazine-tour .z-\\[9999\\] { z-index: 9999; }
-        #jollify-magazine-tour .mx-auto { margin-left: auto; margin-right: auto; }
-        #jollify-magazine-tour .my-4 { margin-top: 1rem; margin-bottom: 1rem; }
-        #jollify-magazine-tour .mt-1 { margin-top: .25rem; }
-        #jollify-magazine-tour .mt-2 { margin-top: .5rem; }
-        #jollify-magazine-tour .mt-3 { margin-top: .75rem; }
-        #jollify-magazine-tour .mt-4 { margin-top: 1rem; }
-        #jollify-magazine-tour .mt-6 { margin-top: 1.5rem; }
-        #jollify-magazine-tour .mt-12 { margin-top: 3rem; }
-        #jollify-magazine-tour .mt-16 { margin-top: 4rem; }
-        #jollify-magazine-tour .mb-2 { margin-bottom: .5rem; }
-        #jollify-magazine-tour .mb-3 { margin-bottom: .75rem; }
-        #jollify-magazine-tour .mb-4 { margin-bottom: 1rem; }
-        #jollify-magazine-tour .mb-6 { margin-bottom: 1.5rem; }
-        #jollify-magazine-tour .mb-8 { margin-bottom: 2rem; }
-        #jollify-magazine-tour .mb-10 { margin-bottom: 2.5rem; }
-        #jollify-magazine-tour .mb-14 { margin-bottom: 3.5rem; }
-        #jollify-magazine-tour .mb-12 { margin-bottom: 3rem; }
-        #jollify-magazine-tour .mb-16 { margin-bottom: 4rem; }
-        #jollify-magazine-tour .ml-4 { margin-left: 1rem; }
-        #jollify-magazine-tour .mr-2 { margin-right: .5rem; }
-        #jollify-magazine-tour .m-0 { margin: 0; }
-        #jollify-magazine-tour .block { display: block; }
-        #jollify-magazine-tour .inline-flex { display: inline-flex; }
-        #jollify-magazine-tour .inline-block { display: inline-block; }
-        #jollify-magazine-tour .flex { display: flex; }
-        #jollify-magazine-tour .grid { display: grid; }
-        #jollify-magazine-tour .hidden { display: none; }
-        #jollify-magazine-tour .flex-1 { flex: 1 1 0%; }
-        #jollify-magazine-tour .h-2 { height: .5rem; }
-        #jollify-magazine-tour .h-0\\.5 { height: .125rem; }
-        #jollify-magazine-tour .h-4 { height: 1rem; }
-        #jollify-magazine-tour .h-5 { height: 1.25rem; }
-        #jollify-magazine-tour .h-6 { height: 1.5rem; }
-        #jollify-magazine-tour .h-8 { height: 2rem; }
-        #jollify-magazine-tour .h-12 { height: 3rem; }
-        #jollify-magazine-tour .h-16 { height: 4rem; }
-        #jollify-magazine-tour .h-24 { height: 6rem; }
-        #jollify-magazine-tour .h-64 { height: 16rem; }
-        #jollify-magazine-tour .h-full { height: 100%; }
-        #jollify-magazine-tour .h-screen { min-height: 100vh; }
-        #jollify-magazine-tour .h-\\[1px\\] { height: 1px; }
-        #jollify-magazine-tour .h-\\[2px\\] { height: 2px; }
-        #jollify-magazine-tour .h-\\[45vh\\] { height: 45vh; }
-        #jollify-magazine-tour .h-\\[50vh\\] { height: 50vh; }
-        #jollify-magazine-tour .w-0 { width: 0; }
-        #jollify-magazine-tour .w-0\\.5 { width: .125rem; }
-        #jollify-magazine-tour .w-1 { width: .25rem; }
-        #jollify-magazine-tour .w-4 { width: 1rem; }
-        #jollify-magazine-tour .w-5 { width: 1.25rem; }
-        #jollify-magazine-tour .w-6 { width: 1.5rem; }
-        #jollify-magazine-tour .w-8 { width: 2rem; }
-        #jollify-magazine-tour .w-12 { width: 3rem; }
-        #jollify-magazine-tour .w-16 { width: 4rem; }
-        #jollify-magazine-tour .w-20 { width: 5rem; }
-        #jollify-magazine-tour .w-24 { width: 6rem; }
-        #jollify-magazine-tour .w-32 { width: 8rem; }
-        #jollify-magazine-tour .w-full { width: 100%; }
-        #jollify-magazine-tour .min-h-screen { min-height: 100vh; }
-        #jollify-magazine-tour .min-h-\\[255px\\] { min-height: 255px; }
-        #jollify-magazine-tour .max-w-xl { max-width: 36rem; }
-        #jollify-magazine-tour .max-w-4xl { max-width: 56rem; }
-        #jollify-magazine-tour .max-w-5xl { max-width: 64rem; }
-        #jollify-magazine-tour .max-w-6xl { max-width: 72rem; }
-        #jollify-magazine-tour .max-w-7xl { max-width: 80rem; }
-        #jollify-magazine-tour .shrink-0 { flex-shrink: 0; }
-        #jollify-magazine-tour .-translate-x-1\\/2 { transform: translateX(-50%); }
-        #jollify-magazine-tour .translate-x-4 { transform: translateX(1rem); }
-        #jollify-magazine-tour .translate-y-4 { transform: translateY(1rem); }
-        #jollify-magazine-tour .cursor-pointer { cursor: pointer; }
-        #jollify-magazine-tour .pointer-events-none { pointer-events: none; }
-        #jollify-magazine-tour .overflow-hidden { overflow: hidden; }
-        #jollify-magazine-tour .rounded-full { border-radius: 9999px; }
-        #jollify-magazine-tour .rounded-lg { border-radius: .5rem; }
-        #jollify-magazine-tour .rounded-sm { border-radius: .125rem; }
-        #jollify-magazine-tour .rounded-r-md { border-top-right-radius: .375rem; border-bottom-right-radius: .375rem; }
-        #jollify-magazine-tour .border { border-width: 1px; border-style: solid; }
-        #jollify-magazine-tour .border-2 { border-width: 2px; border-style: solid; }
-        #jollify-magazine-tour .border-b { border-bottom-width: 1px; border-bottom-style: solid; }
-        #jollify-magazine-tour .border-l-4 { border-left-width: 4px; border-left-style: solid; }
-        #jollify-magazine-tour .border-l-transparent { border-left-color: transparent; }
-        #jollify-magazine-tour .border-t-jollify-gold { border-top-color: #D4A93B; }
-        #jollify-magazine-tour .border-b-jollify-purple { border-bottom-color: #4C2A85; }
-        #jollify-magazine-tour .border-white\\/20 { border-color: rgba(255,255,255,.2); }
-        #jollify-magazine-tour .border-white\\/30 { border-color: rgba(255,255,255,.3); }
-        #jollify-magazine-tour .border-jollify-gold\\/15 { border-color: rgba(212,169,59,.15); }
-        #jollify-magazine-tour .border-jollify-gold\\/20 { border-color: rgba(212,169,59,.2); }
-        #jollify-magazine-tour .border-jollify-gold\\/25 { border-color: rgba(212,169,59,.25); }
-        #jollify-magazine-tour .border-jollify-gold\\/40 { border-color: rgba(212,169,59,.4); }
-        #jollify-magazine-tour .border-jollify-purple\\/10 { border-color: rgba(76,42,133,.1); }
-        #jollify-magazine-tour .border-jollify-purple\\/30 { border-color: rgba(76,42,133,.3); }
-        #jollify-magazine-tour .bg-white { background-color: #fff; }
-        #jollify-magazine-tour .bg-gray-200 { background-color: #e5e7eb; }
-        #jollify-magazine-tour .bg-jollify-cream { background-color: #FBF9FC; }
-        #jollify-magazine-tour .bg-jollify-dark { background-color: #150F1D; }
-        #jollify-magazine-tour .bg-jollify-gold { background-color: #D4A93B; }
-        #jollify-magazine-tour .bg-jollify-gold\\/30 { background-color: rgba(212,169,59,.3); }
-        #jollify-magazine-tour .bg-jollify-purple { background-color: #4C2A85; }
-        #jollify-magazine-tour .bg-jollify-purple\\/10 { background-color: rgba(76,42,133,.1); }
-        #jollify-magazine-tour .bg-jollify-purple\\/80 { background-color: rgba(76,42,133,.8); }
-        #jollify-magazine-tour .bg-jollify-cream\\/30 { background-color: rgba(251,249,252,.3); }
-        #jollify-magazine-tour .bg-transparent { background-color: transparent; }
-        #jollify-magazine-tour .bg-jollify-dark\\/80 { background-color: rgba(21,15,29,.8); }
-        #jollify-magazine-tour .bg-jollify-dark\\/95 { background-color: rgba(21,15,29,.95); }
-        #jollify-magazine-tour .bg-\\[\\#06C755\\] { background-color: #06C755; }
-        #jollify-magazine-tour .bg-cover { background-size: cover; }
-        #jollify-magazine-tour .bg-center { background-position: center; }
-        #jollify-magazine-tour .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
-        #jollify-magazine-tour .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
-        #jollify-magazine-tour .bg-gradient-to-t { background-image: linear-gradient(to top, var(--tw-gradient-stops)); }
-        #jollify-magazine-tour .from-jollify-dark\\/40 { --tw-gradient-from: rgba(21,15,29,.4); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(21,15,29,0)); }
-        #jollify-magazine-tour .from-jollify-dark\\/80 { --tw-gradient-from: rgba(21,15,29,.8); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via, transparent), var(--tw-gradient-to, rgba(21,15,29,0)); }
-        #jollify-magazine-tour .from-jollify-dark\\/90 { --tw-gradient-from: rgba(21,15,29,.9); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via, transparent), var(--tw-gradient-to, rgba(21,15,29,0)); }
-        #jollify-magazine-tour .via-jollify-dark\\/40 { --tw-gradient-via: rgba(21,15,29,.4); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(21,15,29,0)); }
-        #jollify-magazine-tour .via-transparent { --tw-gradient-via: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, rgba(21,15,29,0)); }
-        #jollify-magazine-tour .to-jollify-dark\\/95 { --tw-gradient-to: rgba(21,15,29,.95); }
-        #jollify-magazine-tour .to-jollify-gold-light { --tw-gradient-to: #E6C56E; }
-        #jollify-magazine-tour .from-transparent { --tw-gradient-from: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
-        #jollify-magazine-tour .via-jollify-gold { --tw-gradient-stops: var(--tw-gradient-from), #D4A93B, var(--tw-gradient-to, transparent); }
-        #jollify-magazine-tour .via-jollify-gold-light { --tw-gradient-stops: var(--tw-gradient-from), #E6C56E, var(--tw-gradient-to, transparent); }
-        #jollify-magazine-tour .to-transparent { --tw-gradient-to: transparent; }
-        #jollify-magazine-tour .from-white { --tw-gradient-from: #fff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255,255,255,0)); }
-        #jollify-magazine-tour .via-jollify-gold-light { --tw-gradient-stops: var(--tw-gradient-from), #E6C56E, var(--tw-gradient-to, rgba(255,255,255,0)); }
-        #jollify-magazine-tour .to-white { --tw-gradient-to: #fff; }
-        #jollify-magazine-tour .from-jollify-gold { --tw-gradient-from: #D4A93B; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(212,169,59,0)); }
-        #jollify-magazine-tour .to-yellow-600 { --tw-gradient-to: #ca8a04; }
-        #jollify-magazine-tour .object-cover { object-fit: cover; }
-        #jollify-magazine-tour .p-0 { padding: 0; }
-        #jollify-magazine-tour .p-1 { padding: .25rem; }
-        #jollify-magazine-tour .p-4 { padding: 1rem; }
-        #jollify-magazine-tour .p-8 { padding: 2rem; }
-        #jollify-magazine-tour .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        #jollify-magazine-tour .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
-        #jollify-magazine-tour .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-        #jollify-magazine-tour .px-8 { padding-left: 2rem; padding-right: 2rem; }
-        #jollify-magazine-tour .py-1\\.5 { padding-top: .375rem; padding-bottom: .375rem; }
-        #jollify-magazine-tour .py-2 { padding-top: .5rem; padding-bottom: .5rem; }
-        #jollify-magazine-tour .py-3 { padding-top: .75rem; padding-bottom: .75rem; }
-        #jollify-magazine-tour .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-        #jollify-magazine-tour .py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
-        #jollify-magazine-tour .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
-        #jollify-magazine-tour .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
-        #jollify-magazine-tour .py-16 { padding-top: 4rem; padding-bottom: 4rem; }
-        #jollify-magazine-tour .pt-1 { padding-top: .25rem; }
-        #jollify-magazine-tour .pt-2 { padding-top: .5rem; }
-        #jollify-magazine-tour .pb-4 { padding-bottom: 1rem; }
-        #jollify-magazine-tour .pb-6 { padding-bottom: 1.5rem; }
-        #jollify-magazine-tour .text-left { text-align: left; }
-        #jollify-magazine-tour .text-center { text-align: center; }
-        #jollify-magazine-tour .font-serif { font-family: "Cormorant Garamond", "Noto Serif TC", serif; }
-        #jollify-magazine-tour .font-sans { font-family: "Montserrat", "PingFang TC", "Microsoft JhengHei", sans-serif; }
-        #jollify-magazine-tour .text-\\[10px\\] { font-size: 10px; }
-        #jollify-magazine-tour .text-xs { font-size: .75rem; line-height: 1rem; }
-        #jollify-magazine-tour .text-sm { font-size: .875rem; line-height: 1.25rem; }
-        #jollify-magazine-tour .text-base { font-size: 1rem; line-height: 1.5rem; }
-        #jollify-magazine-tour .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        #jollify-magazine-tour .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-        #jollify-magazine-tour .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-        #jollify-magazine-tour .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-        #jollify-magazine-tour .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-        #jollify-magazine-tour .text-5xl { font-size: 3rem; line-height: 1; }
-        #jollify-magazine-tour .font-light { font-weight: 300; }
-        #jollify-magazine-tour .font-medium { font-weight: 500; }
-        #jollify-magazine-tour .font-semibold { font-weight: 600; }
-        #jollify-magazine-tour .font-bold { font-weight: 700; }
-        #jollify-magazine-tour .font-black { font-weight: 900; }
-        #jollify-magazine-tour .italic { font-style: italic; }
-        #jollify-magazine-tour .uppercase { text-transform: uppercase; }
-        #jollify-magazine-tour .leading-tight { line-height: 1.25; }
-        #jollify-magazine-tour .leading-relaxed { line-height: 1.625; }
-        #jollify-magazine-tour .leading-loose { line-height: 2; }
-        #jollify-magazine-tour .tracking-wide { letter-spacing: .025em; }
-        #jollify-magazine-tour .tracking-wider { letter-spacing: .05em; }
-        #jollify-magazine-tour .tracking-widest { letter-spacing: .1em; }
-        #jollify-magazine-tour .tracking-\\[0\\.1em\\] { letter-spacing: .1em; }
-        #jollify-magazine-tour .tracking-\\[0\\.12em\\] { letter-spacing: .12em; }
-        #jollify-magazine-tour .tracking-\\[0\\.15em\\] { letter-spacing: .15em; }
-        #jollify-magazine-tour .tracking-\\[0\\.2em\\] { letter-spacing: .2em; }
-        #jollify-magazine-tour .tracking-\\[0\\.25em\\] { letter-spacing: .25em; }
-        #jollify-magazine-tour .tracking-\\[0\\.3em\\] { letter-spacing: .3em; }
-        #jollify-magazine-tour .tracking-\\[0\\.4em\\] { letter-spacing: .4em; }
-        #jollify-magazine-tour .text-transparent { color: transparent; }
-        #jollify-magazine-tour .text-white { color: #fff; }
-        #jollify-magazine-tour .text-gray-200 { color: #e5e7eb; }
-        #jollify-magazine-tour .text-gray-300 { color: #d1d5db; }
-        #jollify-magazine-tour .text-gray-500 { color: #6b7280; }
-        #jollify-magazine-tour .text-gray-600 { color: #4b5563; }
-        #jollify-magazine-tour .text-jollify-dark { color: #150F1D; }
-        #jollify-magazine-tour .text-jollify-gold { color: #D4A93B; }
-        #jollify-magazine-tour .text-jollify-gold-dark { color: #B58C28; }
-        #jollify-magazine-tour .text-jollify-gold-light { color: #E6C56E; }
-        #jollify-magazine-tour .text-jollify-gray { color: #6A5E78; }
-        #jollify-magazine-tour .text-jollify-purple { color: #4C2A85; }
-        #jollify-magazine-tour .text-jollify-purple-dark { color: #2D1654; }
-        #jollify-magazine-tour .opacity-0 { opacity: 0; }
-        #jollify-magazine-tour .opacity-50 { opacity: .5; }
-        #jollify-magazine-tour .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,.05); }
-        #jollify-magazine-tour .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); }
-        #jollify-magazine-tour .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1); }
-        #jollify-magazine-tour .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); }
-        #jollify-magazine-tour .fill-current { fill: currentColor; }
-        #jollify-magazine-tour .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-        #jollify-magazine-tour .transition-all { transition-property: all; }
-        #jollify-magazine-tour .transition-transform { transition-property: transform; }
-        #jollify-magazine-tour .transition-colors { transition-property: color, background-color, border-color; }
-        #jollify-magazine-tour .duration-300 { transition-duration: .3s; }
-        #jollify-magazine-tour .duration-500 { transition-duration: .5s; }
-        #jollify-magazine-tour .duration-700 { transition-duration: .7s; }
-        #jollify-magazine-tour .duration-1000 { transition-duration: 1s; }
-        #jollify-magazine-tour .ease-in-out { transition-timing-function: cubic-bezier(.4,0,.2,1); }
-        #jollify-magazine-tour .bg-clip-text { -webkit-background-clip: text; background-clip: text; }
-        #jollify-magazine-tour .items-start { align-items: flex-start; }
-        #jollify-magazine-tour .items-center { align-items: center; }
-        #jollify-magazine-tour .items-end { align-items: flex-end; }
-        #jollify-magazine-tour .justify-center { justify-content: center; }
-        #jollify-magazine-tour .justify-between { justify-content: space-between; }
-        #jollify-magazine-tour .flex-col { flex-direction: column; }
-        #jollify-magazine-tour .gap-2 { gap: .5rem; }
-        #jollify-magazine-tour .gap-3 { gap: .75rem; }
-        #jollify-magazine-tour .gap-4 { gap: 1rem; }
-        #jollify-magazine-tour .gap-6 { gap: 1.5rem; }
-        #jollify-magazine-tour .gap-8 { gap: 2rem; }
-        #jollify-magazine-tour .gap-12 { gap: 3rem; }
-        #jollify-magazine-tour .space-y-4 > * + * { margin-top: 1rem; }
-        #jollify-magazine-tour .space-y-6 > * + * { margin-top: 1.5rem; }
-        #jollify-magazine-tour .space-y-8 > * + * { margin-top: 2rem; }
-        #jollify-magazine-tour .space-y-12 > * + * { margin-top: 3rem; }
-        #jollify-magazine-tour .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-        #jollify-magazine-tour .max-h-0 { max-height: 0; }
-        #jollify-magazine-tour .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        #jollify-magazine-tour .top-0 { top: 0; }
-        #jollify-magazine-tour .top-1\\.5 { top: .375rem; }
-        #jollify-magazine-tour .left-0 { left: 0; }
-        #jollify-magazine-tour .left-1\\.5 { left: .375rem; }
-        #jollify-magazine-tour .left-6 { left: 1.5rem; }
-        #jollify-magazine-tour .focus\\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
-        #jollify-magazine-tour .hover\\:bg-white\\/10:hover { background-color: rgba(255,255,255,.1); }
-        #jollify-magazine-tour .hover\\:shadow-xl:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1); }
-        #jollify-magazine-tour .hover\\:scale-105:hover { transform: scale(1.05); }
-        #jollify-magazine-tour .hover\\:bg-\\[\\#05b04b\\]:hover { background-color: #05b04b; }
-        #jollify-magazine-tour .hover\\:text-white:hover { color: #fff; }
-        #jollify-magazine-tour .group:hover .group-hover\\:scale-110 { transform: scale(1.1); }
-        #jollify-magazine-tour .group:hover .group-hover\\:text-white { color: #fff; }
-        #jollify-magazine-tour .group:hover .group-hover\\:translate-x-6 { transform: translateX(1.5rem); }
-        #jollify-magazine-tour .group:hover .group-hover\\:translate-y-6 { transform: translateY(1.5rem); }
-        #jollify-magazine-tour .animate-spin { animation: jollifySpin 1s linear infinite; }
-        #jollify-magazine-tour .animate-pulse-slow { animation: jollifyPulse 3s cubic-bezier(.4,0,.6,1) infinite; }
-        #jollify-magazine-tour .animate-bounce { animation: jollifyBounce 1s infinite; }
-        @keyframes jollifySpin { to { transform: rotate(360deg); } }
-        @keyframes jollifyPulse { 50% { opacity: .5; } }
-        @keyframes jollifyBounce { 0%,100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(.8,0,1,1); } 50% { transform: none; animation-timing-function: cubic-bezier(0,0,.2,1); } }
-
-        @media (min-width: 768px) {
-            #jollify-magazine-tour .md\\:block { display: block; }
-            #jollify-magazine-tour .md\\:flex-row { flex-direction: row; }
-            #jollify-magazine-tour .md\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            #jollify-magazine-tour .md\\:gap-12 { gap: 3rem; }
-            #jollify-magazine-tour .md\\:h-80 { height: 20rem; }
-            #jollify-magazine-tour .md\\:h-\\[70vh\\] { height: 70vh; }
-            #jollify-magazine-tour .md\\:mb-0 { margin-bottom: 0; }
-            #jollify-magazine-tour .md\\:mt-0 { margin-top: 0; }
-            #jollify-magazine-tour .md\\:p-16 { padding: 4rem; }
-            #jollify-magazine-tour .md\\:px-8 { padding-left: 2rem; padding-right: 2rem; }
-            #jollify-magazine-tour .md\\:px-12 { padding-left: 3rem; padding-right: 3rem; }
-            #jollify-magazine-tour .md\\:w-1\\/2 { width: 50%; }
-            #jollify-magazine-tour .md\\:w-36 { width: 9rem; }
-            #jollify-magazine-tour .md\\:w-56 { width: 14rem; }
-            #jollify-magazine-tour .md\\:text-right { text-align: right; }
-            #jollify-magazine-tour .md\\:text-base { font-size: 1rem; line-height: 1.5rem; }
-            #jollify-magazine-tour .md\\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-            #jollify-magazine-tour .md\\:text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-            #jollify-magazine-tour .md\\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
-            #jollify-magazine-tour .md\\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-            #jollify-magazine-tour .md\\:text-5xl { font-size: 3rem; line-height: 1; }
-            #jollify-magazine-tour .md\\:text-6xl { font-size: 3.75rem; line-height: 1; }
-            #jollify-magazine-tour .md\\:text-8xl { font-size: 6rem; line-height: 1; }
-        }
-
-        @media (min-width: 640px) {
-            #jollify-magazine-tour .sm\\:flex-row { flex-direction: row; }
-            #jollify-magazine-tour .sm\\:w-auto { width: auto; }
-        }
-
-        @media (min-width: 1024px) {
-            #jollify-magazine-tour .lg\\:flex-row { flex-direction: row; }
-            #jollify-magazine-tour .lg\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            #jollify-magazine-tour .lg\\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-            #jollify-magazine-tour .lg\\:gap-24 { gap: 6rem; }
-            #jollify-magazine-tour .lg\\:h-screen { min-height: 100vh; }
-            #jollify-magazine-tour .lg\\:p-24 { padding: 6rem; }
-            #jollify-magazine-tour .lg\\:w-1\\/2 { width: 50%; }
-        }
-        
-        /* 自訂高級捲動軸，呼應鑫囍紫金主題 */
-        #jollify-magazine-tour::-webkit-scrollbar {
-            width: 8px;
-        }
-        #jollify-magazine-tour::-webkit-scrollbar-track {
-            background: #150F1D; 
-        }
-        #jollify-magazine-tour::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, #4C2A85, #D4A93B); 
-            border-radius: 4px;
-        }
-
-        /* 雜誌頁面基本樣式 */
-        #jollify-magazine-tour .magazine-section {
-            min-height: 100vh;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 5rem 1.5rem;
-            overflow: hidden;
-        }
-
-        /* 頂級轉場動畫類別 */
-        #jollify-magazine-tour .animate-trigger {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        #jollify-magazine-tour .animate-trigger.slide-left {
-            transform: translateX(-50px);
-        }
-
-        #jollify-magazine-tour .animate-trigger.slide-right {
-            transform: translateX(50px);
-        }
-
-        #jollify-magazine-tour .animate-trigger.scale-up {
-            transform: scale(0.95);
-        }
-
-        #jollify-magazine-tour .animate-active {
-            opacity: 1 !important;
-            transform: translate(0) scale(1) !important;
-        }
-
-        /* 漸進式文字延遲 */
-        #jollify-magazine-tour .delay-100 { transition-delay: 100ms; }
-        #jollify-magazine-tour .delay-200 { transition-delay: 200ms; }
-        #jollify-magazine-tour .delay-300 { transition-delay: 300ms; }
-        #jollify-magazine-tour .delay-400 { transition-delay: 400ms; }
-        #jollify-magazine-tour .delay-500 { transition-delay: 500ms; }
-        #jollify-magazine-tour .delay-600 { transition-delay: 600ms; }
-        #jollify-magazine-tour .delay-700 { transition-delay: 700ms; }
-
-        /* 左側懸浮導覽列的進階設計 */
-        #jollify-magazine-tour .nav-dots {
-            position: fixed;
-            left: 25px;
-            right: auto;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        #jollify-magazine-tour .dot-wrapper {
-            display: flex;
-            flex-direction: row-reverse;
-            align-items: center;
-            justify-content: flex-end;
-            position: relative;
-            cursor: pointer;
-            group: pointer;
-        }
-
-        #jollify-magazine-tour .dot-label {
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            color: #D4A93B;
-            font-size: 0.8rem;
-            letter-spacing: 0.15em;
-            margin-left: 12px;
-            margin-right: 0;
-            white-space: nowrap;
-            pointer-events: none;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        #jollify-magazine-tour .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: rgba(76, 42, 133, 0.35); /* 鑫囍紫的透明度 */
-            border: 1px solid rgba(212, 169, 59, 0.5); /* 鑫囍金邊框 */
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        #jollify-magazine-tour .dot-wrapper:hover .dot-label {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        #jollify-magazine-tour .dot-wrapper:hover .dot {
-            background-color: #D4A93B;
-            transform: scale(1.4);
-        }
-
-        #jollify-magazine-tour .dot-wrapper.active .dot {
-            background-color: #D4A93B;
-            box-shadow: 0 0 10px #D4A93B, 0 0 4px #4C2A85;
-            transform: scale(1.6);
-            border-color: #4C2A85;
-        }
-
-        #jollify-magazine-tour .dark-bg-dots .dot {
-            background-color: rgba(255, 255, 255, 0.25);
-            border-color: rgba(214, 169, 59, 0.6);
-        }
-        
-        #jollify-magazine-tour .dark-bg-dots .dot-wrapper.active .dot {
-            background-color: #D4A93B;
-            box-shadow: 0 0 10px #D4A93B, 0 0 4px #FFFFFF;
-        }
-
-        /* 圖片高質感奢華濾鏡與慢速動態 */
-        #jollify-magazine-tour .img-elegant {
-            filter: brightness(0.92) contrast(1.05) saturate(0.95);
-            transition: transform 12s cubic-bezier(0.1, 0.8, 0.2, 1);
-        }
-        #jollify-magazine-tour .overflow-hidden:hover .img-elegant {
-            transform: scale(1.08) rotate(0.5deg);
-        }
-
-        /* 玻璃微光質感 (Glassmorphism) */
-        #jollify-magazine-tour .glass-premium {
-            background: rgba(251, 249, 252, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(76, 42, 133, 0.1);
-        }
-
-        #jollify-magazine-tour .glass-premium-dark {
-            background: rgba(21, 15, 29, 0.82);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(212, 169, 59, 0.15);
-        }
-
-        /* 頁面頂端閱讀進度條 */
-        #jollify-magazine-tour #progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(to right, #4C2A85, #D4A93B, #6E45B2);
-            width: 0%;
-            z-index: 100;
-            transition: width 0.1s ease;
-        }
-
-        /* 行程總覽項目的精緻懸浮設計 */
-        #jollify-magazine-tour .itinerary-row {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        #jollify-magazine-tour .itinerary-row:hover {
-            background: rgba(212, 169, 59, 0.08);
-            border-left-color: #D4A93B !important;
-            padding-left: 2rem !important;
-        }
-
-        #jollify-magazine-tour .flight-card-lines {
-            position: relative;
-            padding-left: 4rem;
-            font-family: 'Montserrat', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-        }
-
-        #jollify-magazine-tour .flight-card-lines::before {
-            content: '';
-            position: absolute;
-            left: 1.25rem;
-            top: 1.25rem;
-            bottom: 1.25rem;
-            width: 2px;
-            background: #E5E1EA;
-        }
-
-        #jollify-magazine-tour .flight-route-row {
-            position: relative;
-            min-height: 4.5rem;
-            display: grid;
-            grid-template-columns: minmax(9rem, 1fr) minmax(16rem, 1.55fr);
-            align-items: center;
-            gap: 1.5rem;
-            border-bottom: 1px solid rgba(76, 42, 133, 0.08);
-        }
-
-        #jollify-magazine-tour .flight-route-row:last-child {
-            border-bottom: 0;
-        }
-
-        #jollify-magazine-tour .flight-mark {
-            position: absolute;
-            left: -3.4rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 2rem;
-            height: 2rem;
-            border-radius: 999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            font-size: 0.95rem;
-            font-weight: 800;
-            z-index: 1;
-        }
-
-        #jollify-magazine-tour .flight-mark.outbound {
-            color: #4C2A85;
-            border: 3px solid #4C2A85;
-        }
-
-        #jollify-magazine-tour .flight-mark.inbound {
-            color: #D4A93B;
-            border: 3px solid #D4A93B;
-        }
-
-        #jollify-magazine-tour .flight-route-label {
-            color: #6A5E78;
-            font-size: 1.35rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
-
-        #jollify-magazine-tour .flight-route-time {
-            color: #2D1654;
-            font-size: 1.5rem;
-            font-weight: 900;
-            text-align: right;
-            letter-spacing: -0.01em;
-            white-space: nowrap;
-        }
-
-        #jollify-magazine-tour .flight-arrow {
-            display: inline-block;
-            padding: 0 0.2rem;
-        }
-
-        #jollify-magazine-tour .flight-wide-card {
-            position: relative;
-            overflow: hidden;
-        }
-
-        #jollify-magazine-tour .flight-direction-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 2rem;
-        }
-
-        #jollify-magazine-tour .flight-direction-column {
-            background: #FBF9FC;
-            border: 1px solid rgba(76, 42, 133, 0.1);
-            padding: 1.5rem;
-        }
-
-        #jollify-magazine-tour .flight-direction-head {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding-bottom: 1.25rem;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(76, 42, 133, 0.08);
-        }
-
-        #jollify-magazine-tour .flight-direction-mark {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            font-weight: 900;
-            flex: 0 0 auto;
-        }
-
-        #jollify-magazine-tour .flight-direction-mark.outbound {
-            color: #4C2A85;
-            border: 3px solid #4C2A85;
-        }
-
-        #jollify-magazine-tour .flight-direction-mark.inbound {
-            color: #D4A93B;
-            border: 3px solid #D4A93B;
-        }
-
-        #jollify-magazine-tour .flight-direction-title {
-            color: #2D1654;
-            font-size: 1.2rem;
-            font-weight: 900;
-            letter-spacing: 0.08em;
-        }
-
-        #jollify-magazine-tour .flight-direction-subtitle {
-            color: #D4A93B;
-            font-size: 0.78rem;
-            font-weight: 800;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            margin-top: 0.2rem;
-        }
-
-        #jollify-magazine-tour .flight-timeline-lines {
-            position: relative;
-            display: grid;
-            gap: 0;
-            font-family: 'Montserrat', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-        }
-
-        #jollify-magazine-tour .flight-timeline-row {
-            display: grid;
-            grid-template-columns: 3rem minmax(10rem, 1fr) minmax(18rem, 1.3fr);
-            align-items: center;
-            gap: 1.5rem;
-            min-height: 5rem;
-            border-bottom: 1px solid rgba(76, 42, 133, 0.08);
-        }
-
-        #jollify-magazine-tour .flight-timeline-row.compact {
-            grid-template-columns: 2.75rem 1fr;
-            gap: 1rem;
-            align-items: start;
-            padding: 1rem 0;
-        }
-
-        #jollify-magazine-tour .flight-timeline-row.compact .flight-route-time {
-            grid-column: 2;
-            text-align: left;
-            font-size: 1.15rem;
-            white-space: normal;
-            margin-top: -0.25rem;
-        }
-
-        #jollify-magazine-tour .flight-timeline-row:last-child {
-            border-bottom: 0;
-        }
-
-        #jollify-magazine-tour .flight-timeline-dot {
-            width: 2.35rem;
-            height: 2.35rem;
-            border-radius: 999px;
-            background: rgba(76, 42, 133, 0.08);
-            color: #4C2A85;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            border: 2px solid rgba(76, 42, 133, 0.2);
-        }
-
-        #jollify-magazine-tour .connection-chain {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 1rem;
-            font-family: 'Montserrat', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-        }
-
-        #jollify-magazine-tour .connection-step {
-            position: relative;
-            min-height: 11rem;
-            padding: 1.5rem;
-            background: #FBF9FC;
-            border: 1px solid rgba(76, 42, 133, 0.1);
-        }
-
-        #jollify-magazine-tour .connection-step::after {
-            content: '➜';
-            position: absolute;
-            right: -1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #D4A93B;
-            font-size: 1.35rem;
-            font-weight: 900;
-            z-index: 2;
-        }
-
-        #jollify-magazine-tour .connection-step:last-child::after {
-            display: none;
-        }
-
-        #jollify-magazine-tour .connection-step.domestic {
-            background: rgba(212, 169, 59, 0.08);
-            border-color: rgba(212, 169, 59, 0.45);
-        }
-
-        #jollify-magazine-tour .connection-kicker {
-            color: #D4A93B;
-            font-size: 0.78rem;
-            font-weight: 900;
-            letter-spacing: 0.18em;
-            margin-bottom: 1rem;
-        }
-
-        #jollify-magazine-tour .connection-main {
-            color: #6A5E78;
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-        }
-
-        #jollify-magazine-tour .connection-time {
-            color: #2D1654;
-            font-size: 1.25rem;
-            font-weight: 900;
-            line-height: 1.35;
-        }
-
-        @media (max-width: 768px) {
-            #jollify-magazine-tour .magazine-section {
-                width: 100%;
-                min-height: auto;
-                padding: 4rem 1.25rem;
-            }
-
-            #jollify-magazine-tour .nav-dots {
-                left: 10px;
-                gap: 10px;
-            }
-
-            #jollify-magazine-tour .dot {
-                width: 7px;
-                height: 7px;
-            }
-
-            #jollify-magazine-tour .dot-label {
-                display: none;
-            }
-
-            #jollify-magazine-tour .mobile-readable-title {
-                font-size: 2rem !important;
-                line-height: 1.2 !important;
-                letter-spacing: 0.08em !important;
-            }
-
-            #jollify-magazine-tour .mobile-readable-body {
-                font-size: 1rem !important;
-                line-height: 1.9 !important;
-            }
-
-            #jollify-magazine-tour .flight-card-lines {
-                padding-left: 3rem;
-            }
-
-            #jollify-magazine-tour .flight-card-lines::before {
-                left: 1rem;
-            }
-
-            #jollify-magazine-tour .flight-route-row {
-                grid-template-columns: 1fr;
-                gap: 0.35rem;
-                padding: 1rem 0;
-            }
-
-            #jollify-magazine-tour .flight-mark {
-                left: -2.95rem;
-            }
-
-            #jollify-magazine-tour .flight-route-label {
-                font-size: 1.05rem;
-            }
-
-            #jollify-magazine-tour .flight-route-time {
-                text-align: left;
-                font-size: clamp(1.1rem, 5.5vw, 1.4rem);
-                white-space: normal;
-            }
-
-            #jollify-magazine-tour .flight-timeline-row,
-            #jollify-magazine-tour .flight-direction-grid,
-            #jollify-magazine-tour .connection-chain {
-                grid-template-columns: 1fr;
-            }
-
-            #jollify-magazine-tour .flight-timeline-row {
-                gap: 0.5rem;
-                padding: 1rem 0;
-            }
-
-            #jollify-magazine-tour .connection-step::after {
-                right: 50%;
-                top: auto;
-                bottom: -1.25rem;
-                transform: translateX(50%) rotate(90deg);
-            }
-
-            #jollify-magazine-tour .j-magazine-accordion-item.is-active {
-                border-color: #D4A93B !important;
-                box-shadow: 0 4px 15px rgba(212, 169, 59, 0.08) !important;
-            }
-        }
-    `;
+  return magazineThemeCss;
 };
 
 export const generateJs = () => {
@@ -935,26 +90,30 @@ export const generateJs = () => {
             if (!root) return;
             const sections = root.querySelectorAll('section');
             const navDotsContainer = root.querySelector('#nav-dots');
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
             
             if (navDotsContainer) {
                 sections.forEach((sec, index) => {
                     const title = sec.getAttribute('data-title') || \`Page \${index + 1}\`;
-                    const dotWrapper = document.createElement('div');
+                    const dotWrapper = document.createElement('button');
                     dotWrapper.classList.add('dot-wrapper');
+                    dotWrapper.type = 'button';
                     dotWrapper.setAttribute('data-index', index);
+                    dotWrapper.setAttribute('aria-label', \`前往\${title}\`);
                     
                     const label = document.createElement('span');
                     label.classList.add('dot-label', 'font-sans');
                     label.textContent = title;
                     
-                    const dot = document.createElement('div');
+                    const dot = document.createElement('span');
                     dot.classList.add('dot');
+                    dot.setAttribute('aria-hidden', 'true');
                     
                     dotWrapper.appendChild(label);
                     dotWrapper.appendChild(dot);
                     
                     dotWrapper.addEventListener('click', () => {
-                        sec.scrollIntoView({ behavior: 'smooth' });
+                        sec.scrollIntoView({ behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
                     });
                     
                     navDotsContainer.appendChild(dotWrapper);
@@ -994,9 +153,13 @@ export const generateJs = () => {
                         });
 
                         const index = Array.from(sections).indexOf(targetSection);
-                        dotWrappers.forEach(dw => dw.classList.remove('active'));
+                        dotWrappers.forEach(dw => {
+                            dw.classList.remove('active');
+                            dw.removeAttribute('aria-current');
+                        });
                         if (dotWrappers[index]) {
                             dotWrappers[index].classList.add('active');
+                            dotWrappers[index].setAttribute('aria-current', 'location');
                         }
 
                         if (navDotsContainer) {
@@ -1077,7 +240,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   // ── Helpers ───────────────────────────────────────────────────
   const esc = (v) => (v == null ? '' : String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
   const safe = (v, fallback = '') => v != null && v !== '' ? v : fallback;
-  const imageCredit = source => source ? `<small class="absolute right-3 bottom-3 z-30 rounded-sm bg-black/60 px-2 py-1 font-sans text-[10px] leading-tight text-white">圖片來源：${esc(source)}</small>` : '';
+  const imageCredit = source => source ? `<small class="j-image-credit absolute right-3 bottom-3 z-30 rounded-sm bg-black/60 px-2 py-1 font-sans text-[10px] leading-tight text-white">圖片來源：${esc(source)}</small>` : '';
   const destinationTitle = String(itinerary?.hero_data?.title1 || itinerary?.title || '').trim();
   const destinationValue = JSON.stringify(destinationTitle)
     .replace(/&/g, '&amp;')
@@ -1087,8 +250,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const destinationClick = destinationTitle
     ? `onclick="try{localStorage.setItem('jt_dest', ${destinationValue})}catch(e){}"`
     : '';
-  const tags = [itinerary?.quick_info?.tag1, itinerary?.quick_info?.tag2, itinerary?.quick_info?.tag3]
-    .filter(Boolean).join(' ‧ ') || '尊榮 ‧ 奢華 ‧ 絕美秘境';
+  const hero = itinerary?.hero_data || {};
+  const tags = String(hero.tags || '').split(/\n|[,，]/).map(tag => tag.trim()).filter(Boolean).join(' ‧ ')
+    || '尊榮 ‧ 奢華 ‧ 絕美秘境';
 
   // ── Flights HTML ───────────────────────────────────────────────
   let flightsHtml = '';
@@ -1279,8 +443,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     <section id="page-2" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="航班參考">
       <div class="max-w-6xl mx-auto w-full relative z-10">
         <div class="text-center mb-16 animate-trigger">
-          <p class="text-jollify-purple tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">PREMIUM FLIGHTS</p>
-          <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">尊榮啟航 ‧ 航班資訊</h2>
+          <p class="text-jollify-purple tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">${esc(flights.subtitle || 'PREMIUM FLIGHTS')}</p>
+          <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">${esc(flights.title || '尊榮啟航 ‧ 航班資訊')}</h2>
           <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
         </div>
         <div class="${gridClass}">${cards}</div>
@@ -1295,21 +459,28 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   let featuresHtml = '';
   if (highlights?.visible !== false && visibleHighlights.length) {
     const cards = visibleHighlights.map((c, i) => `
-      <div class="bg-white p-8 border border-jollify-purple/10 shadow-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
-        <div class="w-12 h-12 bg-jollify-purple/10 text-jollify-purple flex items-center justify-center rounded-full mb-6">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      <article class="j-mag-feature-card bg-white border border-jollify-purple/10 shadow-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
+        <div class="j-mag-feature-media relative overflow-hidden">
+          ${c.img
+            ? `<img src="${esc(c.img)}" alt="${esc(c.title || '行程特色')}" class="w-full h-full object-cover img-elegant">${imageCredit(c.image_source)}`
+            : `<div class="j-mag-feature-placeholder">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>`}
         </div>
-        <h3 class="text-xl font-serif font-bold text-jollify-purple-dark mb-3">${esc(c.title || '')}</h3>
-        <p class="text-jollify-gray font-sans text-sm leading-relaxed">${esc(c.desc || '')}</p>
-      </div>
+        <div class="j-mag-feature-body">
+          ${c.subtitle ? `<p class="text-jollify-gold text-xs tracking-[0.2em] font-sans font-bold mb-2">${esc(c.subtitle)}</p>` : ''}
+          <h3 class="text-xl font-serif font-bold text-jollify-purple-dark mb-3">${esc(c.title || '')}</h3>
+          <p class="text-jollify-gray font-sans text-sm leading-relaxed">${esc(c.desc || '')}</p>
+        </div>
+      </article>
     `).join('');
     featuresHtml = `
     <section id="page-feature" class="magazine-section bg-jollify-cream" data-title="行程特色">
       <div class="max-w-6xl mx-auto w-full relative z-10 px-4 md:px-8 py-16">
         <div class="text-center mb-16 animate-trigger">
-          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">EXCLUSIVE HIGHLIGHTS</p>
+          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">${esc(highlights.subtitle || 'EXCLUSIVE HIGHLIGHTS')}</p>
           <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">
-            行程特色 ‧ 專屬亮點
+            ${esc(highlights.title || '行程特色 ‧ 專屬亮點')}
           </h2>
           <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
         </div>
@@ -1331,7 +502,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
         </div>
         <div class="p-7">
           ${spot.tag ? `<p class="text-jollify-gold text-xs tracking-[0.2em] font-sans font-bold mb-3">${esc(spot.tag)}</p>` : ''}
-          <h3 class="text-2xl font-serif font-bold text-jollify-purple-dark mb-3">${esc(spot.name || '')}</h3>
+          <h3 class="text-2xl font-serif font-bold text-jollify-purple-dark mb-1">${esc(spot.name || '')}</h3>
+          ${spot.name_en || spot.city_zh ? `<p class="text-xs tracking-wider text-jollify-purple mb-3 font-sans">${esc([spot.name_en, spot.city_zh].filter(Boolean).join(' · '))}</p>` : ''}
           <p class="text-jollify-gray font-sans text-sm leading-relaxed">${esc(spot.desc || '')}</p>
         </div>
       </article>
@@ -1340,7 +512,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     <section id="page-spots" class="magazine-section bg-jollify-cream" data-title="精選景點">
       <div class="max-w-6xl mx-auto w-full relative z-10 px-4 md:px-8 py-16">
         <div class="text-center mb-14 animate-trigger">
-          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">SCENIC SPOTS</p>
+          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">${esc(spots.subtitle || 'SCENIC SPOTS')}</p>
           <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">${esc(spots.title || '精選景點 ‧ 探索之美')}</h2>
           <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
         </div>
@@ -1355,14 +527,16 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     const rows = days.items.map((day, i) => {
       const pageNum = i + 4;
       return `
-        <div onclick="document.getElementById('page-${pageNum}') && document.getElementById('page-${pageNum}').scrollIntoView({ behavior: 'smooth' })"
+        <div role="link" tabindex="0" aria-label="查看第 ${i + 1} 天行程：${esc(day.title || `第 ${i + 1} 天`)}"
+             onclick="document.getElementById('page-${pageNum}') && document.getElementById('page-${pageNum}').scrollIntoView({ behavior: 'smooth' })"
+             onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); this.click(); }"
              class="itinerary-row flex flex-col md:flex-row items-center border-b border-jollify-gold/15 pb-4 cursor-pointer p-4 border-l-4 border-l-transparent rounded-r-md">
           <div class="text-jollify-gold text-3xl font-serif font-bold w-full md:w-36 mb-2 md:mb-0">DAY ${String(i + 1).padStart(2, '0')}</div>
           <div class="flex-1 w-full">
             <h4 class="text-2xl md:text-3xl font-bold tracking-wide text-white mobile-readable-title">${esc(day.title || `第 ${i + 1} 天`)}</h4>
-            <p class="text-base md:text-lg text-jollify-gray mt-2 mobile-readable-body">${esc(day.summary || '')}</p>
+            <p class="j-overview-summary text-base md:text-lg mt-2 mobile-readable-body">${esc(day.summary || day.lead || day.route || '')}</p>
           </div>
-          <div class="w-full md:w-56 text-left md:text-right text-sm text-jollify-gold-light mt-3 md:mt-0 font-medium">${esc((day.hotel_name || day.stay) ? '宿: ' + (day.hotel_name || day.stay) : '')}</div>
+          <div class="itinerary-stay w-full md:w-56 text-left md:text-right text-sm text-jollify-gold-light mt-3 md:mt-0 font-medium">${esc((day.hotel_name || day.stay) ? '宿: ' + (day.hotel_name || day.stay) : '')}</div>
         </div>`;
     }).join('');
     const totalDays = days.items.length;
@@ -1376,9 +550,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     <section id="page-3" class="magazine-section bg-jollify-dark text-white" data-title="行程總覽">
       <div class="max-w-5xl mx-auto w-full relative z-10">
         <div class="text-center mb-16 animate-trigger">
-          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">EXCLUSIVE ITINERARY</p>
+          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">${esc(days.subtitle || 'EXCLUSIVE ITINERARY')}</p>
           <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-transparent bg-clip-text bg-gradient-to-r from-white to-jollify-gold-light">
-            ${toChineseNum(totalDays)} 日行程 ‧ 精采總覽
+            ${esc(days.title || `${toChineseNum(totalDays)} 日行程 ‧ 精采總覽`)}
           </h2>
           <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
         </div>
@@ -1396,29 +570,31 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       const bg = isDark ? 'bg-jollify-dark text-white' : 'bg-jollify-cream text-jollify-dark';
       const titleColor = isDark ? 'text-white' : 'text-jollify-purple-dark';
       const subColor = isDark ? 'text-jollify-gold-light' : 'text-jollify-gold-dark';
-      const bodyColor = isDark ? 'text-gray-300' : 'text-jollify-gray';
+      const bodyColor = isDark ? 'j-day-body-dark' : 'j-day-body-light';
       const imgSide = (i % 2 === 0) ? 'flex-col lg:flex-row' : 'flex-col lg:flex-row-reverse';
       const imgAnim = (i % 2 === 0) ? 'slide-left' : 'slide-right';
       const txtAnim = (i % 2 === 0) ? 'slide-right' : 'slide-left';
       const img = day.image?.url || day.images?.[0] || 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
       const imgLabel = day.image?.label ? `${esc(day.image.label)}` : `DAY ${String(i + 1).padStart(2, '0')} ‧ ${esc(day.title || '').substring(0, 10)}`;
+      const imgSubtitle = day.image?.subtitle || '';
       const tagBg = isDark ? 'bg-jollify-gold/80' : 'bg-jollify-purple/80';
       const desc = (day.lead || day.description || '').replace(/\n/g, '<br>');
+      const pointsHtml = day.points ? `<div class="${bodyColor} mb-6 leading-relaxed font-sans text-base mobile-readable-body">${esc(day.points).replace(/\n/g, '<br>')}</div>` : '';
       // meals
       const showMeals = day.meals?.show !== false;
       const hasMeals = showMeals && (day.meals?.breakfast || day.meals?.lunch || day.meals?.dinner);
       const mealsHtml = hasMeals ? `
-            <div class="mt-8 pt-6 border-t ${isDark ? 'border-jollify-gold/20' : 'border-jollify-purple/10'} grid grid-cols-3 gap-3 font-sans text-xs">
-              ${day.meals?.breakfast ? `<div><span class="block font-bold ${isDark ? 'text-jollify-gold' : 'text-jollify-purple'} mb-1">早餐 B</span><span class="${bodyColor}">${esc(day.meals.breakfast)}</span></div>` : '<div></div>'}
-              ${day.meals?.lunch ? `<div><span class="block font-bold ${isDark ? 'text-jollify-gold' : 'text-jollify-purple'} mb-1">午餐 L</span><span class="${bodyColor}">${esc(day.meals.lunch)}</span></div>` : '<div></div>'}
-              ${day.meals?.dinner ? `<div><span class="block font-bold ${isDark ? 'text-jollify-gold' : 'text-jollify-purple'} mb-1">晚餐 D</span><span class="${bodyColor}">${esc(day.meals.dinner)}</span></div>` : '<div></div>'}
+            <div class="day-meals mt-8 pt-6 border-t ${isDark ? 'border-jollify-gold/20' : 'border-jollify-purple/10'} grid grid-cols-3 gap-3 font-sans text-xs">
+              ${day.meals?.breakfast ? `<div class="day-meal"><span class="day-meal-label block font-bold ${isDark ? 'text-jollify-gold' : 'text-jollify-purple'} mb-1">早餐 B</span><span class="day-meal-value ${bodyColor}">${esc(day.meals.breakfast)}</span></div>` : '<div class="day-meal" aria-hidden="true"></div>'}
+              ${day.meals?.lunch ? `<div class="day-meal"><span class="day-meal-label block font-bold ${isDark ? 'text-jollify-gold' : 'text-jollify-purple'} mb-1">午餐 L</span><span class="day-meal-value ${bodyColor}">${esc(day.meals.lunch)}</span></div>` : '<div class="day-meal" aria-hidden="true"></div>'}
+              ${day.meals?.dinner ? `<div class="day-meal"><span class="day-meal-label block font-bold ${isDark ? 'text-jollify-gold' : 'text-jollify-purple'} mb-1">晚餐 D</span><span class="day-meal-value ${bodyColor}">${esc(day.meals.dinner)}</span></div>` : '<div class="day-meal" aria-hidden="true"></div>'}
             </div>` : '';
 
       const stayName = day.hotel_name || day.stay;
       const stayHtml = stayName ? `
-            <div class="mt-5 ${!hasMeals ? `pt-6 border-t ${isDark ? 'border-jollify-gold/20' : 'border-jollify-purple/10'}` : ''} flex items-center font-sans text-sm">
-              <span class="inline-flex items-center justify-center border ${isDark ? 'border-jollify-gold text-jollify-gold' : 'border-jollify-purple text-jollify-purple'} rounded-full px-3 py-1 text-[10px] font-bold mr-4 tracking-[0.2em] uppercase">STAY</span>
-              <span class="${bodyColor} font-bold text-sm md:text-base tracking-wide">${esc(stayName)}</span>
+            <div class="day-stay mt-5 ${!hasMeals ? `pt-6 border-t ${isDark ? 'border-jollify-gold/20' : 'border-jollify-purple/10'}` : ''} flex items-center font-sans text-sm">
+              <span class="day-stay-label inline-flex items-center justify-center border ${isDark ? 'border-jollify-gold text-jollify-gold' : 'border-jollify-purple text-jollify-purple'} rounded-full px-3 py-1 text-[10px] font-bold mr-4 tracking-[0.2em] uppercase">STAY</span>
+              <span class="day-stay-name ${bodyColor} font-bold text-sm md:text-base tracking-wide">${esc(stayName)}</span>
             </div>` : '';
 
       return `
@@ -1428,7 +604,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <img src="${esc(img)}" alt="Day ${i + 1}" class="w-full h-full object-cover img-elegant">
           ${imageCredit(day.image?.source)}
           <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/40 to-transparent"></div>
-          <span class="absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans ${tagBg} px-4 py-2 backdrop-blur-md">${imgLabel}</span>
+          <span class="day-image-tag absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans ${tagBg} px-4 py-2 backdrop-blur-md">${imgLabel}${imgSubtitle ? `<small class="day-image-subtitle block mt-1">${esc(imgSubtitle)}</small>` : ''}</span>
         </div>
         <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 lg:p-24 animate-trigger ${txtAnim} delay-200">
           <div class="max-w-xl w-full">
@@ -1438,6 +614,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
               <span class="text-3xl font-light italic ${subColor} mt-3 block font-serif">${esc(day.route || day.summary || '')}</span>
             </h2>
             <p class="${bodyColor} mb-4 leading-relaxed font-sans font-light text-lg mobile-readable-body">${desc}</p>
+            ${pointsHtml}
             ${mealsHtml}
             ${stayHtml}
           </div>
@@ -1478,7 +655,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           </div>
         </div>
         <div class="w-full md:w-1/2 animate-trigger ${txtAnim} delay-300">
-          <p class="${accentColor} tracking-[0.3em] uppercase text-xs mb-4 font-sans font-semibold">STAY IN STYLE</p>
+          <p class="${accentColor} tracking-[0.3em] uppercase text-xs mb-4 font-sans font-semibold">${esc([hotels.subtitle || 'STAY IN STYLE', hotels.title, hotel.city_zh, hotel.stars].filter(Boolean).join(' · '))}</p>
           <h2 class="text-4xl md:text-5xl font-bold font-serif ${titleColor} tracking-wider ${hotel.name_en ? 'mb-2' : 'mb-6'} leading-tight" style="font-weight:700 !important;">${esc(hotel.name || '嚴選旅宿')}</h2>
           ${hotel.name_en ? `<p class="text-sm md:text-base font-sans tracking-[0.12em] ${bodyColor} mb-6">${esc(hotel.name_en)}</p>` : ''}
           <div class="w-16 h-[2px] ${isDark ? 'bg-jollify-gold' : 'bg-jollify-purple'} mb-8"></div>
@@ -1519,8 +696,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     <section id="page-${noticesPageNum}" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="報名注意">
       <div class="max-w-4xl mx-auto w-full relative z-10">
         <div class="text-center mb-14 animate-trigger">
-          <p class="text-jollify-purple tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">NOTICES</p>
-          <h2 class="text-4xl md:text-6xl font-bold tracking-[0.12em] font-serif text-jollify-purple-dark mobile-readable-title">報名注意事項</h2>
+          <p class="text-jollify-purple tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">${esc(itinerary.notices.subtitle || 'NOTICES')}</p>
+          <h2 class="text-4xl md:text-6xl font-bold tracking-[0.12em] font-serif text-jollify-purple-dark mobile-readable-title">${esc(itinerary.notices.title || '報名注意事項')}</h2>
           <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
         </div>
         <div class="space-y-4">${noticeCards}</div>
@@ -1546,9 +723,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     <section id="page-recommended" class="magazine-section bg-jollify-dark text-white" data-title="推薦行程">
       <div class="max-w-6xl mx-auto w-full relative z-10">
         <div class="text-center mb-16 animate-trigger">
-          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">MORE EXPLORE</p>
+          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">${esc(recommended.subtitle || 'MORE EXPLORE')}</p>
           <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-transparent bg-clip-text bg-gradient-to-r from-white to-jollify-gold-light">
-            探索更多奢華旅程
+            ${esc(recommended.title || '探索更多奢華旅程')}
           </h2>
           <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
         </div>
@@ -1563,20 +740,20 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const lastPageNum = 4 + (days?.items?.length || 0) + (hotels?.items?.length || 0) + (hasNotices ? 1 : 0);
   const ctaTitle = safe(cta?.title || cta?.cta_title, '開啟您的尊榮篇章');
   const ctaDesc = safe(cta?.cta_desc, '地面代理專屬尊榮企劃報價，由專屬顧問親自服務。');
-  const lineBtn = cta?.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-[#06C755] text-white font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-[#05b04b] transition-all duration-300 shadow-lg">客服</a>` : '';
+  const lineBtn = cta?.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" rel="noopener noreferrer" class="j-mag-cta-button w-full sm:w-auto px-8 py-4 bg-[#06C755] text-white font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-[#05b04b] transition-all duration-300 shadow-lg">客服</a>` : '';
   const registerUrl = cta?.cta_register_url || DEFAULT_CTA_REGISTER_URL;
-  const regBtn = `<a href="${esc(registerUrl)}" target="_blank" ${destinationClick} class="w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg">立即報名</a>`;
+  const regBtn = `<a href="${esc(registerUrl)}" target="_blank" rel="noopener noreferrer" ${destinationClick} class="j-mag-cta-button w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg">立即報名</a>`;
   const ctaSection = `
     <section id="page-${lastPageNum}" class="magazine-section bg-jollify-dark text-white relative" data-title="報價與諮詢">
       <div class="max-w-4xl mx-auto w-full text-center relative z-20 px-6 py-12 border border-jollify-gold/20 rounded-sm glass-premium-dark animate-trigger scale-up delay-200">
-        <p class="text-jollify-gold tracking-[0.4em] font-serif text-sm mb-4 uppercase">JOLLIFY TRAVEL EXCLUSIVE</p>
+        <p class="text-jollify-gold tracking-[0.4em] font-serif text-sm mb-4 uppercase">${esc(cta?.subtitle || 'JOLLIFY TRAVEL EXCLUSIVE')}</p>
         <h2 class="text-4xl md:text-6xl font-serif font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white via-jollify-gold-light to-white mb-8">${esc(ctaTitle)}</h2>
         <div class="w-16 h-[1px] bg-jollify-gold mx-auto mb-10"></div>
         <p class="text-gray-300 font-sans text-base leading-relaxed mb-10">${esc(ctaDesc)}</p>
         <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
           ${lineBtn}
           ${regBtn}
-          <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full sm:w-auto px-8 py-4 bg-transparent text-white font-sans text-sm tracking-[0.2em] rounded-sm hover:bg-white/10 transition-all duration-300 border border-white/20">回到首頁</button>
+          <button type="button" onclick="window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })" class="j-mag-cta-button w-full sm:w-auto px-8 py-4 bg-transparent text-white font-sans text-sm tracking-[0.2em] rounded-sm hover:bg-white/10 transition-all duration-300 border border-white/20">回到首頁</button>
         </div>
         <p class="text-[10px] text-gray-500 font-sans tracking-widest mt-16">© 2026 JOLLIFY TRAVEL 鑫囍探索. ALL RIGHTS RESERVED.</p>
       </div>
@@ -1617,7 +794,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     </div>
 
     <!-- 左側分頁導覽 -->
-    <div class="nav-dots" id="nav-dots"></div>
+    <nav class="nav-dots" id="nav-dots" aria-label="行程章節導覽"></nav>
 
     ${floatBtn}
 
@@ -1627,26 +804,27 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
         <img src="${esc(safe(itinerary?.hero_data?.image, 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'))}" alt="Cover" class="w-full h-full object-cover img-elegant opacity-50">
         ${imageCredit(itinerary?.hero_data?.image_source)}
       </div>
-      <div class="absolute inset-0 bg-gradient-to-b from-jollify-dark/80 via-transparent to-jollify-dark/95 z-10"></div>
+      <div class="j-mag-cover-overlay absolute inset-0 z-10"></div>
       <div class="absolute inset-8 border border-jollify-gold/25 pointer-events-none z-20 hidden md:block"></div>
-      <div class="z-20 text-center text-white max-w-4xl mx-auto px-6 h-full flex flex-col justify-center items-center">
-        <div class="animate-trigger scale-up delay-100 flex items-center gap-3 mb-6">
+      <div class="magazine-cover-content z-20 text-center text-white max-w-4xl mx-auto px-6 h-full flex flex-col justify-center items-center">
+        <div class="magazine-cover-kicker animate-trigger scale-up delay-100 flex items-center gap-3 mb-6">
           <span class="w-6 h-[1px] bg-jollify-gold"></span>
-          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs font-sans">Jollify Luxury Journey</p>
+          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs font-sans">${esc(hero.subtitle || 'Jollify Luxury Journey')}</p>
           <span class="w-6 h-[1px] bg-jollify-gold"></span>
         </div>
-        <h1 class="text-5xl md:text-8xl font-black tracking-[0.15em] mb-8 leading-tight font-serif text-transparent bg-clip-text bg-gradient-to-r from-white via-jollify-gold-light to-white">
+        <h1 class="magazine-cover-title text-5xl md:text-8xl font-black tracking-[0.15em] mb-8 leading-tight font-serif text-transparent bg-clip-text bg-gradient-to-r from-white via-jollify-gold-light to-white">
           ${esc(safe(itinerary?.hero_data?.title1, '未命名行程')).replace(/\n/g, '<br>')}<br>
           <span class="text-2xl md:text-5xl italic font-light tracking-[0.1em] text-jollify-gold-light mt-4 block font-serif">${esc(safe(itinerary?.hero_data?.title2, '')).replace(/\n/g, '<br>')}</span>
         </h1>
-        <div class="w-20 h-[1px] bg-gradient-to-r from-transparent via-jollify-gold to-transparent my-4"></div>
-        <p class="text-base md:text-xl font-light tracking-[0.25em] text-gray-200 font-sans mt-4">${esc(tags)}</p>
-        <div class="absolute bottom-16 left-1/2 -translate-x-1/2 text-center z-20 cursor-pointer" onclick="document.querySelector('#jollify-magazine-tour section:nth-of-type(2)')?.scrollIntoView({ behavior: 'smooth' })">
-          <span class="text-xs tracking-[0.3em] text-jollify-gold hover:text-white transition-colors duration-300 block mb-2 font-sans">SCROLL TO DISCOVER</span>
+        <div class="magazine-cover-rule w-20 h-[1px] bg-gradient-to-r from-transparent via-jollify-gold to-transparent my-4"></div>
+        <p class="magazine-cover-tags text-base md:text-xl font-light tracking-[0.25em] text-gray-200 font-sans mt-4">${esc(tags)}</p>
+        ${hero.description ? `<p class="magazine-cover-description max-w-xl text-sm md:text-base font-light leading-relaxed text-gray-200 font-sans mt-5">${esc(hero.description)}</p>` : ''}
+        <button type="button" class="cover-scroll-cue absolute bottom-16 left-1/2 -translate-x-1/2 text-center z-20" aria-label="前往下一個行程章節" onclick="document.querySelector('#jollify-magazine-tour section:nth-of-type(2)')?.scrollIntoView({ behavior: 'smooth' })">
+          <span class="cover-scroll-label text-xs tracking-[0.3em] text-jollify-gold transition-colors duration-300 block mb-2 font-sans">SCROLL TO DISCOVER</span>
           <div class="w-5 h-8 border border-jollify-gold/40 rounded-full mx-auto p-1 flex justify-center">
             <div class="w-1 h-2 bg-jollify-gold rounded-full animate-bounce"></div>
           </div>
-        </div>
+        </button>
       </div>
     </section>
 

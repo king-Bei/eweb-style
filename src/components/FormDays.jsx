@@ -1,7 +1,7 @@
 import React from 'react';
 import ImageAttributionInput from './ImageAttributionInput';
 
-export default function FormDays({ data = {}, onChange }) {
+export default function FormDays({ data = {}, onChange, theme = 'classic' }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
   const items = data.items || [];
 
@@ -62,7 +62,7 @@ export default function FormDays({ data = {}, onChange }) {
             </div>
           </div>
 
-          <div style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #f0f0f0', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          {theme === 'classic' && <div style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #f0f0f0', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
             <div>
               <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1.5 block">行程圖面放置方式</label>
               <select
@@ -87,7 +87,7 @@ export default function FormDays({ data = {}, onChange }) {
                 條列重點加粗顯示
               </label>
             </div>
-          </div>
+          </div>}
 
           {data.visible !== false && (
             <>

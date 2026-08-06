@@ -444,7 +444,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
               const dayNum = i + 1;
               const act = i === 0 ? 'is-active' : '';
               const sty = i === 0 ? 'display:block;' : 'display:none;';
-              tabsHtml += `<button class="j-day-tab ${act}" data-target="panel-${dayNum}"><span class="j-tab-num">0${dayNum}</span><span class="j-tab-label">DAY</span></button>`;
+              tabsHtml += `<button id="tab-day-${dayNum}" class="j-day-tab ${act}" data-target="panel-${dayNum}" role="tab" aria-controls="panel-${dayNum}" aria-selected="${i === 0}" tabindex="${i === 0 ? '0' : '-1'}"><span class="j-tab-num">${String(dayNum).padStart(2, '0')}</span><span class="j-tab-label">DAY</span></button>`;
 
               let pointsHtml = '';
               if (c.points) {
@@ -455,7 +455,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
 
               const hasImg = !!(c.image?.url);
               panelsHtml += `
-              <div id="panel-${dayNum}" class="day-panel j-day-panel ${act}" style="${sty}">
+              <div id="panel-${dayNum}" class="day-panel j-day-panel ${act}" role="tabpanel" aria-labelledby="tab-day-${dayNum}" ${i === 0 ? '' : 'hidden'} style="${sty}">
+                  ${hasImg ? `<p class="day-swipe-guide"><span aria-hidden="true">←</span> 左右滑動查看圖片與行程 <span aria-hidden="true">→</span></p>` : ''}
                   <div class="day-grid j-day-layout-${daysLayout}${hasImg ? '' : ' no-image'}">
                       ${hasImg ? `<div class="day-image-area" style="position:relative;">
                           <div class="day-stamp">${c.image?.label || ''}</div>
@@ -484,7 +485,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             if (tabsHtml) {
               const daysTitle = days?.title || '每日行程';
               const daysSubtitle = days?.subtitle || 'Daily Itinerary';
-              html += `<div class="j-section" id="itinerary"><div class="j-heading wow fadeInUp"><span class="j-badge">${daysSubtitle}</span><h2>${daysTitle}</h2></div><div class="j-wrapper"><div class="j-magazine-box"><div class="j-tabs-row">${tabsHtml}</div><div class="j-panels-row">${panelsHtml}</div></div></div></div>`;
+              html += `<div class="j-section" id="itinerary"><div class="j-heading wow fadeInUp"><span class="j-badge">${daysSubtitle}</span><h2>${daysTitle}</h2></div><div class="j-wrapper"><div class="j-magazine-box"><div class="j-tabs-row" role="tablist" aria-label="每日行程">${tabsHtml}</div><div class="j-panels-row">${panelsHtml}</div></div></div></div>`;
             }
           }
         }
@@ -629,17 +630,24 @@ export const generateJs = () => {
                 e.preventDefault();
                 container.querySelectorAll('.j-day-tab').forEach(function(tab) {
                     tab.classList.remove('is-active');
+                    tab.setAttribute('aria-selected', 'false');
+                    tab.setAttribute('tabindex', '-1');
                 });
                 container.querySelectorAll('.j-day-panel').forEach(function(panel) {
                     panel.style.display = 'none';
                     panel.classList.remove('is-active');
+                    panel.hidden = true;
                 });
                 dayTab.classList.add('is-active');
+                dayTab.setAttribute('aria-selected', 'true');
+                dayTab.setAttribute('tabindex', '0');
                 var targetPanel = container.querySelector('#' + dayTab.dataset.target);
                 if (targetPanel) {
                     targetPanel.style.display = '';
                     targetPanel.classList.add('is-active');
+                    targetPanel.hidden = false;
                 }
+                dayTab.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
                 return;
             }
 
@@ -649,6 +657,19 @@ export const generateJs = () => {
                 var item = accordionHeader.closest('.j-accordion-item');
                 if (item) item.classList.toggle('is-active');
             }
+        });
+
+        container.addEventListener('keydown', function(e) {
+            var dayTab = e.target.closest('.j-day-tab');
+            if (!dayTab || !container.contains(dayTab) || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+            var tabs = Array.from(dayTab.closest('.j-tabs-row').querySelectorAll('.j-day-tab'));
+            var index = tabs.indexOf(dayTab);
+            if (e.key === 'Home') index = 0;
+            else if (e.key === 'End') index = tabs.length - 1;
+            else index = (index + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+            e.preventDefault();
+            tabs[index].focus();
+            tabs[index].click();
         });
     });
 `;

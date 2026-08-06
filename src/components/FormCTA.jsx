@@ -33,6 +33,11 @@ export default function FormCTA({ data = {}, onChange }) {
                 </div>
               </div>
 
+              <div className="mb-4">
+                <label className="form-label text-xs text-[var(--c-pri)] font-bold mb-1 block">說明文字</label>
+                <textarea className="form-control" rows={2} value={data.cta_desc || ''} onChange={e => onChange({ ...data, cta_desc: e.target.value })} placeholder="由專屬顧問親自為您服務。" />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <div>
                 <label className="form-label font-bold text-[var(--c-pri)] flex items-center gap-1">

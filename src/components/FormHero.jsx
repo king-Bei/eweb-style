@@ -1,7 +1,7 @@
 import React from 'react';
 import ImageAttributionInput from './ImageAttributionInput';
 
-export default function FormHero({ heroData = {}, onChange }) {
+export default function FormHero({ heroData = {}, onChange, theme = 'classic' }) {
   const [isCollapsed, setIsCollapsed] = React.useState(true);
   const handleChange = (e) => {
     onChange({ ...heroData, [e.target.name]: e.target.value });
@@ -11,21 +11,21 @@ export default function FormHero({ heroData = {}, onChange }) {
     <div className="module-section" style={{ marginBottom: '25px', backgroundColor: '#fff', border: '1px solid #e9ecef', borderRadius: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', overflow: 'hidden' }}>
       <div className="module-header" onClick={() => setIsCollapsed(!isCollapsed)} style={{ cursor: 'pointer', backgroundColor: '#f8f9fa', padding: '12px 20px', borderBottom: '1px solid #e9ecef', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3 className="module-title" style={{ margin: 0, color: 'var(--c-pri)', fontSize: '1.05rem', fontWeight: 'bold' }}>{isCollapsed ? '▶️ ' : '🔽 '} 主視覺與標題 (Hero)</h3>
-        <label className="flex items-center gap-2 cursor-pointer text-sm" onClick={e => e.stopPropagation()}>
+        {theme === 'classic' && <label className="flex items-center gap-2 cursor-pointer text-sm" onClick={e => e.stopPropagation()}>
           <input type="checkbox" name="visible" checked={heroData.visible !== false} onChange={e => onChange({ ...heroData, visible: e.target.checked })} />
           顯示
-        </label>
+        </label>}
       </div>
       {!isCollapsed && (
         <div className="module-body" style={{ padding: '20px' }}>
 
-          {heroData.visible !== false && (
+          {(theme === 'magazine' || heroData.visible !== false) && (
             <>
-              <label className="form-label" style={{ color: 'white' }}>標題排版樣式</label>
+              {theme === 'classic' && <><label className="form-label" style={{ color: 'white' }}>標題排版樣式</label>
               <select name="titleStyle" className="form-control" value={heroData.titleStyle || 'classic'} onChange={handleChange} style={{ marginBottom: '10px' }}>
                 <option value="classic">版本一</option>
                 <option value="alternative">版本二</option>
-              </select>
+              </select></>}
 
               <label className="form-label" style={{ color: 'white' }}>主標題</label>
               <input type="text" name="title1" className="form-control" value={heroData.title1 || ''} onChange={handleChange} placeholder="馬爾地夫 ‧ 水上別墅蜜月奢旅" />
