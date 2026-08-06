@@ -214,10 +214,14 @@ export const generateJs = () => {
                         
                         if (isActive) {
                             item.classList.remove('is-active');
+                            header.setAttribute('aria-expanded', 'false');
+                            content.setAttribute('aria-hidden', 'true');
                             content.style.maxHeight = '0px';
                             if (icon) icon.style.transform = 'rotate(0deg)';
                         } else {
                             item.classList.add('is-active');
+                            header.setAttribute('aria-expanded', 'true');
+                            content.setAttribute('aria-hidden', 'false');
                             content.style.maxHeight = content.scrollHeight + 'px';
                             if (icon) icon.style.transform = 'rotate(135deg)';
                         }
@@ -672,9 +676,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const noticesPageNum = 4 + (days?.items?.length || 0) + (hotels?.items?.length || 0);
   let noticesHtml = '';
   if (hasNotices) {
-    const noticeCards = itinerary.notices.items.map((notice, i) => `
+    const noticeCards = itinerary.notices.items.map((notice, i) => {
+      const headerId = `j-magazine-notice-header-${i + 1}`;
+      const contentId = `j-magazine-notice-content-${i + 1}`;
+      return `
       <div class="j-magazine-accordion-item border border-jollify-purple/10 rounded-lg overflow-hidden bg-white shadow-sm mb-4 transition-all duration-300 animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
-        <button class="j-magazine-accordion-header w-full text-left px-6 py-5 flex items-center justify-between focus:outline-none" type="button">
+        <button id="${headerId}" class="j-magazine-accordion-header w-full text-left px-6 py-5 flex items-center justify-between focus:outline-none" type="button" aria-expanded="false" aria-controls="${contentId}">
           <div class="flex items-center gap-4">
             <span class="bg-jollify-purple text-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">${NOTICE_INFO_ICON}</span>
             <span class="text-xl md:text-2xl font-serif font-bold text-jollify-purple-dark">${esc(notice.t || notice.title || '注意事項')}</span>
@@ -684,13 +691,14 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
             <span class="absolute top-0 left-1.5 w-0.5 h-4 bg-jollify-gold"></span>
           </span>
         </button>
-        <div class="j-magazine-accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-jollify-cream/30">
+        <div id="${contentId}" class="j-magazine-accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-jollify-cream/30" role="region" aria-labelledby="${headerId}" aria-hidden="true">
           <div class="px-6 pb-6 pt-2 text-jollify-gray font-sans text-base md:text-lg leading-relaxed">
             <div>${formatNoticeDesc(esc(notice.desc || notice.description || ''))}</div>
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     noticesHtml = `
     <section id="page-${noticesPageNum}" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="報名注意">

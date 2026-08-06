@@ -641,6 +641,24 @@
     box-shadow: 0 0 0 7px rgba(212, 169, 59, 0.32), 0 12px 30px rgba(0, 0, 0, 0.24);
 }
 
+/* 注意事項手風琴：延續白金層次，讓鍵盤焦點與展開狀態同樣清楚。 */
+#jollify-magazine-tour .j-magazine-accordion-header {
+    min-height: 4.5rem;
+    cursor: pointer;
+}
+
+#jollify-magazine-tour .j-magazine-accordion-header:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid #D4A93B;
+    outline-offset: -4px;
+    box-shadow: inset 0 0 0 1px rgba(76, 42, 133, 0.2), 0 0 0 3px rgba(212, 169, 59, 0.18);
+}
+
+#jollify-magazine-tour .j-magazine-accordion-header[aria-expanded="true"] {
+    color: #2D1654;
+}
+
 /* 頁面頂端閱讀進度條 */
 #jollify-magazine-tour #progress-bar {
     position: fixed;
