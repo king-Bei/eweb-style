@@ -43,45 +43,6 @@
 .jollify-luxury-theme .j-badge { display: inline-block !important; font-size: 11px !important; letter-spacing: 3px !important; background: var(--c-sec) !important; color: #fff !important; padding: 5px 15px !important; border-radius: 20px !important; margin-bottom: 15px !important; text-transform: uppercase; }
 .jollify-luxury-theme .j-heading h2 { font-size: 32px !important; color: var(--c-pri) !important; margin: 0 !important; font-weight: bold !important; letter-spacing: 2px !important;}
 
-/* Classic reveal animation: self-contained, no WOW CDN required. */
-.jollify-luxury-theme .wow {
-  opacity: 0;
-  transform: translateY(34px);
-  transition: opacity 0.9s var(--k-ease, cubic-bezier(.16, 1, .3, 1)), transform 0.9s var(--k-ease, cubic-bezier(.16, 1, .3, 1));
-  will-change: opacity, transform;
-}
-.jollify-luxury-theme .wow.fadeIn {
-  transform: scale(1.015);
-}
-.jollify-luxury-theme .wow.fadeInUp {
-  transform: translateY(34px);
-}
-.jollify-luxury-theme .wow.animated {
-  opacity: 1;
-  transform: none;
-}
-.jollify-luxury-theme .wow .j-h-image img,
-.jollify-luxury-theme .wow .j-hl-card-img img,
-.jollify-luxury-theme .wow .j-hl-overlap-img img,
-.jollify-luxury-theme .wow .j-spot-fi-img img,
-.jollify-luxury-theme .wow .j-spot-ltr-img img,
-.jollify-luxury-theme .wow .j-spot-grid-img img,
-.jollify-luxury-theme .wow .j-grid-hotel-card img,
-.jollify-luxury-theme .wow .j-rec-img {
-  transform: scale(1.06);
-  transition: transform 1.4s var(--k-ease, cubic-bezier(.16, 1, .3, 1));
-}
-.jollify-luxury-theme .wow.animated .j-h-image img,
-.jollify-luxury-theme .wow.animated .j-hl-card-img img,
-.jollify-luxury-theme .wow.animated .j-hl-overlap-img img,
-.jollify-luxury-theme .wow.animated .j-spot-fi-img img,
-.jollify-luxury-theme .wow.animated .j-spot-ltr-img img,
-.jollify-luxury-theme .wow.animated .j-spot-grid-img img,
-.jollify-luxury-theme .wow.animated .j-grid-hotel-card img,
-.jollify-luxury-theme .wow.animated .j-rec-img {
-  transform: scale(1);
-}
-
 /* Hero Banner */
 .jollify-luxury-theme .j-hero { position: relative !important; width: 100% !important; height: 60vh !important; min-height: 400px !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; z-index:1;}
 .jollify-luxury-theme .j-hero img { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important; z-index: 1 !important; }
@@ -250,18 +211,22 @@
 .jollify-luxury-theme .j-grid-h-info p { font-size: 14px !important; color: #666 !important; line-height: 1.6 !important; margin:0;}
 
 /* Hotel: Full-bleed hero gallery */
-.jollify-luxury-theme .j-hotel-hero-wrapper { width: 100% !important; display: grid !important; gap: 34px !important; }
-.jollify-luxury-theme .j-hotel-hero-card { position: relative !important; min-height: 640px !important; overflow: hidden !important; isolation: isolate !important; display: flex !important; align-items: flex-end !important; padding: 0 !important; background: var(--c-pri) !important; }
+.jollify-luxury-theme .j-hotel-hero-wrapper { width: 100% !important; max-width: 1180px !important; margin: 0 auto !important; padding: 0 clamp(20px, 3vw, 36px) !important; display: grid !important; gap: 0 !important; box-sizing: border-box !important; }
+.jollify-luxury-theme .j-hotel-hero-card { position: relative !important; width: 100% !important; min-height: 560px !important; overflow: hidden !important; isolation: isolate !important; display: flex !important; align-items: flex-end !important; padding: 0 !important; background: #fff !important; border-radius: 16px !important; box-sizing: border-box !important; }
 .jollify-luxury-theme .j-hotel-hero-bg { position: absolute !important; inset: 0 !important; z-index: -3 !important; }
 .jollify-luxury-theme .j-hotel-hero-bg::after { content: '' !important; position: absolute !important; inset: 0 !important; background: linear-gradient(to top, rgba(21,15,29,0.62) 0%, rgba(21,15,29,0.22) 34%, rgba(21,15,29,0.04) 68%) !important; z-index: 2 !important; }
 .jollify-luxury-theme .j-hotel-hero-main { width: 100% !important; height: 100% !important; object-fit: cover !important; filter: saturate(0.98) contrast(1.04) brightness(0.96) !important; transform: scale(1.02) !important; animation: jHotelHeroZoom 18s ease-in-out infinite alternate !important; }
-.jollify-luxury-theme .j-hotel-hero-shade { position: absolute !important; inset: 18px !important; border: 1px solid rgba(212,169,59,0.36) !important; z-index: -1 !important; pointer-events: none !important; }
-.jollify-luxury-theme .j-hotel-hero-info { width: 100% !important; min-height: 0 !important; padding: 22px clamp(24px, 5vw, 58px) 24px !important; background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)) !important; border-top: 1px solid rgba(212,169,59,0.5) !important; box-shadow: 0 -12px 44px rgba(0,0,0,0.12) !important; backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important; z-index: 2 !important; display: flex !important; flex-wrap: wrap !important; gap: 8px 18px !important; align-items: flex-end !important; }
+.jollify-luxury-theme .j-hotel-hero-shade { display: none !important; }
+.jollify-luxury-theme .j-hotel-hero-info { width: 100% !important; min-height: 0 !important; padding: 22px clamp(24px, 5vw, 58px) 24px !important; background: #fff !important; border-top: none !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; z-index: 2 !important; display: flex !important; flex-wrap: wrap !important; gap: 8px 18px !important; align-items: flex-end !important; box-sizing: border-box !important; }
 .jollify-luxury-theme .j-hotel-hero-info .j-h-stars { margin-bottom: 8px !important; }
 .jollify-luxury-theme .j-hotel-hero-name { margin: 0 0 6px !important; color: var(--c-pri) !important; font-size: clamp(24px, 3vw, 34px) !important; line-height: 1.16 !important; font-weight: 800 !important; }
 .jollify-luxury-theme .j-hotel-hero-en { margin: 0 !important; color: #766f7e !important; font-size: 12px !important; line-height: 1.45 !important; letter-spacing: 0.08em !important; text-transform: uppercase !important; }
 .jollify-luxury-theme .j-hotel-hero-card .j-h-tags { margin-left: auto !important; display: flex !important; flex-wrap: wrap !important; justify-content: flex-end !important; gap: 8px !important; }
-.jollify-luxury-theme .j-hotel-hero-copy { max-width: 1180px !important; margin: -6px auto 0 !important; padding: 30px clamp(24px, 4vw, 48px) 34px !important; background: var(--j-card-bg) !important; border-left: 4px solid var(--c-sec) !important; box-shadow: 0 12px 30px rgba(0,0,0,0.035) !important; }
+.jollify-luxury-theme .j-hotel-hero-card:has(+ .j-hotel-hero-copy) { border-radius: 16px 16px 0 0 !important; }
+.jollify-luxury-theme .j-hotel-hero-card + .j-hotel-hero-card,
+.jollify-luxury-theme .j-hotel-hero-copy + .j-hotel-hero-card { margin-top: 34px !important; }
+.jollify-luxury-theme .j-hotel-hero-copy { width: 100% !important; max-width: none !important; margin: 0 auto 34px !important; padding: 30px clamp(24px, 4vw, 48px) 34px !important; background: var(--j-card-bg) !important; border-top: none !important; border-radius: 0 0 16px 16px !important; box-shadow: 0 16px 30px rgba(76,42,133,0.06) !important; box-sizing: border-box !important; }
+.jollify-luxury-theme .j-hotel-hero-copy:last-child { margin-bottom: 0 !important; }
 .jollify-luxury-theme .j-hotel-hero-copy p { margin: 0 !important; color: #4d4655 !important; font-size: 15px !important; line-height: 1.9 !important; text-align: justify !important; }
 .jollify-luxury-theme .j-hotel-hero-thumbs { position: absolute !important; right: clamp(22px, 4vw, 54px) !important; top: clamp(22px, 4vw, 54px) !important; z-index: 3 !important; display: grid !important; grid-template-columns: repeat(2, minmax(76px, 118px)) !important; gap: 10px !important; }
 .jollify-luxury-theme .j-hotel-hero-thumb { aspect-ratio: 4 / 3 !important; overflow: hidden !important; border: 1px solid rgba(255,255,255,0.78) !important; padding: 0 !important; cursor: pointer !important; background: transparent !important; box-shadow: 0 12px 28px rgba(0,0,0,0.25) !important; animation: jHotelThumbFloat 5s ease-in-out infinite alternate !important; transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease !important; }
@@ -289,10 +254,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .jollify-luxury-theme .wow,
-    .jollify-luxury-theme .wow.fadeIn,
-    .jollify-luxury-theme .wow.fadeInUp,
-    .jollify-luxury-theme .wow img,
     .jollify-luxury-theme .j-hotel-hero-main,
     .jollify-luxury-theme .j-hotel-hero-thumb {
         opacity: 1 !important;
@@ -306,13 +267,27 @@
 .jollify-luxury-theme .j-spot-tag { display: inline-block !important; font-size: 11px !important; letter-spacing: 2px !important; background: rgba(76,42,133,0.08) !important; color: var(--c-pri) !important; padding: 3px 12px !important; border-radius: 12px !important; margin-right: 6px !important; margin-bottom: 12px !important; border: 1px solid rgba(76,42,133,0.15) !important; }
 .jollify-luxury-theme .j-spot-name { font-size: 24px !important; color: var(--c-pri) !important; font-weight: 400 !important; margin: 0 0 14px 0 !important; letter-spacing: 1px !important; }
 .jollify-luxury-theme .j-spot-desc { font-size: 15px !important; color: #555 !important; line-height: 1.9 !important; text-align: justify !important; margin: 0 !important; }
+.jollify-luxury-theme .j-spot-fi-img,
+.jollify-luxury-theme .j-spot-ltr-img,
+.jollify-luxury-theme .j-spot-grid-img { position: relative !important; cursor: pointer !important; transition: transform 0.45s var(--k-ease, ease), box-shadow 0.45s var(--k-ease, ease) !important; }
+.jollify-luxury-theme .j-spot-fi-img::after,
+.jollify-luxury-theme .j-spot-ltr-img::after,
+.jollify-luxury-theme .j-spot-grid-img::after { content: '' !important; position: absolute !important; inset: 0 !important; background: linear-gradient(120deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.26) 48%, rgba(255,255,255,0) 72%) !important; opacity: 0 !important; transform: translateX(-70%) !important; transition: opacity 0.45s ease, transform 0.8s ease !important; pointer-events: none !important; }
+.jollify-luxury-theme .j-spot-fi-img:hover,
+.jollify-luxury-theme .j-spot-ltr-img:hover,
+.jollify-luxury-theme .j-spot-grid-card:hover .j-spot-grid-img { transform: translateY(-5px) !important; box-shadow: 0 18px 42px rgba(76,42,133,0.16) !important; }
+.jollify-luxury-theme .j-spot-fi-img:hover::after,
+.jollify-luxury-theme .j-spot-ltr-img:hover::after,
+.jollify-luxury-theme .j-spot-grid-card:hover .j-spot-grid-img::after { opacity: 1 !important; transform: translateX(70%) !important; }
+.jollify-luxury-theme .j-spot-fi-img:hover img,
+.jollify-luxury-theme .j-spot-ltr-img:hover img,
+.jollify-luxury-theme .j-spot-grid-card:hover .j-spot-grid-img img { transform: scale(1.06) !important; filter: saturate(1.08) contrast(1.04) brightness(1.03) !important; }
 
 /* Scenic Spots: fullimg */
 .jollify-luxury-theme .j-spot-fullimg { margin-bottom: 60px !important; }
 .jollify-luxury-theme .j-spot-fullimg:last-child { margin-bottom: 0 !important; }
 .jollify-luxury-theme .j-spot-fi-img { width: 100% !important; aspect-ratio: 16 / 7 !important; min-height: 420px !important; overflow: hidden !important; border-radius: 16px !important; }
-.jollify-luxury-theme .j-spot-fi-img img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important; transition: transform 0.5s ease !important; }
-.jollify-luxury-theme .j-spot-fi-img img:hover { transform: scale(1.02) !important; }
+.jollify-luxury-theme .j-spot-fi-img img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important; transition: transform 0.65s var(--k-ease, ease), filter 0.65s var(--k-ease, ease) !important; }
 .jollify-luxury-theme .j-spot-fi-caption { max-width: 700px !important; margin: 30px auto 0 auto !important; text-align: center !important; padding: 0 20px !important; }
 
 /* Scenic Spots: ltr */
@@ -320,7 +295,7 @@
 .jollify-luxury-theme .j-spot-ltr:last-child { margin-bottom: 0 !important; }
 .jollify-luxury-theme .j-spot-ltr.reverse { flex-direction: row-reverse !important; }
 .jollify-luxury-theme .j-spot-ltr-img { flex: 0 0 55% !important; aspect-ratio: 16 / 10 !important; min-height: 350px !important; overflow: hidden !important; border-radius: 16px !important; box-shadow: 0 15px 40px rgba(0,0,0,0.08) !important; }
-.jollify-luxury-theme .j-spot-ltr-img img { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 16px !important; display: block !important; }
+.jollify-luxury-theme .j-spot-ltr-img img { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 16px !important; display: block !important; transition: transform 0.65s var(--k-ease, ease), filter 0.65s var(--k-ease, ease) !important; }
 .jollify-luxury-theme .j-spot-ltr-text { flex: 1 !important; }
 
 /* Scenic Spots: grid */
@@ -328,7 +303,7 @@
 .jollify-luxury-theme .j-spot-grid-card { background: #fff !important; border-radius: 12px !important; overflow: hidden !important; box-shadow: 0 5px 20px rgba(0,0,0,0.05) !important; border: 1px solid #eee !important; transition: transform 0.3s !important; }
 .jollify-luxury-theme .j-spot-grid-card:hover { transform: translateY(-4px) !important; }
 .jollify-luxury-theme .j-spot-grid-img { width: 100% !important; aspect-ratio: 4 / 3 !important; min-height: 220px !important; overflow: hidden !important; }
-.jollify-luxury-theme .j-spot-grid-img img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important; }
+.jollify-luxury-theme .j-spot-grid-img img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important; transition: transform 0.65s var(--k-ease, ease), filter 0.65s var(--k-ease, ease) !important; }
 .jollify-luxury-theme .j-spot-grid-info { padding: 25px !important; }
 .jollify-luxury-theme .j-spot-grid-info .j-spot-name { font-size: 18px !important; }
 .jollify-luxury-theme .j-spot-grid-info .j-spot-desc { font-size: 14px !important; }
@@ -494,7 +469,7 @@
     .jollify-luxury-theme .j-hotel-hero-card { min-height: 560px !important; padding: 0 !important; align-items: flex-end !important; }
     .jollify-luxury-theme .j-hotel-hero-bg::after { background: linear-gradient(to top, rgba(21,15,29,0.66) 0%, rgba(21,15,29,0.22) 42%, rgba(21,15,29,0.04) 70%) !important; }
     .jollify-luxury-theme .j-hotel-hero-shade { inset: 10px !important; }
-    .jollify-luxury-theme .j-hotel-hero-info { width: 100% !important; padding: 18px 18px 20px !important; grid-template-columns: 1fr !important; gap: 10px !important; background: rgba(255,255,255,0.86) !important; }
+    .jollify-luxury-theme .j-hotel-hero-info { width: 100% !important; padding: 18px 18px 20px !important; grid-template-columns: 1fr !important; gap: 10px !important; background: #fff !important; }
     .jollify-luxury-theme .j-hotel-hero-name { font-size: 24px !important; }
     .jollify-luxury-theme .j-hotel-hero-thumbs { top: 18px !important; right: 18px !important; grid-template-columns: repeat(2, 72px) !important; gap: 8px !important; }
     .jollify-luxury-theme .j-hotel-hero-thumb { box-shadow: 0 8px 18px rgba(0,0,0,0.18) !important; }
