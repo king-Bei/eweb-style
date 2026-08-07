@@ -14,10 +14,12 @@ export default function FormDays({ data = {}, onChange, theme = 'classic' }) {
           route: '',
           title: '',
           lead: '',
+          summary: '',
           image: { url: '', source: '', label: '', subtitle: '' },
           points: '',
           meals: { breakfast: '', lunch: '', dinner: '' },
-          stay: ''
+          stay: '',
+          hotel_name: ''
         }
       ]
     });
@@ -111,6 +113,19 @@ export default function FormDays({ data = {}, onChange, theme = 'classic' }) {
                       <label className="form-label text-xs">前言 (Lead)</label>
                       <textarea className="form-control" rows={2} value={item.lead} onChange={e => updateItem(i, 'lead', e.target.value)}></textarea>
                     </div>
+                    {theme === 'magazine' && (
+                      <div className="col-span-2 rounded border border-amber-200 bg-amber-50 p-3">
+                        <label className="form-label text-xs font-bold text-[var(--c-pri)]">行程總覽摘要 (Magazine Summary)</label>
+                        <p className="mb-2 text-xs text-gray-500">顯示於雜誌風格的行程總覽；留空時會使用前言內容。</p>
+                        <textarea
+                          className="form-control mb-0"
+                          rows={2}
+                          value={item.summary || ''}
+                          onChange={e => updateItem(i, 'summary', e.target.value)}
+                          placeholder="以一兩句話概述當日亮點"
+                        />
+                      </div>
+                    )}
 
                     {/* Image Section */}
                     <div className="col-span-2 p-3 bg-gray-50 border border-gray-200 rounded">
@@ -167,6 +182,19 @@ export default function FormDays({ data = {}, onChange, theme = 'classic' }) {
                       <label className="form-label text-xs">住宿 (Stay)</label>
                       <input type="text" className="form-control" value={item.stay} onChange={e => updateItem(i, 'stay', e.target.value)} placeholder="Ozen Reserve Bolifushi - Earth Pool Villa" />
                     </div>
+                    {theme === 'magazine' && (
+                      <div className="col-span-2 rounded border border-amber-200 bg-amber-50 p-3">
+                        <label className="form-label text-xs font-bold text-[var(--c-pri)]">雜誌住宿顯示名稱 (Magazine Stay)</label>
+                        <p className="mb-2 text-xs text-gray-500">顯示於雜誌風格的行程總覽與每日頁面；留空時會使用上方住宿欄位。</p>
+                        <input
+                          type="text"
+                          className="form-control mb-0"
+                          value={item.hotel_name || ''}
+                          onChange={e => updateItem(i, 'hotel_name', e.target.value)}
+                          placeholder="例如：馬爾地夫奧臻瑞澤爾芙度假村"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

@@ -641,6 +641,26 @@
     box-shadow: 0 0 0 7px rgba(212, 169, 59, 0.32), 0 12px 30px rgba(0, 0, 0, 0.24);
 }
 
+/* 浮動轉換操作：保留輕盈膠囊感，鍵盤、觸控與安全區同樣可靠。 */
+#jollify-magazine-tour .j-mag-floating-actions {
+    right: max(1.5rem, env(safe-area-inset-right));
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+#jollify-magazine-tour .j-mag-floating-action {
+    min-height: 3rem;
+    justify-content: center;
+    line-height: 1.3;
+    text-align: center;
+    transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+#jollify-magazine-tour .j-mag-floating-action:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(212, 169, 59, 0.38), 0 14px 34px rgba(21, 15, 29, 0.3);
+}
+
 /* 注意事項手風琴：延續白金層次，讓鍵盤焦點與展開狀態同樣清楚。 */
 #jollify-magazine-tour .j-magazine-accordion-header {
     min-height: 4.5rem;
@@ -765,6 +785,18 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+    #jollify-magazine-tour .j-mag-floating-action:hover {
+        transform: translateY(-2px) scale(1.025);
+    }
+
+    #jollify-magazine-tour .j-mag-floating-line:hover {
+        background-color: #05B04B;
+    }
+
+    #jollify-magazine-tour .j-mag-floating-register:hover {
+        box-shadow: 0 16px 36px rgba(21, 15, 29, 0.28), 0 0 0 1px rgba(246, 231, 174, 0.32);
+    }
+
     #jollify-magazine-tour .itinerary-row:hover {
         background: rgba(76, 42, 133, 0.22);
         border-left-color: #D4A93B !important;
@@ -1299,6 +1331,100 @@
         flex: 0 0 auto;
         margin-top: 0.05rem;
     }
+}
+
+/* Reference price */
+#jollify-magazine-tour .magazine-price-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: min(66vh, 620px);
+    padding: 72px 24px;
+    background: #21152d;
+    color: #ffffff;
+}
+
+#jollify-magazine-tour .magazine-price-inner {
+    width: min(100%, 920px);
+    padding: clamp(42px, 7vw, 82px) clamp(28px, 7vw, 88px);
+    text-align: center;
+    border-top: 1px solid rgba(212, 169, 59, 0.78);
+    border-bottom: 1px solid rgba(212, 169, 59, 0.34);
+}
+
+#jollify-magazine-tour .magazine-price-kicker {
+    margin: 0 0 18px;
+    color: #d4a93b;
+    font-family: var(--font-sans, sans-serif);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+}
+
+#jollify-magazine-tour .magazine-price-inner h2 {
+    margin: 0;
+    color: #ffffff;
+    font-family: var(--font-serif, serif);
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+#jollify-magazine-tour .magazine-price-value {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+    color: #d4a93b;
+    font-family: var(--font-sans, sans-serif);
+    font-size: clamp(38px, 7vw, 76px);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.1;
+}
+
+#jollify-magazine-tour .magazine-price-value span {
+    color: rgba(255, 255, 255, 0.78);
+    font-family: var(--font-serif, serif);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+}
+
+#jollify-magazine-tour .magazine-price-consult {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    margin-top: 30px;
+    padding: 0 28px;
+    border: 1px solid #d4a93b;
+    color: #d4a93b;
+    font-family: var(--font-sans, sans-serif);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-decoration: none;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+#jollify-magazine-tour .magazine-price-consult:hover {
+    background: #d4a93b;
+    color: #21152d;
+    transform: translateY(-2px);
+}
+
+#jollify-magazine-tour .magazine-price-note {
+    max-width: 640px;
+    margin: 30px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.72);
+    font-family: var(--font-sans, sans-serif);
+    font-size: 14px;
+    line-height: 1.9;
 }
 
 /* 尊重系統動態偏好：內容維持可見，避免長距離進場、縮放與持續旋轉。 */

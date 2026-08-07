@@ -84,7 +84,7 @@ function formatNoticeDesc(desc) {
 }
 
 export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin = '', moduleOrder = []) => {
-  const { hero_data, highlights, spots, notices, recommended, map_data } = itinerary;
+  const { hero_data, highlights, spots, notices, recommended, map_data, price_data } = itinerary;
   const destinationTitle = String(hero_data?.title1 || itinerary?.title || '').trim();
   const destinationValue = JSON.stringify(destinationTitle)
     .replace(/&/g, '&amp;')
@@ -94,11 +94,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
   const destinationClick = destinationTitle
     ? `onclick="try{localStorage.setItem('jt_dest', ${destinationValue})}catch(e){}"`
     : '';
+  const priceConsultUrl = cta?.cta_register_url || DEFAULT_CTA_REGISTER_URL;
 
 
   const order = (moduleOrder && moduleOrder.length > 0)
     ? moduleOrder.filter(k => k !== 'quick_info' && k !== 'quick')
-    : ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
+    : ['hero', 'highlights', 'spots', 'flights', 'price', 'hotels', 'days', 'notices', 'map', 'recommended'];
 
   let html = `
 <style>
@@ -343,6 +344,15 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
             const flightsTitle = flights?.title || '航程紀實 ‧ 優雅啟程';
             html += `<div class="j-section" id="flights"><div class="j-heading wow fadeInUp"><span class="j-badge">${flightsSubtitle}</span><h2>${flightsTitle}</h2></div><div class="j-wrapper j-flights-wrapper">${allGroupsHtml}</div></div>`;
           }
+        }
+        break;
+      case 'price':
+        if (price_data?.visible !== false && [price_data?.amount, price_data?.note, price_data?.title].some(value => String(value || '').trim())) {
+          const priceTitle = price_data?.title || '尊榮旅程參考售價';
+          const priceSubtitle = price_data?.subtitle || 'FROM';
+          const priceAmount = price_data?.amount || '';
+          const priceUnit = price_data?.unit || '每人起';
+          html += `<div class="j-section j-price-section" id="price"><div class="j-wrapper"><div class="j-price-card wow fadeInUp"><div class="j-price-heading"><span class="j-price-subtitle">${priceSubtitle}</span><h2>${priceTitle}</h2></div><div class="j-price-action"><div class="j-price-value"><span class="j-price-amount">${priceAmount}</span><span class="j-price-unit">${priceUnit}</span></div><a href="${priceConsultUrl}" target="_blank" ${destinationClick} class="j-price-consult">我要詢問</a></div>${price_data?.note ? `<p class="j-price-note">${String(price_data.note).replace(/\n/g, '<br>')}</p>` : ''}</div></div></div>`;
         }
         break;
       case 'hotels':

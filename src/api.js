@@ -169,6 +169,7 @@ export const itineraryApi = {
         spots: original.spots,
         notices: original.notices,
         recommended: original.recommended,
+        map_data: original.map_data,
         config: original.config
       }])
       .select()

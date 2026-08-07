@@ -26,6 +26,30 @@ export default function FormMap({ data = {}, onChange }) {
 
       {!isCollapsed && (
         <div className="module-body" style={{ padding: '20px' }}>
+          <div className="mb-4 grid grid-cols-1 gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 sm:grid-cols-2">
+            <div>
+              <label className="form-label mb-1 block text-xs font-bold text-[var(--c-pri)]">區塊主標題 (Main Title)</label>
+              <input
+                type="text"
+                className="form-control"
+                style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }}
+                value={data.title || ''}
+                onChange={e => onChange({ ...data, title: e.target.value })}
+                placeholder="行程地圖"
+              />
+            </div>
+            <div>
+              <label className="form-label mb-1 block text-xs font-bold text-[var(--c-pri)]">地圖說明 (Description)</label>
+              <textarea
+                className="form-control"
+                rows={2}
+                style={{ marginBottom: 0, padding: '6px 12px', fontSize: '13px' }}
+                value={data.desc || ''}
+                onChange={e => onChange({ ...data, desc: e.target.value })}
+                placeholder="從起點到目的地的旅程路線"
+              />
+            </div>
+          </div>
           <label className="form-label text-xs text-[var(--c-pri)] font-bold">地圖圖片網址</label>
           <p className="text-xs text-gray-400 mb-2">
             請輸入地圖的公開圖片連結（如：上傳至科威素材庫之圖片網址，地圖會自動隨視窗大小縮放）

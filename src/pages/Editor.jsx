@@ -25,6 +25,8 @@ import FormFlights from '../components/FormFlights';
 import FormHotels from '../components/FormHotels';
 import FormDays from '../components/FormDays';
 import FormMap from '../components/FormMap';
+import FormQuickInfo from '../components/FormQuickInfo';
+import FormPrice from '../components/FormPrice';
 import FormNotices from '../components/FormNotices';
 import FormRecommended from '../components/FormRecommended';
 import FormCTA from '../components/FormCTA';
@@ -33,7 +35,7 @@ import useUnsavedChangesWarning from '../hooks/useUnsavedChangesWarning';
 import { prepareHtmlImagesForKowei, toPreviewImageUrl } from '../utils/imageUrls';
 import { createZipBlob } from '../utils/zipArchive';
 
-const DEFAULT_MODULE_ORDER = ['hero', 'highlights', 'spots', 'flights', 'hotels', 'days', 'notices', 'map', 'recommended'];
+const DEFAULT_MODULE_ORDER = ['hero', 'highlights', 'spots', 'flights', 'price', 'hotels', 'days', 'notices', 'map', 'recommended'];
 
 const normalizeModuleOrder = (order) => {
   const normalized = Array.isArray(order)
@@ -57,6 +59,17 @@ const orderedRelationData = (rows, field) => (Array.isArray(rows) ? [...rows] : 
     delete value.__sort_index;
     return value;
   });
+
+// Price data is persisted in `config.price_data` for compatibility with the
+// current itinerary schema. A deployed top-level `price_data` column may be
+// present but empty on older records, so only let it override the config value
+// when it actually contains a saved setting (including `visible: false`).
+const resolvePriceData = (record) => {
+  const columnValue = record?.price_data;
+  return columnValue && typeof columnValue === 'object' && !Array.isArray(columnValue) && Object.keys(columnValue).length
+    ? columnValue
+    : record?.config?.price_data || {};
+};
 
 const serializeEditorState = ({ itinerary, flights, days, hotels, cta, moduleOrder, status, publishDateNote, theme }) => JSON.stringify({
   itinerary,
@@ -99,6 +112,8 @@ export default function Editor({ forcedTheme = null }) {
     hero_data: {},
     highlights: {},
     spots: {},
+    quick_info: {},
+    price_data: {},
     notices: {},
     recommended: {}
   });
@@ -267,6 +282,8 @@ export default function Editor({ forcedTheme = null }) {
         hero_data: data.hero_data || {},
         highlights: data.highlights || {},
         spots: data.spots || {},
+        quick_info: data.quick_info || {},
+        price_data: resolvePriceData(data),
         notices: data.notices || {},
         recommended: data.recommended || {},
         map_data: data.map_data || {}
@@ -306,11 +323,19 @@ export default function Editor({ forcedTheme = null }) {
       setDays({
         visible: themeConfig.days_visible !== false,
         layout: themeConfig.daysLayout || 'leftimg',
+        title: themeConfig.days_title || '',
+        subtitle: themeConfig.days_subtitle || '',
         items: d_items
       });
 
       const h_items = orderedRelationData(data.itinerary_hotels, 'hotel_group_data');
-      setHotels({ visible: themeConfig.hotels_visible !== false, layout: themeConfig.hotelLayout || 'overlap', items: h_items });
+      setHotels({
+        visible: themeConfig.hotels_visible !== false,
+        layout: themeConfig.hotelLayout || 'overlap',
+        title: themeConfig.hotels_title || '',
+        subtitle: themeConfig.hotels_subtitle || '',
+        items: h_items
+      });
 
       setCta({
         visible: themeConfig.cta_visible !== false,
@@ -365,8 +390,12 @@ export default function Editor({ forcedTheme = null }) {
         flightEditorState: flights,
         days_visible: days.visible,
         daysLayout: days.layout || 'leftimg',
+        days_title: days.title || '',
+        days_subtitle: days.subtitle || '',
         hotels_visible: hotels.visible,
         hotelLayout: hotels.layout,
+        hotels_title: hotels.title || '',
+        hotels_subtitle: hotels.subtitle || '',
         cta_visible: cta.visible,
         cta_title: cta.title || '',
         cta_subtitle: cta.subtitle || '',
@@ -378,6 +407,7 @@ export default function Editor({ forcedTheme = null }) {
       const config = {
         ...baseConfig,
         theme: activeTheme,
+        price_data: itinerary.price_data,
         [`${activeTheme}_config`]: {
           ...(baseConfig?.[`${activeTheme}_config`] || {}),
           ...themeConfig
@@ -391,6 +421,7 @@ export default function Editor({ forcedTheme = null }) {
         hero_data: itinerary.hero_data,
         highlights: itinerary.highlights,
         spots: itinerary.spots,
+        quick_info: itinerary.quick_info,
         notices: itinerary.notices,
         recommended: itinerary.recommended,
         map_data: itinerary.map_data,
@@ -740,6 +771,7 @@ ${exportCodes.html}
       highlights: '行程特色亮點',
       spots: '精選景點',
       flights: '航程航班資訊',
+      price: '參考售價',
       hotels: '嚴選旅宿住宿',
       days: '每日行程說明',
       notices: '報名注意事項',
@@ -760,6 +792,9 @@ ${exportCodes.html}
         break;
       case 'flights':
         formComponent = <FormFlights data={flights} onChange={setFlights} theme={theme} />;
+        break;
+      case 'price':
+        formComponent = <FormPrice data={itinerary.price_data || {}} onChange={(d) => setItinerary({ ...itinerary, price_data: d })} />;
         break;
       case 'hotels':
         formComponent = <FormHotels data={hotels} onChange={setHotels} />;
@@ -1040,8 +1075,11 @@ ${exportCodes.html}
               <button onClick={() => document.getElementById('form-highlights')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">行程特色</button>
               <button onClick={() => document.getElementById('form-spots')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">精選景點</button>
               <button onClick={() => document.getElementById('form-flights')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">航班資訊</button>
+              <button onClick={() => document.getElementById('form-quick-info')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">旅程速覽</button>
+              <button onClick={() => document.getElementById('form-price')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">參考售價</button>
               <button onClick={() => document.getElementById('form-hotels')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">嚴選旅宿</button>
               <button onClick={() => document.getElementById('form-days')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">每日行程</button>
+              <button onClick={() => document.getElementById('form-map')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">行程地圖</button>
               <button onClick={() => document.getElementById('form-notices')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">注意事項</button>
               <button onClick={() => document.getElementById('form-cta')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">報名諮詢</button>
               <button onClick={() => document.getElementById('form-recommended')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:border-[var(--c-pri)] hover:text-[var(--c-pri)] whitespace-nowrap transition-all shadow-sm">推薦行程</button>
@@ -1067,8 +1105,11 @@ ${exportCodes.html}
                 <div id="form-highlights"><FormHighlights data={itinerary.highlights} onChange={(d) => setItinerary({ ...itinerary, highlights: d })} theme={theme} /></div>
                 <div id="form-spots"><FormSpots data={itinerary.spots} onChange={(d) => setItinerary({ ...itinerary, spots: d })} theme={theme} /></div>
                 <div id="form-flights"><FormFlights data={flights} onChange={setFlights} theme={theme} /></div>
+                <div id="form-quick-info"><FormQuickInfo data={itinerary.quick_info || {}} onChange={(d) => setItinerary({ ...itinerary, quick_info: d })} /></div>
+                <div id="form-price"><FormPrice data={itinerary.price_data || {}} onChange={(d) => setItinerary({ ...itinerary, price_data: d })} /></div>
                 <div id="form-hotels"><FormHotels data={hotels} onChange={setHotels} theme={theme} /></div>
                 <div id="form-days"><FormDays data={days} onChange={setDays} theme={theme} /></div>
+                <div id="form-map"><FormMap data={itinerary.map_data || {}} onChange={(d) => setItinerary({ ...itinerary, map_data: d })} /></div>
                 <div id="form-notices"><FormNotices data={itinerary.notices} onChange={(d) => setItinerary({ ...itinerary, notices: d })} /></div>
                 <div id="form-cta"><FormCTA data={cta} onChange={setCta} /></div>
                 <div id="form-recommended"><FormRecommended data={itinerary.recommended} onChange={(d) => setItinerary({ ...itinerary, recommended: d })} /></div>

@@ -236,6 +236,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const highlights = itinerary?.highlights;
   const spots = itinerary?.spots;
   const recommended = itinerary?.recommended;
+  const quickInfo = itinerary?.quick_info || {};
+  const priceData = itinerary?.price_data || {};
+  const mapData = itinerary?.map_data || {};
   const visibleFlights = (flights?.items || []).filter(item => item.visible !== false);
   const visibleHighlights = (highlights?.items || []).filter(item => item.visible !== false);
   const visibleSpots = (spots?.items || []).filter(item => item.visible !== false);
@@ -244,6 +247,36 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   // ── Helpers ───────────────────────────────────────────────────
   const esc = (v) => (v == null ? '' : String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
   const safe = (v, fallback = '') => v != null && v !== '' ? v : fallback;
+  // URLs come from editor fields and are rendered into exported HTML. Keep
+  // external navigation to web URLs only, rather than allowing executable
+  // schemes such as `javascript:` through an otherwise escaped href.
+  const safeHttpUrl = (value, fallback = '') => {
+    const url = String(value || '').trim();
+    if (!url) return fallback;
+    try {
+      const parsed = new URL(url);
+      return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+  // Image fields may refer either to a public web image or to an asset served
+  // from the Jollify site. Do not pass arbitrary schemes into src or CSS url().
+  const safeImageUrl = (value, fallback = '') => {
+    let url = String(value || '').trim();
+    if (!url) return fallback;
+    if (/^\/\/(?:www\.)?jollifytravel\.com\//i.test(url)) url = `https:${url}`;
+    if (/^(?:www\.)?jollifytravel\.com\//i.test(url)) url = `https://${url}`;
+    if (url.startsWith('/') && !url.startsWith('//')) {
+      try {
+        const parsed = new URL(url, 'https://jollifytravel.com');
+        return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+      } catch {
+        return fallback;
+      }
+    }
+    return safeHttpUrl(url, fallback).replace(/'/g, '%27');
+  };
   const imageCredit = source => source ? `<small class="j-image-credit absolute right-3 bottom-3 z-30 rounded-sm bg-black/60 px-2 py-1 font-sans text-[10px] leading-tight text-white">圖片來源：${esc(source)}</small>` : '';
   const destinationTitle = String(itinerary?.hero_data?.title1 || itinerary?.title || '').trim();
   const destinationValue = JSON.stringify(destinationTitle)
@@ -254,9 +287,52 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const destinationClick = destinationTitle
     ? `onclick="try{localStorage.setItem('jt_dest', ${destinationValue})}catch(e){}"`
     : '';
+  const registerUrl = safeHttpUrl(cta?.cta_register_url, DEFAULT_CTA_REGISTER_URL);
+  const lineUrl = safeHttpUrl(cta?.cta_line_url);
+  const priceConsultUrl = registerUrl;
   const hero = itinerary?.hero_data || {};
   const tags = String(hero.tags || '').split(/\n|[,，]/).map(tag => tag.trim()).filter(Boolean).join(' ‧ ')
     || '尊榮 ‧ 奢華 ‧ 絕美秘境';
+
+  // ── Journey brief HTML ────────────────────────────────────────
+  // `quick_info` is an itinerary-level JSON field. Only render it when
+  // meaningful values have been supplied, so a legacy empty field does not
+  // turn into a generic placeholder page in magazine exports.
+  const quickInfoFields = [
+    ['duration', '旅程天數'],
+    ['group', '成行人數'],
+    ['depart', '出發檔期'],
+    ['price', '參考售價'],
+    ['flight', '搭乘航空']
+  ].filter(([key]) => String(quickInfo[key] || '').trim());
+  const quickInfoHtml = quickInfo.visible !== false && quickInfoFields.length ? `
+    <section id="page-brief" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="旅程速覽">
+      <div class="max-w-5xl mx-auto w-full relative z-10 px-4 md:px-8 py-16">
+        <div class="text-center mb-12 animate-trigger">
+          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">JOURNEY AT A GLANCE</p>
+          <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">旅程速覽</h2>
+          <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
+        </div>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-px overflow-hidden border border-jollify-purple/10 bg-jollify-purple/10 shadow-sm animate-trigger scale-up delay-200">
+          ${quickInfoFields.map(([key, label]) => `
+            <div class="${key === 'flight' && quickInfoFields.length % 2 === 1 ? 'sm:col-span-2' : ''} bg-white px-7 py-6 md:px-9 md:py-7">
+              <dt class="font-sans text-xs font-bold tracking-[0.18em] text-jollify-gold">${esc(label)}</dt>
+              <dd class="mt-3 font-serif text-xl font-bold leading-relaxed tracking-wide text-jollify-purple-dark">${esc(quickInfo[key])}</dd>
+            </div>`).join('')}
+        </dl>
+      </div>
+    </section>` : '';
+
+  const priceHtml = priceData.visible !== false && [priceData.amount, priceData.note, priceData.title].some(value => String(value || '').trim()) ? `
+    <section id="page-price" class="magazine-section magazine-price-section" data-title="參考售價">
+      <div class="magazine-price-inner animate-trigger scale-up">
+        <p class="magazine-price-kicker">${esc(priceData.subtitle || 'FROM')}</p>
+        <h2>${esc(priceData.title || '尊榮旅程參考售價')}</h2>
+        <div class="magazine-price-value">${esc(priceData.amount || '')}<span>${esc(priceData.unit || '每人起')}</span></div>
+        <a href="${esc(priceConsultUrl)}" target="_blank" rel="noopener noreferrer" ${destinationClick} class="magazine-price-consult">我要詢問</a>
+        ${priceData.note ? `<p class="magazine-price-note">${esc(priceData.note).replace(/\n/g, '<br>')}</p>` : ''}
+      </div>
+    </section>` : '';
 
   // ── Flights HTML ───────────────────────────────────────────────
   let flightsHtml = '';
@@ -462,11 +538,13 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   // ── Features HTML (Highlights) ─────────────────────────────────
   let featuresHtml = '';
   if (highlights?.visible !== false && visibleHighlights.length) {
-    const cards = visibleHighlights.map((c, i) => `
+    const cards = visibleHighlights.map((c, i) => {
+      const imageUrl = safeImageUrl(c.img);
+      return `
       <article class="j-mag-feature-card bg-white border border-jollify-purple/10 shadow-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
         <div class="j-mag-feature-media relative overflow-hidden">
-          ${c.img
-            ? `<img src="${esc(c.img)}" alt="${esc(c.title || '行程特色')}" class="w-full h-full object-cover img-elegant">${imageCredit(c.image_source)}`
+          ${imageUrl
+            ? `<img src="${esc(imageUrl)}" alt="${esc(c.title || '行程特色')}" class="w-full h-full object-cover img-elegant">${imageCredit(c.image_source)}`
             : `<div class="j-mag-feature-placeholder">
                 <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               </div>`}
@@ -477,7 +555,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <p class="text-jollify-gray font-sans text-sm leading-relaxed">${esc(c.desc || '')}</p>
         </div>
       </article>
-    `).join('');
+    `;
+    }).join('');
     featuresHtml = `
     <section id="page-feature" class="magazine-section bg-jollify-cream" data-title="行程特色">
       <div class="max-w-6xl mx-auto w-full relative z-10 px-4 md:px-8 py-16">
@@ -498,11 +577,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   // ── Scenic spots HTML ─────────────────────────────────────────
   let spotsHtml = '';
   if (spots?.visible !== false && visibleSpots.length) {
-    const cards = visibleSpots.map((spot, i) => `
+    const cards = visibleSpots.map((spot, i) => {
+      const imageUrl = safeImageUrl(spot.img);
+      return `
       <article class="bg-white border border-jollify-purple/10 shadow-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
         <div class="relative h-64 overflow-hidden">
-          <img src="${esc(spot.img || '')}" alt="${esc(spot.name || '精選景點')}" class="w-full h-full object-cover img-elegant">
-          ${imageCredit(spot.image_source)}
+          ${imageUrl ? `<img src="${esc(imageUrl)}" alt="${esc(spot.name || '精選景點')}" class="w-full h-full object-cover img-elegant">${imageCredit(spot.image_source)}` : '<div class="j-mag-feature-placeholder"></div>'}
         </div>
         <div class="p-7">
           ${spot.tag ? `<p class="text-jollify-gold text-xs tracking-[0.2em] font-sans font-bold mb-3">${esc(spot.tag)}</p>` : ''}
@@ -511,7 +591,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <p class="text-jollify-gray font-sans text-sm leading-relaxed">${esc(spot.desc || '')}</p>
         </div>
       </article>
-    `).join('');
+    `;
+    }).join('');
     spotsHtml = `
     <section id="page-spots" class="magazine-section bg-jollify-cream" data-title="精選景點">
       <div class="max-w-6xl mx-auto w-full relative z-10 px-4 md:px-8 py-16">
@@ -529,10 +610,10 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   let highlightsHtml = '';
   if (days?.visible !== false && days?.items?.length) {
     const rows = days.items.map((day, i) => {
-      const pageNum = i + 4;
+      const pageId = `page-day-${i + 1}`;
       return `
         <div role="link" tabindex="0" aria-label="查看第 ${i + 1} 天行程：${esc(day.title || `第 ${i + 1} 天`)}"
-             onclick="document.getElementById('page-${pageNum}') && document.getElementById('page-${pageNum}').scrollIntoView({ behavior: 'smooth' })"
+             onclick="document.getElementById('${pageId}') && document.getElementById('${pageId}').scrollIntoView({ behavior: 'smooth' })"
              onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); this.click(); }"
              class="itinerary-row flex flex-col md:flex-row items-center border-b border-jollify-gold/15 pb-4 cursor-pointer p-4 border-l-4 border-l-transparent rounded-r-md">
           <div class="text-jollify-gold text-3xl font-serif font-bold w-full md:w-36 mb-2 md:mb-0">DAY ${String(i + 1).padStart(2, '0')}</div>
@@ -569,7 +650,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   let daysDetailHtml = '';
   if (days?.visible !== false && days?.items?.length) {
     daysDetailHtml = days.items.map((day, i) => {
-      const pageNum = i + 4;
+      const pageId = `page-day-${i + 1}`;
       const isDark = (i % 2 !== 0);
       const bg = isDark ? 'bg-jollify-dark text-white' : 'bg-jollify-cream text-jollify-dark';
       const titleColor = isDark ? 'text-white' : 'text-jollify-purple-dark';
@@ -578,11 +659,11 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       const imgSide = (i % 2 === 0) ? 'flex-col lg:flex-row' : 'flex-col lg:flex-row-reverse';
       const imgAnim = (i % 2 === 0) ? 'slide-left' : 'slide-right';
       const txtAnim = (i % 2 === 0) ? 'slide-right' : 'slide-left';
-      const img = day.image?.url || day.images?.[0] || 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
+      const img = safeImageUrl(day.image?.url || day.images?.[0], 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
       const imgLabel = day.image?.label ? `${esc(day.image.label)}` : `DAY ${String(i + 1).padStart(2, '0')} ‧ ${esc(day.title || '').substring(0, 10)}`;
       const imgSubtitle = day.image?.subtitle || '';
       const tagBg = isDark ? 'bg-jollify-gold/80' : 'bg-jollify-purple/80';
-      const desc = (day.lead || day.description || '').replace(/\n/g, '<br>');
+      const desc = esc(day.lead || day.description || '').replace(/\n/g, '<br>');
       const pointsHtml = day.points ? `<div class="${bodyColor} mb-6 leading-relaxed font-sans text-base mobile-readable-body">${esc(day.points).replace(/\n/g, '<br>')}</div>` : '';
       // meals
       const showMeals = day.meals?.show !== false;
@@ -602,7 +683,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
             </div>` : '';
 
       return `
-    <section id="page-${pageNum}" class="magazine-section p-0 ${bg}" data-title="Day ${String(i + 1).padStart(2, '0')}">
+    <section id="${pageId}" class="magazine-section p-0 ${bg}" data-title="Day ${String(i + 1).padStart(2, '0')}">
       <div class="flex ${imgSide} w-full h-full min-h-screen">
         <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger ${imgAnim}">
           <img src="${esc(img)}" alt="Day ${i + 1}" class="w-full h-full object-cover img-elegant">
@@ -632,7 +713,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   let hotelsHtml = '';
   if (hotels?.visible !== false && visibleHotels.length) {
     hotelsHtml = visibleHotels.map((hotel, i) => {
-      const pageNum = i + 4 + (days?.items?.length || 0);
+      const pageId = `page-hotel-${i + 1}`;
       const isDark = (i % 2 !== 0);
       const bg = isDark ? 'bg-jollify-dark text-white' : 'bg-jollify-cream text-jollify-dark';
       const titleColor = isDark ? 'text-white' : 'text-jollify-purple-dark';
@@ -642,14 +723,15 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       const layout = (i % 2 === 0) ? 'flex-col md:flex-row' : 'flex-col md:flex-row-reverse';
       const imgAnim = (i % 2 === 0) ? 'slide-right' : 'slide-left';
       const txtAnim = (i % 2 === 0) ? 'slide-left' : 'slide-right';
-      const img = hotel.image || hotel.img || 'https://images.unsplash.com/photo-1542314831-c6a420808643?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80';
-      const desc = (hotel.description || hotel.desc || '').replace(/\n/g, '<br>');
-      const linkHtml = hotel.link ? `<a href="${esc(hotel.link)}" target="_blank" class="inline-flex items-center gap-3 text-xs tracking-[0.2em] ${accentColor} transition-colors font-semibold uppercase mt-8">探索飯店 →</a>` : '';
+      const img = safeImageUrl(hotel.image || hotel.img, 'https://images.unsplash.com/photo-1542314831-c6a420808643?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+      const desc = esc(hotel.description || hotel.desc || '').replace(/\n/g, '<br>');
+      const hotelUrl = safeHttpUrl(hotel.link);
+      const linkHtml = hotelUrl ? `<a href="${esc(hotelUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-xs tracking-[0.2em] ${accentColor} transition-colors font-semibold uppercase mt-8">探索飯店 →</a>` : '';
       const tagsHtml = hotel.tags
         ? `<div class="flex flex-wrap gap-2 mt-6">${hotel.tags.split(/[,，\n]/).filter(t => t.trim()).map(t => `<span class="px-2.5 py-0.5 text-xs font-sans tracking-wider rounded border ${isDark ? 'bg-jollify-gold/10 text-jollify-gold border-jollify-gold/20' : 'bg-jollify-purple/5 text-jollify-purple border-jollify-purple/10'}">${esc(t.trim())}</span>`).join('')}</div>`
         : '';
       return `
-    <section id="page-${pageNum}" class="magazine-section ${bg}" data-title="${esc((hotel.name || '旅宿').substring(0, 8))}">
+    <section id="${pageId}" class="magazine-section ${bg}" data-title="${esc((hotel.name || '旅宿').substring(0, 8))}">
       <div class="max-w-7xl mx-auto w-full relative z-10 flex ${layout} items-center gap-12 lg:gap-24">
         <div class="w-full md:w-1/2 animate-trigger ${imgAnim} delay-100">
           <div class="relative group">
@@ -671,9 +753,35 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     }).join('');
   }
 
+  // ── Route map HTML ────────────────────────────────────────────
+  // map_data is the persisted itinerary source shared with the classic theme.
+  // Keep the magazine page conditional so an empty optional map never renders
+  // a decorative placeholder as though it were an actual route.
+  let mapHtml = '';
+  const mapImageUrl = safeImageUrl(mapData.embed_url);
+  if (mapData.visible !== false && mapImageUrl) {
+    const mapTitle = mapData.title || '行程地圖';
+    mapHtml = `
+    <section id="page-map" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="${esc(mapTitle)}">
+      <div class="max-w-6xl mx-auto w-full relative z-10 px-4 md:px-8 py-16">
+        <div class="text-center mb-12 animate-trigger">
+          <p class="text-jollify-gold tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">ROUTE MAP</p>
+          <h2 class="text-4xl md:text-5xl font-bold tracking-[0.15em] font-serif text-jollify-purple-dark">${esc(mapTitle)}</h2>
+          <div class="w-12 h-[2px] bg-jollify-gold mx-auto mt-6"></div>
+        </div>
+        <figure class="animate-trigger scale-up delay-200">
+          <div class="relative overflow-hidden border border-jollify-purple/10 bg-white p-2 shadow-xl md:p-4">
+            <img src="${esc(mapImageUrl)}" alt="${esc(mapTitle)}" class="w-full h-auto object-contain">
+            ${imageCredit(mapData.image_source)}
+          </div>
+          ${mapData.desc ? `<figcaption class="mx-auto mt-6 max-w-3xl text-center font-sans text-sm leading-relaxed text-jollify-gray">${esc(mapData.desc).replace(/\n/g, '<br>')}</figcaption>` : ''}
+        </figure>
+      </div>
+    </section>`;
+  }
+
   // ── Notices HTML ───────────────────────────────────────────────
   const hasNotices = itinerary?.notices?.visible !== false && itinerary?.notices?.items?.length;
-  const noticesPageNum = 4 + (days?.items?.length || 0) + (hotels?.items?.length || 0);
   let noticesHtml = '';
   if (hasNotices) {
     const noticeCards = itinerary.notices.items.map((notice, i) => {
@@ -701,7 +809,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     }).join('');
 
     noticesHtml = `
-    <section id="page-${noticesPageNum}" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="報名注意">
+    <section id="page-notices" class="magazine-section bg-jollify-cream text-jollify-dark" data-title="報名注意">
       <div class="max-w-4xl mx-auto w-full relative z-10">
         <div class="text-center mb-14 animate-trigger">
           <p class="text-jollify-purple tracking-[0.3em] uppercase text-xs mb-3 font-sans font-semibold">${esc(itinerary.notices.subtitle || 'NOTICES')}</p>
@@ -716,9 +824,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   // ── Recommended HTML ───────────────────────────────────────────
   let recommendedHtml = '';
   if (recommended?.visible !== false && recommended?.items?.length) {
-    const rCards = recommended.items.map((c, i) => `
-      <a href="${esc(c.link || '#')}" target="_blank" rel="noopener noreferrer" class="recommended-card block group relative overflow-hidden h-64 md:h-80 w-full rounded-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
-        <div class="recommended-card-image absolute inset-0 bg-cover bg-center transition-transform duration-700" style="background-image:url('${esc(c.img || '')}')"></div>
+    const rCards = recommended.items.map((c, i) => {
+      const recommendedUrl = safeHttpUrl(c.link, '#');
+      const imageUrl = safeImageUrl(c.img);
+      return `
+      <a href="${esc(recommendedUrl)}"${recommendedUrl === '#' ? '' : ' target="_blank" rel="noopener noreferrer"'} class="recommended-card block group relative overflow-hidden h-64 md:h-80 w-full rounded-sm animate-trigger slide-up delay-${Math.min((i + 1) * 100, 700)}">
+        <div class="recommended-card-image absolute inset-0 bg-cover bg-center transition-transform duration-700"${imageUrl ? ` style="background-image:url('${esc(imageUrl)}')"` : ''}></div>
         ${imageCredit(c.image_source)}
         <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/90 via-jollify-dark/40 to-transparent"></div>
         <div class="absolute bottom-6 left-6 right-6">
@@ -726,7 +837,8 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
           <span class="recommended-card-cta inline-block text-jollify-gold font-sans text-xs tracking-[0.2em] uppercase transition-colors duration-300">查看行程 &rarr;</span>
         </div>
       </a>
-    `).join('');
+    `;
+    }).join('');
     recommendedHtml = `
     <section id="page-recommended" class="magazine-section bg-jollify-dark text-white" data-title="推薦行程">
       <div class="max-w-6xl mx-auto w-full relative z-10">
@@ -745,14 +857,12 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   }
 
   // ── CTA / Last Page ────────────────────────────────────────────
-  const lastPageNum = 4 + (days?.items?.length || 0) + (hotels?.items?.length || 0) + (hasNotices ? 1 : 0);
   const ctaTitle = safe(cta?.title || cta?.cta_title, '開啟您的尊榮篇章');
   const ctaDesc = safe(cta?.cta_desc, '地面代理專屬尊榮企劃報價，由專屬顧問親自服務。');
-  const lineBtn = cta?.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" rel="noopener noreferrer" class="j-mag-cta-button w-full sm:w-auto px-8 py-4 bg-[#06C755] text-white font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-[#05b04b] transition-all duration-300 shadow-lg">客服</a>` : '';
-  const registerUrl = cta?.cta_register_url || DEFAULT_CTA_REGISTER_URL;
+  const lineBtn = lineUrl ? `<a href="${esc(lineUrl)}" target="_blank" rel="noopener noreferrer" class="j-mag-cta-button w-full sm:w-auto px-8 py-4 bg-[#06C755] text-white font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-[#05b04b] transition-all duration-300 shadow-lg">客服</a>` : '';
   const regBtn = `<a href="${esc(registerUrl)}" target="_blank" rel="noopener noreferrer" ${destinationClick} class="j-mag-cta-button w-full sm:w-auto px-8 py-4 bg-jollify-gold text-jollify-dark font-sans font-bold text-sm tracking-[0.2em] rounded-sm hover:bg-white hover:text-jollify-purple transition-all duration-300 border border-jollify-gold shadow-lg">立即報名</a>`;
-  const ctaSection = `
-    <section id="page-${lastPageNum}" class="magazine-section bg-jollify-dark text-white relative" data-title="報價與諮詢">
+  const ctaSection = cta?.visible !== false ? `
+    <section id="page-cta" class="magazine-section bg-jollify-dark text-white relative" data-title="報價與諮詢">
       <div class="max-w-4xl mx-auto w-full text-center relative z-20 px-6 py-12 border border-jollify-gold/20 rounded-sm glass-premium-dark animate-trigger scale-up delay-200">
         <p class="text-jollify-gold tracking-[0.4em] font-serif text-sm mb-4 uppercase">${esc(cta?.subtitle || 'JOLLIFY TRAVEL EXCLUSIVE')}</p>
         <h2 class="text-4xl md:text-6xl font-serif font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white via-jollify-gold-light to-white mb-8">${esc(ctaTitle)}</h2>
@@ -765,13 +875,13 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
         </div>
         <p class="text-[10px] text-gray-500 font-sans tracking-widest mt-16">© 2026 JOLLIFY TRAVEL 鑫囍探索. ALL RIGHTS RESERVED.</p>
       </div>
-    </section>`;
+    </section>` : '';
 
   // ── CTA floating button ────────────────────────────────────────
-  const floatBtn = (cta?.visible !== false && (registerUrl || cta?.cta_line_url)) ? `
-    <div class="fixed bottom-6 right-6 z-[9000] flex flex-col gap-3 items-end">
-      ${cta.cta_line_url ? `<a href="${esc(cta.cta_line_url)}" target="_blank" class="flex items-center bg-[#06C755] hover:bg-[#05b04b] text-white rounded-full px-5 py-3 shadow-lg transition-transform hover:scale-105"><img src="/material-alias/Shared_data/LINE.png" alt="LINE" class="w-5 h-5 object-contain mr-2" /><span class="font-bold">客服</span></a>` : ''}
-      <a href="${esc(registerUrl)}" target="_blank" ${destinationClick} class="flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl hover:scale-105 font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>
+  const floatBtn = (cta?.visible !== false && (registerUrl || lineUrl)) ? `
+    <div class="j-mag-floating-actions fixed bottom-6 right-6 z-[9000] flex flex-col gap-3 items-end" aria-label="快速諮詢與報名">
+      ${lineUrl ? `<a href="${esc(lineUrl)}" target="_blank" rel="noopener noreferrer" class="j-mag-floating-action j-mag-floating-line flex items-center bg-[#06C755] text-white rounded-full px-5 py-3 shadow-lg"><img src="/material-alias/Shared_data/LINE.png" alt="" class="w-5 h-5 object-contain mr-2" /><span class="font-bold">客服</span></a>` : ''}
+      <a href="${esc(registerUrl)}" target="_blank" rel="noopener noreferrer" ${destinationClick} class="j-mag-floating-action j-mag-floating-register flex items-center bg-gradient-to-r from-jollify-gold to-yellow-600 text-white rounded-full px-6 py-3 shadow-xl font-serif tracking-widest text-lg font-bold border border-white/30">我要報名</a>
     </div>` : '';
 
   return prepareHtmlImagesForPreview(`
@@ -809,7 +919,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
     <!-- Page 1: 封面 -->
     <section id="page-1" class="magazine-section p-0 m-0 h-screen w-full relative bg-jollify-dark" data-title="封面導引">
       <div class="absolute inset-0 z-0">
-        <img src="${esc(safe(itinerary?.hero_data?.image, 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'))}" alt="Cover" class="w-full h-full object-cover img-elegant opacity-50">
+        <img src="${esc(safeImageUrl(itinerary?.hero_data?.image, 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'))}" alt="Cover" class="w-full h-full object-cover img-elegant opacity-50">
         ${imageCredit(itinerary?.hero_data?.image_source)}
       </div>
       <div class="j-mag-cover-overlay absolute inset-0 z-10"></div>
@@ -836,12 +946,15 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       </div>
     </section>
 
+    ${quickInfoHtml}
+    ${priceHtml}
     ${flightsHtml}
     ${featuresHtml}
     ${spotsHtml}
     ${highlightsHtml}
     ${daysDetailHtml}
     ${hotelsHtml}
+    ${mapHtml}
     ${noticesHtml}
     ${recommendedHtml}
     ${ctaSection}

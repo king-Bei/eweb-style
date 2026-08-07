@@ -4,6 +4,8 @@
   --c-bg: #fff;
   --j-section-bg: #f8f6fb;
   --j-card-bg: #ffffff;
+  --j-content-width: 1180px;
+  --j-content-gutter: clamp(20px, 3vw, 36px);
   --j-font-heading: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif;
   --j-font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
   --j-font-ui: "Montserrat", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
@@ -14,6 +16,8 @@
   --c-bg: #fff;
   --j-section-bg: #f8f6fb;
   --j-card-bg: #ffffff;
+  --j-content-width: 1180px;
+  --j-content-gutter: clamp(20px, 3vw, 36px);
   --j-font-heading: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif;
   --j-font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
   --j-font-ui: "Montserrat", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
@@ -36,7 +40,7 @@
   font-family: var(--j-font-heading) !important;
 }
 .jollify-luxury-theme button, .jollify-luxury-theme input, .jollify-luxury-theme select, .jollify-luxury-theme textarea { font-family: inherit !important; }
-.jollify-luxury-theme .j-wrapper { width: 100% !important; max-width: 1180px !important; margin: 0 auto !important; padding: 0 clamp(20px, 3vw, 36px) !important; box-sizing: border-box !important; }
+.jollify-luxury-theme .j-wrapper { width: 100% !important; max-width: var(--j-content-width) !important; margin: 0 auto !important; padding: 0 var(--j-content-gutter) !important; box-sizing: border-box !important; }
 .jollify-luxury-theme .j-section { padding: 60px 0 !important; background: var(--j-section-bg) !important; }
 .jollify-luxury-theme .bg-light-gray { background: var(--j-section-bg) !important; border-top: 1px solid rgba(76,42,133,0.08); border-bottom: 1px solid rgba(76,42,133,0.08);}
 .jollify-luxury-theme .j-heading { text-align: center !important; margin-bottom: 50px !important; }
@@ -50,6 +54,19 @@
 .jollify-luxury-theme .j-hero-content { position: relative !important; z-index: 3 !important; color: white !important; }
 .jollify-luxury-theme .j-hero-sub { font-size: 20px !important; font-weight: 600 !important; letter-spacing: 4px !important; color: var(--c-sec) !important; display: block !important; margin-bottom: 15px !important; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important; font-family: inherit !important; }
 .jollify-luxury-theme .j-hero-title { font-size: 48px !important; font-weight: bold !important; letter-spacing: 2px !important; margin: 0 !important; text-shadow: 0 2px 8px rgba(0,0,0,0.6) !important; color: #fff !important; font-family: inherit !important; }
+
+/* Reference price */
+.jollify-luxury-theme .j-price-section { padding-block: 46px !important; }
+.jollify-luxury-theme .j-price-card { display: grid !important; grid-template-columns: minmax(0, 1fr) auto !important; align-items: center !important; gap: 20px 42px !important; padding: clamp(28px, 4vw, 46px) !important; color: #fff !important; background: var(--c-pri) !important; border-left: 5px solid var(--c-sec) !important; box-shadow: 0 18px 40px rgba(76,42,133,0.14) !important; }
+.jollify-luxury-theme .j-price-heading h2 { margin: 6px 0 0 !important; color: #fff !important; font-size: clamp(25px, 3vw, 34px) !important; letter-spacing: 0.08em !important; }
+.jollify-luxury-theme .j-price-subtitle { color: var(--c-sec) !important; font-family: var(--j-font-ui) !important; font-size: 11px !important; font-weight: 700 !important; letter-spacing: 0.22em !important; }
+.jollify-luxury-theme .j-price-action { display: flex !important; align-items: center !important; justify-content: flex-end !important; flex-wrap: wrap !important; gap: 16px 24px !important; }
+.jollify-luxury-theme .j-price-value { display: flex !important; align-items: baseline !important; justify-content: flex-end !important; gap: 12px !important; white-space: nowrap !important; }
+.jollify-luxury-theme .j-price-amount { color: #fff !important; font-family: var(--j-font-ui) !important; font-size: clamp(30px, 4vw, 52px) !important; font-weight: 700 !important; line-height: 1 !important; letter-spacing: 0.02em !important; }
+.jollify-luxury-theme .j-price-unit { color: rgba(255,255,255,0.8) !important; font-size: 14px !important; }
+.jollify-luxury-theme .j-price-consult { display: inline-flex !important; align-items: center !important; justify-content: center !important; min-height: 42px !important; padding: 0 22px !important; background: var(--c-sec) !important; color: #2c193e !important; font-family: var(--j-font-ui) !important; font-size: 13px !important; font-weight: 700 !important; letter-spacing: 0.12em !important; text-decoration: none !important; transition: background-color 0.25s ease, transform 0.25s ease !important; }
+.jollify-luxury-theme .j-price-consult:hover { background: #fff !important; color: var(--c-pri) !important; transform: translateY(-2px) !important; }
+.jollify-luxury-theme .j-price-note { grid-column: 1 / -1 !important; margin: 0 !important; padding-top: 18px !important; border-top: 1px solid rgba(255,255,255,0.22) !important; color: rgba(255,255,255,0.82) !important; font-size: 14px !important; line-height: 1.8 !important; }
 
 /* Highlights */
 .jollify-luxury-theme .j-highlights-section { background: var(--j-section-bg) !important; }
@@ -203,7 +220,7 @@
 .jollify-luxury-theme .j-h-desc { font-size: 15px !important; color: #555 !important; line-height: 1.9 !important; text-align: justify !important; margin: 0 !important; }
 
 /* Hotel: Grid */
-.jollify-luxury-theme .j-hotel-grid-wrapper { max-width: 1180px !important; margin: 0 auto !important; padding: 0 20px !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important;}
+.jollify-luxury-theme .j-hotel-grid-wrapper { width: 100% !important; max-width: var(--j-content-width) !important; margin: 0 auto !important; padding: 0 var(--j-content-gutter) !important; box-sizing: border-box !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important;}
 .jollify-luxury-theme .j-grid-hotel-card { background: #fff; border-radius: 12px !important; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #eee;}
 .jollify-luxury-theme .j-grid-hotel-card img { width: 100%; height: 220px; object-fit: cover; }
 .jollify-luxury-theme .j-grid-h-info { padding: 25px; }
@@ -211,7 +228,7 @@
 .jollify-luxury-theme .j-grid-h-info p { font-size: 14px !important; color: #666 !important; line-height: 1.6 !important; margin:0;}
 
 /* Hotel: Full-bleed hero gallery */
-.jollify-luxury-theme .j-hotel-hero-wrapper { width: 100% !important; max-width: 1180px !important; margin: 0 auto !important; padding: 0 clamp(20px, 3vw, 36px) !important; display: grid !important; gap: 0 !important; box-sizing: border-box !important; }
+.jollify-luxury-theme .j-hotel-hero-wrapper { width: 100% !important; max-width: var(--j-content-width) !important; margin: 0 auto !important; padding: 0 var(--j-content-gutter) !important; display: grid !important; gap: 0 !important; box-sizing: border-box !important; }
 .jollify-luxury-theme .j-hotel-hero-card { position: relative !important; width: 100% !important; min-height: 560px !important; overflow: hidden !important; isolation: isolate !important; display: flex !important; align-items: flex-end !important; padding: 0 !important; background: #fff !important; border-radius: 16px !important; box-sizing: border-box !important; }
 .jollify-luxury-theme .j-hotel-hero-bg { position: absolute !important; inset: 0 !important; z-index: -3 !important; }
 .jollify-luxury-theme .j-hotel-hero-bg::after { content: '' !important; position: absolute !important; inset: 0 !important; background: linear-gradient(to top, rgba(21,15,29,0.62) 0%, rgba(21,15,29,0.22) 34%, rgba(21,15,29,0.04) 68%) !important; z-index: 2 !important; }
@@ -299,7 +316,7 @@
 .jollify-luxury-theme .j-spot-ltr-text { flex: 1 !important; }
 
 /* Scenic Spots: grid */
-.jollify-luxury-theme .j-spot-grid-wrapper { max-width: 1180px !important; margin: 0 auto !important; padding: 0 20px !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; }
+.jollify-luxury-theme .j-spot-grid-wrapper { width: 100% !important; max-width: var(--j-content-width) !important; margin: 0 auto !important; padding: 0 var(--j-content-gutter) !important; box-sizing: border-box !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; }
 .jollify-luxury-theme .j-spot-grid-card { background: #fff !important; border-radius: 12px !important; overflow: hidden !important; box-shadow: 0 5px 20px rgba(0,0,0,0.05) !important; border: 1px solid #eee !important; transition: transform 0.3s !important; }
 .jollify-luxury-theme .j-spot-grid-card:hover { transform: translateY(-4px) !important; }
 .jollify-luxury-theme .j-spot-grid-img { width: 100% !important; aspect-ratio: 4 / 3 !important; min-height: 220px !important; overflow: hidden !important; }
@@ -348,7 +365,7 @@
     .jollify-luxury-theme .j-wrapper,
     .jollify-luxury-theme .j-hotel-grid-wrapper,
     .jollify-luxury-theme .j-spot-grid-wrapper {
-        max-width: 1280px !important;
+        max-width: var(--j-content-width) !important;
     }
     .jollify-luxury-theme .j-section {
         padding-block: 76px !important;
@@ -362,7 +379,7 @@
 }
 
 /* Notice (Accordion) */
-.jollify-luxury-theme .j-accordion { max-width: 850px !important; margin: 0 auto !important; display: flex !important; flex-direction: column !important; gap: 16px !important; }
+.jollify-luxury-theme .j-accordion { width: 100% !important; max-width: none !important; margin: 0 auto !important; display: flex !important; flex-direction: column !important; gap: 16px !important; }
 .jollify-luxury-theme .j-accordion-item { background: #fff !important; border: 1px solid #e5e7eb !important; border-radius: 8px !important; overflow: hidden !important; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02) !important; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; }
 .jollify-luxury-theme .j-accordion-item.is-active { border-color: var(--c-sec) !important; box-shadow: 0 10px 25px rgba(76, 42, 133, 0.06) !important; }
 .jollify-luxury-theme .j-accordion-header { width: 100% !important; background: none !important; border: none !important; padding: 22px 28px !important; display: flex !important; align-items: center !important; text-align: left !important; cursor: pointer !important; outline: none !important; transition: background-color 0.2s ease !important; }
@@ -389,6 +406,8 @@
 
 /* Map Section */
 .jollify-luxury-theme .j-map-section { background: var(--j-section-bg) !important; border-top: 1px solid rgba(76,42,133,0.08); border-bottom: 1px solid rgba(76,42,133,0.08); }
+.jollify-luxury-theme .j-map-section > .j-wrapper { max-width: var(--j-content-width) !important; padding-inline: var(--j-content-gutter) !important; }
+.jollify-luxury-theme .j-map-section .j-map-img-box { width: 100% !important; max-width: none !important; box-sizing: border-box !important; }
 .jollify-luxury-theme .j-map-wrap { width: 100% !important; aspect-ratio: 16 / 9 !important; min-height: clamp(260px, 46vw, var(--j-map-height, 450px)) !important; border-radius: 16px !important; overflow: hidden !important; box-shadow: 0 20px 50px rgba(0,0,0,0.08) !important; border: 1px solid rgba(76,42,133,0.08) !important; }
 .jollify-luxury-theme .j-map-iframe { display: block !important; width: 100% !important; height: 100% !important; border: none !important; border-radius: 16px !important; }
 .jollify-luxury-theme .j-map-desc { max-width: 800px !important; margin: 28px auto 0 auto !important; text-align: center !important; font-size: 15px !important; color: #666 !important; line-height: 1.8 !important; }
@@ -619,7 +638,7 @@
     flex-direction: column !important;
     gap: 40px !important;
     position: relative !important;
-    max-width: 1060px !important;
+    max-width: none !important;
     margin: 0 auto !important;
     padding-left: 20px !important;
 }
@@ -815,6 +834,10 @@
     .jollify-luxury-theme .j-badge { font-size: 10px !important; padding: 4px 12px !important; margin-bottom: 10px !important; }
     
     .jollify-luxury-theme .j-hero { height: 45vh !important; min-height: 300px !important; }
+    .jollify-luxury-theme .j-price-section { padding-block: 34px !important; }
+    .jollify-luxury-theme .j-price-card { grid-template-columns: 1fr !important; gap: 20px !important; padding: 28px 24px !important; }
+    .jollify-luxury-theme .j-price-action, .jollify-luxury-theme .j-price-value { justify-content: flex-start !important; }
+    .jollify-luxury-theme .j-price-value { flex-wrap: wrap !important; }
     .jollify-luxury-theme .j-hero-title { font-size: 28px !important; }
     .jollify-luxury-theme .j-hero-sub { font-size: 14px !important; letter-spacing: 2px !important; }
     .jollify-luxury-theme .k-tag { font-size: 11px !important; padding: 4px 10px !important; }
