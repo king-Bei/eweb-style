@@ -77,9 +77,9 @@ export default function FormHighlights({ data = {}, onChange, theme = 'classic' 
                     <input type="text" className="form-control" value={item.title} onChange={e => updateItem(i, 'title', e.target.value)} placeholder="例如: 專屬水上別墅" />
                   </div>
 
-                  {theme === 'classic' && (data.layout === 'card' || data.layout === 'overlap') && (
+                  {(theme === 'magazine' || data.layout === 'card' || data.layout === 'overlap') && (
                     <div style={{ marginBottom: '10px' }}>
-                      <label className="form-label text-xs font-semibold text-gray-500 block mb-1">特色圖片網址</label>
+                      <label className="form-label text-xs font-semibold text-gray-500 block mb-1">特色圖片網址{theme === 'magazine' ? '（雜誌卡片圖片）' : ''}</label>
                       <input type="text" className="form-control" value={item.img || ''} onChange={e => updateItem(i, 'img', e.target.value)} placeholder="https://example.com/image.jpg" />
                       <ImageAttributionInput value={item.image_source || ''} onChange={value => updateItem(i, 'image_source', value)} />
                     </div>
