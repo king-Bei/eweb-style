@@ -1352,15 +1352,6 @@
     border-bottom: 1px solid rgba(212, 169, 59, 0.34);
 }
 
-#jollify-magazine-tour .magazine-price-kicker {
-    margin: 0 0 18px;
-    color: #d4a93b;
-    font-family: var(--font-sans, sans-serif);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.3em;
-}
-
 #jollify-magazine-tour .magazine-price-inner h2 {
     margin: 0;
     color: #ffffff;

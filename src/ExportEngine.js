@@ -349,10 +349,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}, origin 
       case 'price':
         if (price_data?.visible !== false && [price_data?.amount, price_data?.note, price_data?.title].some(value => String(value || '').trim())) {
           const priceTitle = price_data?.title || '尊榮旅程參考售價';
-          const priceSubtitle = price_data?.subtitle || 'FROM';
           const priceAmount = price_data?.amount || '';
           const priceUnit = price_data?.unit || '每人起';
-          html += `<div class="j-section j-price-section" id="price"><div class="j-wrapper"><div class="j-price-card wow fadeInUp"><div class="j-price-heading"><span class="j-price-subtitle">${priceSubtitle}</span><h2>${priceTitle}</h2></div><div class="j-price-action"><div class="j-price-value"><span class="j-price-amount">${priceAmount}</span><span class="j-price-unit">${priceUnit}</span></div><a href="${priceConsultUrl}" target="_blank" ${destinationClick} class="j-price-consult">我要詢問</a></div>${price_data?.note ? `<p class="j-price-note">${String(price_data.note).replace(/\n/g, '<br>')}</p>` : ''}</div></div></div>`;
+          html += `<div class="j-section j-price-section" id="price"><div class="j-wrapper"><div class="j-price-card wow fadeInUp"><div class="j-price-heading"><h2>${priceTitle}</h2></div><div class="j-price-action"><div class="j-price-value"><span class="j-price-amount">${priceAmount}</span><span class="j-price-unit">${priceUnit}</span></div><a href="${priceConsultUrl}" target="_blank" ${destinationClick} class="j-price-consult">我要詢問</a></div>${price_data?.note ? `<p class="j-price-note">${String(price_data.note).replace(/\n/g, '<br>')}</p>` : ''}</div></div></div>`;
         }
         break;
       case 'hotels':

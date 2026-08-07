@@ -21,10 +21,6 @@ export default function FormPrice({ data = {}, onChange }) {
               <input type="text" name="title" className="form-control" value={data.title || ''} onChange={handleChange} placeholder="尊榮旅程參考售價" />
             </div>
             <div>
-              <label className="form-label">英文小標</label>
-              <input type="text" name="subtitle" className="form-control" value={data.subtitle || ''} onChange={handleChange} placeholder="FROM" />
-            </div>
-            <div>
               <label className="form-label">價格</label>
               <input type="text" name="amount" className="form-control" value={data.amount || ''} onChange={handleChange} placeholder="NT$ 268,000" />
             </div>

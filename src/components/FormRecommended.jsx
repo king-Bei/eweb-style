@@ -50,7 +50,7 @@ export default function FormRecommended({ data = {}, onChange }) {
                   <div className="grid grid-cols-2 gap-2">
                     <div className="col-span-2">
                       <label className="form-label">行程名稱</label>
-                      <input type="text" className="form-control" value={item.t} onChange={e => updateItem(i, 't', e.target.value)} />
+                      <input type="text" className="form-control" value={item.t || item.title || ''} onChange={e => updateItem(i, 't', e.target.value)} />
                     </div>
                     <div>
                       <label className="form-label">圖片網址</label>

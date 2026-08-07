@@ -25,6 +25,46 @@ const EMPTY_GROUP = {
   items: []
 };
 
+function legacyLocation(value) {
+  const parts = String(value || '').trim().split(/\s+/).filter(Boolean);
+  const code = parts.at(-1) || '';
+  const hasAirportCode = /^[A-Za-z]{3}$/.test(code);
+  return {
+    zh: hasAirportCode ? parts.slice(0, -1).join(' ') : '',
+    en: hasAirportCode ? code.toUpperCase() : String(value || '').trim()
+  };
+}
+
+function legacyFlightDetails(value) {
+  const text = String(value || '').trim();
+  const match = text.match(/(?:^|\s)([A-Za-z]{2,3}\s*\d{1,5}[A-Za-z]?)$/);
+  const prefix = match ? text.slice(0, match.index).trim() : text;
+  const names = prefix.split(/\s+/).filter(Boolean);
+  return {
+    flightNo: match?.[1]?.replace(/\s+/g, '').toUpperCase() || '',
+    airlineNameZh: names[0] || '',
+    airlineNameEn: names.slice(1).join(' ')
+  };
+}
+
+function normalizeFlightItem(item = {}) {
+  const departure = legacyLocation(item.fCode);
+  const arrival = legacyLocation(item.tCode);
+  const legacyFlight = legacyFlightDetails(item.fn);
+  return {
+    ...item,
+    airline_name_zh: item.airline_name_zh || legacyFlight.airlineNameZh,
+    airline_name_en: item.airline_name_en || legacyFlight.airlineNameEn,
+    flight_no: item.flight_no || item.flight_number || legacyFlight.flightNo,
+    dep_location_zh: item.dep_location_zh || departure.zh,
+    dep_location_en: item.dep_location_en || departure.en,
+    arr_location_zh: item.arr_location_zh || arrival.zh,
+    arr_location_en: item.arr_location_en || arrival.en,
+    dep_time: item.dep_time || item.departure_time || item.fTime || '',
+    arr_time: item.arr_time || item.arrival_time || item.tTime || ''
+  };
+}
+
 function syncLegacy(item) {
   return {
     ...item,
@@ -38,8 +78,14 @@ function syncLegacy(item) {
 
 // 將舊版 flat items 自動升級為組別結構
 function migrateToGroups(data) {
-  if (data.groups && data.groups.length > 0) return data;
-  const items = data.items || [];
+  if (data.groups && data.groups.length > 0) {
+    const groups = data.groups.map(group => ({
+      ...group,
+      items: (group.items || []).map(normalizeFlightItem)
+    }));
+    return { ...data, groups, items: groups.flatMap(group => group.items) };
+  }
+  const items = (data.items || []).map(normalizeFlightItem);
   if (items.length === 0) return { ...data, groups: [{ ...EMPTY_GROUP, items: [] }] };
 
   // 按 tag 分組

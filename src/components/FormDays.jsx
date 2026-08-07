@@ -29,7 +29,14 @@ export default function FormDays({ data = {}, onChange, theme = 'classic' }) {
     const newItems = [...items];
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
-      newItems[index][parent] = { ...newItems[index][parent], [child]: value };
+      const parentValue = newItems[index][parent];
+      // Older day records may store image data as a URL string. Convert only
+      // when an editor changes an image field, preserving the remaining item
+      // data while writing the current nested shape.
+      newItems[index][parent] = {
+        ...(parentValue && typeof parentValue === 'object' && !Array.isArray(parentValue) ? parentValue : {}),
+        [child]: value
+      };
     } else {
       newItems[index][field] = value;
     }
@@ -94,7 +101,13 @@ export default function FormDays({ data = {}, onChange, theme = 'classic' }) {
           {data.visible !== false && (
             <>
               {items.map((item, i) => (
-                <div key={i} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
+                (() => {
+                  const image = item.image && typeof item.image === 'object' && !Array.isArray(item.image) ? item.image : {};
+                  const legacyImage = typeof item.image === 'string' ? item.image : '';
+                  const imageUrl = image.url || item.image_url || item.img || legacyImage || '';
+                  const imageSource = image.source || item.image_source || '';
+
+                  return <div key={i} style={{ backgroundColor: '#fafafa', padding: '15px', border: '1px solid #ddd', borderRadius: '8px', borderLeft: '4px solid var(--c-pri)', marginBottom: '15px', position: 'relative' }}>
                   <div className="flex justify-between mb-3 border-b border-gray-700 pb-2">
                     <h4 style={{ margin: 0, color: 'var(--c-pri)', fontWeight: 'bold' }}>第 {i + 1} 天</h4>
                     <button onClick={() => removeItem(i)} style={{ background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer' }}>刪除</button>
@@ -132,14 +145,14 @@ export default function FormDays({ data = {}, onChange, theme = 'classic' }) {
                       <label className="form-label text-xs text-[var(--c-pri)] font-bold">圖片設定</label>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="col-span-2">
-                          <input type="text" className="form-control text-sm" value={item.image?.url || ''} onChange={e => updateItem(i, 'image.url', e.target.value)} placeholder="圖片網址" />
-                          <ImageAttributionInput value={item.image?.source || ''} onChange={value => updateItem(i, 'image.source', value)} />
+                          <input type="text" className="form-control text-sm" value={imageUrl} onChange={e => updateItem(i, 'image.url', e.target.value)} placeholder="圖片網址" />
+                          <ImageAttributionInput value={imageSource} onChange={value => updateItem(i, 'image.source', value)} />
                         </div>
                         <div>
-                          <input type="text" className="form-control text-sm" value={item.image?.label || ''} onChange={e => updateItem(i, 'image.label', e.target.value)} placeholder="圖片大標籤 (如: FIRST DAY)" />
+                          <input type="text" className="form-control text-sm" value={image.label || ''} onChange={e => updateItem(i, 'image.label', e.target.value)} placeholder="圖片大標籤 (如: FIRST DAY)" />
                         </div>
                         <div>
-                          <input type="text" className="form-control text-sm" value={item.image?.subtitle || ''} onChange={e => updateItem(i, 'image.subtitle', e.target.value)} placeholder="圖片副標" />
+                          <input type="text" className="form-control text-sm" value={image.subtitle || ''} onChange={e => updateItem(i, 'image.subtitle', e.target.value)} placeholder="圖片副標" />
                         </div>
                       </div>
                     </div>
@@ -196,7 +209,8 @@ export default function FormDays({ data = {}, onChange, theme = 'classic' }) {
                       </div>
                     )}
                   </div>
-                </div>
+                </div>;
+                })()
               ))}
               <button onClick={addItem} className="btn-outline-gold" style={{ width: '100%', padding: '8px' }}>+ 新增一天行程</button>
             </>

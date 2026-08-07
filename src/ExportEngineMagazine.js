@@ -326,7 +326,6 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
   const priceHtml = priceData.visible !== false && [priceData.amount, priceData.note, priceData.title].some(value => String(value || '').trim()) ? `
     <section id="page-price" class="magazine-section magazine-price-section" data-title="參考售價">
       <div class="magazine-price-inner animate-trigger scale-up">
-        <p class="magazine-price-kicker">${esc(priceData.subtitle || 'FROM')}</p>
         <h2>${esc(priceData.title || '尊榮旅程參考售價')}</h2>
         <div class="magazine-price-value">${esc(priceData.amount || '')}<span>${esc(priceData.unit || '每人起')}</span></div>
         <a href="${esc(priceConsultUrl)}" target="_blank" rel="noopener noreferrer" ${destinationClick} class="magazine-price-consult">我要詢問</a>
@@ -350,7 +349,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       return String(f?.[field] || f?.[legacy] || '').trim().split(/\s+/).pop().toUpperCase();
     };
     const timeOf = (f, direction) => String((direction === 'dep' ? f?.dep_time || f?.departure_time || f?.fTime : f?.arr_time || f?.arrival_time || f?.tTime) || '').trim();
-    const flightNoOf = (f) => String(f?.flight_no || f?.flight_number || '').replace(/\s+/g, ' ').trim();
+    const flightNoOf = (f) => String(f?.flight_no || f?.flight_number || f?.fn || '').replace(/\s+/g, ' ').trim();
     const prettyFlightNo = (f) => {
       const no = flightNoOf(f);
       const code = String(f?.airline_code || '').toUpperCase();
@@ -368,8 +367,9 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       return `${esc(depCode)} ${esc(timeOf(f, 'dep'))} <span class="flight-arrow">➜</span> ${esc(arrCode)} ${esc(timeOf(f, 'arr'))}`;
     };
     const airlineTitle = (f) => {
-      const airlineZh = f?.airline_name_zh || '航空公司';
-      const airlineEn = f?.airline_name_en || '';
+      const legacyNames = String(f?.fn || '').trim().replace(/(?:^|\s)[A-Za-z]{2,3}\s*\d{1,5}[A-Za-z]?$/, '').trim().split(/\s+/).filter(Boolean);
+      const airlineZh = f?.airline_name_zh || legacyNames[0] || '航空公司';
+      const airlineEn = f?.airline_name_en || legacyNames.slice(1).join(' ');
       return `${esc(airlineZh)}${airlineEn ? ` (${esc(airlineEn)})` : ''}`;
     };
     const segmentTitle = (f, i) => {
@@ -659,9 +659,11 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       const imgSide = (i % 2 === 0) ? 'flex-col lg:flex-row' : 'flex-col lg:flex-row-reverse';
       const imgAnim = (i % 2 === 0) ? 'slide-left' : 'slide-right';
       const txtAnim = (i % 2 === 0) ? 'slide-right' : 'slide-left';
-      const img = safeImageUrl(day.image?.url || day.images?.[0], 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
-      const imgLabel = day.image?.label ? `${esc(day.image.label)}` : `DAY ${String(i + 1).padStart(2, '0')} ‧ ${esc(day.title || '').substring(0, 10)}`;
-      const imgSubtitle = day.image?.subtitle || '';
+      const dayImage = day.image && typeof day.image === 'object' && !Array.isArray(day.image) ? day.image : {};
+      const legacyImage = typeof day.image === 'string' ? day.image : '';
+      const img = safeImageUrl(dayImage.url || day.image_url || day.img || legacyImage || day.images?.[0], 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+      const imgLabel = dayImage.label ? `${esc(dayImage.label)}` : `DAY ${String(i + 1).padStart(2, '0')} ‧ ${esc(day.title || '').substring(0, 10)}`;
+      const imgSubtitle = dayImage.subtitle || '';
       const tagBg = isDark ? 'bg-jollify-gold/80' : 'bg-jollify-purple/80';
       const desc = esc(day.lead || day.description || '').replace(/\n/g, '<br>');
       const pointsHtml = day.points ? `<div class="${bodyColor} mb-6 leading-relaxed font-sans text-base mobile-readable-body">${esc(day.points).replace(/\n/g, '<br>')}</div>` : '';
@@ -687,7 +689,7 @@ export const generateHtml = (itinerary, flights, days, hotels, cta = {}) => {
       <div class="flex ${imgSide} w-full h-full min-h-screen">
         <div class="w-full lg:w-1/2 h-[45vh] lg:h-screen relative overflow-hidden animate-trigger ${imgAnim}">
           <img src="${esc(img)}" alt="Day ${i + 1}" class="w-full h-full object-cover img-elegant">
-          ${imageCredit(day.image?.source)}
+          ${imageCredit(dayImage.source || day.image_source)}
           <div class="absolute inset-0 bg-gradient-to-t from-jollify-dark/40 to-transparent"></div>
           <span class="day-image-tag absolute bottom-6 left-6 text-white text-xs tracking-widest font-sans ${tagBg} px-4 py-2 backdrop-blur-md">${imgLabel}${imgSubtitle ? `<small class="day-image-subtitle block mt-1">${esc(imgSubtitle)}</small>` : ''}</span>
         </div>
